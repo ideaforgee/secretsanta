@@ -79,9 +79,17 @@ async function loadTemplate(templateName, data) {
   return template;
 }
 
+const sendAddWishSecretSantaEmail = async (email) => {
+  const emailSubject = `🎅 Secret Santa Alert!`;
+  const emailBody = await loadTemplate("addedWishSecretSantaEmail.html",);
+  await sendEmail(email, emailSubject, emailBody);
+}
+
+
 module.exports = {
   sendCreatedSecretSantaGameEmail,
   sendAssignedSecretSantaEmail,
   sendSecretSantaSentMessageEmail,
-  sendEmail
+  sendEmail,
+  sendAddWishSecretSantaEmail
 };

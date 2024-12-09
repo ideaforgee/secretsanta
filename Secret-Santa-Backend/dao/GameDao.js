@@ -222,6 +222,18 @@ const validateIfGameExist = async (gameId) => {
   }
 };
 
+const getReceiverEmailForGameByUserId = async (userId, gameId) => {
+  try {
+    const query = `SELECT users.email FROM userGame
+      INNER JOIN users ON userGame.userId = users.id
+      WHERE secretSantaId = ? AND gameId = ? LIMIT 1`;
+    const [result] = await db.query(query, [userId, gameId]);
+    return result[0] ?? null;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 module.exports = {
   saveNewSecretSantaGame,
   addNewSecretSantaGame,
@@ -235,5 +247,6 @@ module.exports = {
   getGameIdsForStartByScheduler,
   exitSecretSantaGame,
   validateIfGameExist,
-  getGameIdsForEndByScheduler
+  getGameIdsForEndByScheduler,
+  getReceiverEmailForGameByUserId
 };
