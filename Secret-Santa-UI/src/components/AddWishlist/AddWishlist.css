@@ -1,0 +1,67 @@
+.dialog-title {
+    background-color: var(--primary-button-color);
+    padding: 16px;
+    border-bottom: 1px solid #ddd;
+}
+
+.dialog-title-text {
+    font-weight: normal;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.dialog-content {
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+}
+
+.input-field {
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.dialog-actions {
+    padding: 12px;
+    justify-content: center;
+}
+
+.add-wishlist-form .dialog-actions .cancel-button {
+    background-color: var(--secondary-button-color);
+    color: var(--primary-button-color-hover);
+}
+
+.add-wishlist-form .dialog-actions .add-wishlist-button {
+    background-color: var(--primary-button-color);
+    color: #fff;
+}
+
+.add-wishlist-form .dialog-actions .cancel-button:hover {
+    background-color: var(--secondary-button-color-hover);
+}
+
+.add-wishlist-form .dialog-actions .add-wishlist-button:hover {
+    background-color: var(--primary-button-color-hover);
+}
+
+.add-wishlist-form {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    box-shadow: none;
+    background-color: white;
+    padding: 20px;
+}
+
+.add-wishlist-form input {
+    padding: 12px;
+    width: 335px;
+}
+
+@media (max-width: 768px) {
+    .input-field {
+        gap: 4px;
+    }
+}

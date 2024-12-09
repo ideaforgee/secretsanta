@@ -1,0 +1,32 @@
+version: '3.8'
+
+networks:
+  webnet_secret-santa:
+    driver: bridge
+
+services:
+
+  secret-santa-ui:
+    image: ${SECRET_SANTA_UI:-secret-santa-ui:latest}
+    build:
+      context: ./Secret-Santa-UI
+      dockerfile: Dockerfile
+    depends_on:
+      - secret-santa-backend
+    ports:
+      - "3000:80"
+    networks:
+      - webnet_secret-santa
+    volumes:
+      - ./deployment/nginx.conf:/etc/nginx/nginx.conf:ro
+  secret-santa-backend:
+    image: ${SECRET_SANTA_BACKEND:-secret-santa-backend:latest}
+    build:
+      context: ./Secret-Santa-Backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    env_file:
+      - ./Secret-Santa-Backend/.env
+    networks:
+      - webnet_secret-santa

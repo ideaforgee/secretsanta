@@ -1,0 +1,36 @@
+# Node.js backend
+/Secret-Santa-Backend/node_modules/
+.Secret-Santa-Backend/.env
+/Secret-Santa-Backend/dist/
+Secret-Santa-Backend/build/
+Secret-Santa-Backend/coverage/
+.Secret-Santa-Backend/package-lock.json
+
+# UI (Frontend) project (e.g., React, Angular)
+/Secret-Santa-UI/node_modules/
+/Secret-Santa-UI/node_modules/.cache
+.Secret-Santa-UI/.env
+/Secret-Santa-UI/build/
+Secret-Santa-UI/dist/
+Secret-Santa-UI/coverage/
+.Secret-Santa-UI/package-lock.json
+
+# General
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+dist/
+build/
+test-coverage/
+
+# Build output
+/dist/             # For any general build output
+/build/            # For build outputs in general
+
+# Test coverage
+/test-coverage/

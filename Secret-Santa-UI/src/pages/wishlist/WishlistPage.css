@@ -1,0 +1,223 @@
+.wishlist-container {
+    overflow: hidden;
+}
+
+.list-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 0;
+}
+
+.game-box {
+    padding-left: 10px;
+    padding-right: 18px;
+    padding-bottom: 3px;
+    background-color: black;
+    width: 95%;
+    border-radius: 40px;
+    clip-path: polygon(0% 0%, 101% -21%, 90% 115%, 10% 110%);
+}
+
+.game-head {
+    position: relative;
+    background: linear-gradient(to right, #ffffff, #cccccc);
+    height: 50px;
+    margin: 10px 0;
+    color: #ffffff;
+    background: var(--primary-color);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    clip-path: polygon(0% 0%, 101% 0%, 90% 115%, 10% 108%);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.fixed {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: auto;
+    max-height: 300px;
+}
+
+.fixed::-webkit-scrollbar {
+    display: none;
+}
+
+
+.player-box {
+    padding-left: 10px;
+    padding-right: 18px;
+    padding-bottom: 3px;
+    margin-bottom: 10px;
+    background-color: var(--secondary-color);
+    width: 45%;
+    height: 34px;
+    clip-path: polygon(0% 0%, 101% 0%, 90% 115%, 10% 110%);
+}
+
+.player-shape {
+    display: flex;
+    justify-content: center;
+    background-color: black;
+    width: 65%;
+    height: 100%;
+    clip-path: polygon(0% 0%, 100% 0%, 78% 123%, 19% 110%);
+}
+
+.player-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to right, #ffffff, #cccccc);
+    height: 40px;
+    width: 100%;
+    /* Rounded corners for all edges */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    padding-left: 10px;
+    clip-path: polygon(0% 0%, 101% 0%, 90% 115%, 10% 108%);
+}
+
+.game-heading {
+    display: flex;
+    align-items: center;
+    font-size: 30px;
+    font-weight: 400;
+    color: #ffffff;
+}
+
+.heading {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #333;
+}
+
+.list-item-box {
+    padding-left: 10px;
+    padding-right: 18px;
+    padding-bottom: 3px;
+    background-color: black;
+    width: 70%;
+    border-radius: 40px;
+    clip-path: polygon(0% 0%, 101% 0%, 90% 115%, 10% 110%);
+}
+
+.list-item {
+    display: flex;
+    align-items: center;
+    background: linear-gradient(to right, #ffffff, #cccccc);
+    height: 60px;
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    padding-left: 10px;
+    clip-path: polygon(0% 0%, 101% 0%, 90% 115%, 10% 108%);
+}
+
+@media (max-width: 768px) {
+    .wishlist-container {
+        background-position: 79% !important;
+    }
+
+    .player-number {
+        margin-left: 0px !important;
+    }
+
+    .game-heading {
+        font-size: 1rem !important;
+    }
+
+    .player-name {
+        font-size: 1.3rem !important;
+    }
+
+    .action-container {
+        flex-direction: column !important;
+        align-items: center;
+    }
+}
+
+.player-number {
+    background: #212121;
+    /* border-top-right-radius: 19px; */
+    color: #fff;
+    border-top-color: #000000;
+    border-style: groove;
+    width: 74px;
+    padding-left: 18px;
+    margin-left: 33px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px 13px 31px 39px;
+    font-weight: bold;
+    margin-right: 10px;
+    clip-path: polygon(0 0, 100% 0, 90% 100%, 38% 100%);
+    text-align: center;
+    /* border-radius: 15px; */
+    font-size: x-large;
+}
+
+
+.player-name {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #333;
+    margin-left: 10%;
+}
+
+.player-name strong {
+    font-weight: bold;
+    color: #000;
+}
+
+
+.list-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 31px;
+}
+
+.action-container {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    padding-bottom: 0.7rem;
+    padding-top: 1rem;
+    justify-content: center;
+}
+
+.custom-button:hover {
+    background-color: var(--primary-button-color-hover) !important;
+    /* Hover color */
+}
+
+.go-to-game-icon {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: #fff;
+    font-size: xx-large;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.go-to-game-icon:hover {
+    transform: scale(1.25);
+}
+
+.go-to-game-icon span {
+    margin-left: 5px;
+    font-size: 16px;
+}

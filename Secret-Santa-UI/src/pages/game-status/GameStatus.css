@@ -1,0 +1,212 @@
+.status-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 140px;
+
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-box {
+  padding-left: 10px;
+  padding-right: 18px;
+  padding-bottom: 3px;
+  background-color: var(--secondary-color);
+  width: 95%;
+  border-radius: 40px;
+  clip-path: polygon(0% 0%, 101% -21%, 90% 115%, 10% 110%);
+}
+
+.game-head {
+  position: relative;
+  background: linear-gradient(to right, #ffffff, #cccccc);
+  height: 50px;
+  margin: 10px 0;
+  color: var(--primary-text-color);
+  background: var(--primary-color);
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  clip-path: polygon(0% 0%, 101% 0%, 90% 115%, 10% 108%);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.fixed {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: auto;
+  max-height: 300px;
+}
+
+.fixed::-webkit-scrollbar {
+  display: none;
+}
+
+
+.player-box {
+  padding-left: 10px;
+  padding-right: 18px;
+  padding-bottom: 3px;
+  margin-bottom: 10px;
+  background-color: var(--secondary-color);
+  width: 45%;
+  height: 34px;
+  clip-path: polygon(0% 0%, 101% 0%, 90% 115%, 10% 110%);
+}
+
+.player-shape {
+  display: flex;
+  justify-content: center;
+  background-color: var(--secondary-color);
+  width: 65%;
+  height: 100%;
+  clip-path: polygon(0% 0%, 100% 0%, 78% 123%, 19% 110%);
+}
+
+.player-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to right, #ffffff, #cccccc);
+  height: 40px;
+  width: 100%;
+  /* Rounded corners for all edges */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  padding-left: 10px;
+  clip-path: polygon(0% 0%, 101% 0%, 90% 115%, 10% 108%);
+}
+
+.game-heading {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: var(--primary-text-color);
+}
+
+.heading {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #333;
+}
+
+.list-item-box {
+  padding-left: 10px;
+  padding-right: 18px;
+  padding-bottom: 3px;
+  background-color: var(--secondary-color);
+  width: 70%;
+  border-radius: 40px;
+  clip-path: polygon(0% 0%, 101% 0%, 90% 115%, 10% 110%);
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(to right, #ffffff, #cccccc);
+  height: 60px;
+  width: 100%;
+  border-radius: 20px;
+  /* Rounded corners for all edges */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  padding-left: 10px;
+  clip-path: polygon(0% 0%, 101% 0%, 90% 115%, 10% 108%);
+  /* Trapezium shape */
+}
+
+@media (max-width: 768px) {
+  .player-number {
+    margin-left: 0px !important;
+  }
+}
+
+.player-number {
+  background: var(--secondary-color);
+  /* border-top-right-radius: 19px; */
+  color: var(--primary-text-color);
+  border-top-color: #000000;
+  border-style: groove;
+  width: 74px;
+  padding-left: 18px;
+  margin-left: 60px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px 13px 31px 39px;
+  font-weight: bold;
+  margin-right: 10px;
+  clip-path: polygon(0 0, 100% 0, 90% 100%, 38% 100%);
+  text-align: center;
+  /* border-radius: 15px; */
+  font-size: x-large;
+}
+
+
+.player-name {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #333;
+  margin-left: 10%;
+}
+
+.player-name strong {
+  font-weight: bold;
+  color: #000;
+}
+
+.game-action-container {
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
+  gap: 20px;
+}
+
+
+.exit-game-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: var(--primary-button-color);
+  color: var(--primary-text-color);
+  border: none;
+  padding: 15px 14px;
+  font-size: 1.5rem;
+  border-radius: 40px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.exit-game-button:hover {
+  background-color: var(--primary-button-color-hover) !important;
+  transform: translateY(-5px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+.exit-game-button:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .game-action-container {
+    flex-direction: column !important;
+    align-items: center;
+  }
+}

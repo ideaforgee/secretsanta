@@ -1,0 +1,46 @@
+.spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  color: #fff;
+  font-family: 'Arial', sans-serif;
+}
+
+.spinner-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.climbing-box-loader {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.gift-icon {
+  position: absolute;
+  font-size: 30px;
+  color: #fff;
+  z-index: 5;
+  animation: move-box 1s infinite;
+}
+
+.spinner-text {
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  color: #f1f0f6;
+}
+
