@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaStopCircle, FaPlay } from 'react-icons/fa';
 import { ImExit } from 'react-icons/im';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LockIcon from '@mui/icons-material/Lock';
 import { useAlert } from '../../context/AlertContext.js';
 import * as gameService from '../../services/gameService.js';
@@ -13,6 +14,7 @@ import './GameStatus.css';
 
 function GameStatus() {
   const [rows, setRows] = useState([]);
+  const [hostId, setHostId] = useState([]);
   const [isGameActive, setIsGameActive] = useState(false);
   const { showAlert } = useAlert();
   const navigate = useNavigate();
@@ -61,12 +63,15 @@ function GameStatus() {
     try {
       const response = await gameService.getGameUsers(gameId);
       if (response !== Constant.EMPTY) {
-        const filteredResponse = response.map(({ gameName, userName, email }) => ({
+        const filteredResponse = response.map(({ gameName, userName, email , hostId, userId}) => ({
           gameName,
           userName,
-          email
+          email,
+          hostId,
+          userId
         }));
         setRows(filteredResponse);
+        setHostId(filteredResponse[0].hostId.toString());
       } else {
         setRows([]);
       }
@@ -116,10 +121,13 @@ function GameStatus() {
             {players.map((player, index) => (
               <div className='list-item-box'>
                 <div className='list-item' key={index}>
-                  <div className='player-number'>{index + 1}</div>
-                  <div className='player-name'>
-                    <strong>{player.userName}</strong>
-                  </div>
+                    <div className='player-number'>{index + 1}</div>
+                    <div className='player-name'>
+                      <strong>{player.userName}</strong>
+                    </div>
+                    <div className='host-icon'>
+                      {(player.hostId === player.userId) ? <AccountCircleIcon /> : Constant.EMPTY}
+                    </div>
                 </div>
               </div>
             ))}
@@ -135,12 +143,12 @@ function GameStatus() {
             </div>
           </div>
           <div className='game-action-container'>
-            <button className='game-actions' style={{ width: '252px', filter: !isGameActive ? 'blur(2px)' : 'none' }} onClick={endSecretSantaGame} disabled={!isGameActive}>
-              {isGameActive ? <FaStopCircle /> : <LockIcon />}
+            <button className='game-actions' style={{ width: '252px', filter: (isGameActive && userId === hostId) ? 'none' : 'blur(2px)' }} onClick={endSecretSantaGame} disabled={(isGameActive && userId === hostId)}>
+              {(isGameActive && userId === hostId) ? <FaStopCircle /> : <LockIcon />}
               End Game
             </button>
-            <button className='game-actions' style={{ width: '252px', filter: isGameActive ? 'blur(2px)' : 'none' }} onClick={startSecretSantaGame} disabled={isGameActive}>
-              {!isGameActive ? <FaPlay /> : <LockIcon />}
+            <button className='game-actions' style={{ width: '252px', filter: (!isGameActive && userId === hostId) ? 'none' : 'blur(2px)' }} onClick={startSecretSantaGame} disabled={(!isGameActive && userId == hostId)}>
+              {(!isGameActive && userId === hostId) ? <FaPlay /> : <LockIcon />}
               Start Game
             </button>
           </div>

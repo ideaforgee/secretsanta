@@ -1,5 +1,6 @@
 
 import axiosInstance from '../services/axionsInstance';
+import { GAME_ID_KEY } from '../constants/appConstant';
 // import jwt_decode from 'jwt-decode';
 
 const TOKEN_KEY = 'token';
@@ -40,6 +41,7 @@ export const loginHandler = async (email, password) => {
 export const logout = () => {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
+  localStorage.removeItem(GAME_ID_KEY);
 };
 
 export const getToken = () => {

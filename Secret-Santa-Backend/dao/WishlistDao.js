@@ -63,7 +63,7 @@ const getGiftNinjaWishlist = async (userId, gameId) => {
       AND gameId = ?`;
 
     const [result] = await db.query(giftNinjaId, [userId, gameId]);
-    const results = await getUserSecretSantaWishlist(result[0].giftNinjaId, gameId);
+    const results = await getUserSecretSantaWishlist(result[0]?.giftNinjaId, gameId);
     return results ?? [];
   } catch (error) {
     throw new Error(error.message);

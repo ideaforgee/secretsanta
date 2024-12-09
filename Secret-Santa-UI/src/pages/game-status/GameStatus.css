@@ -169,6 +169,11 @@
   gap: 20px;
 }
 
+.host-icon {
+  font-size: 2rem;
+  margin-left: 6px;
+}
+
 
 .exit-game-button {
   position: fixed;

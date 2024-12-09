@@ -138,7 +138,7 @@ const joinUserToSecretSantaGame = async (userId, gameCode) => {
 const getSecretSantaGameInfoByGameCode = async (gameId) => {
   try {
     const query = `
-      SELECT g.name AS gameName, u.name AS userName, u.email, g.id, g.hostId
+      SELECT g.name AS gameName, u.name AS userName,u.id AS userId, u.email, g.id, g.hostId
       FROM games g
       LEFT JOIN userGame ug ON g.id = ug.gameId
       LEFT JOIN users u ON ug.userId = u.id
