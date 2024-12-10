@@ -44,11 +44,14 @@ pipeline {
             }
         }
 
-         stage('Tag Docker Images') {
+        stage('Tag Docker Images') {
             steps {
                 script {
                     // Tag Docker images 
                     dir("${WORKSPACE}") {
+
+                        sh "docker tag secret-santa-ui secret-santa-ui:${BUILD_TAG}"
+                        sh "docker tag secret-santa-backend secret-santa-backend:${BUILD_TAG}"
 
                         sh "docker image tag secret-santa-ui:${BUILD_TAG} ghcr.io/ideaforgee/secretsanta/secret-santa-ui:${BUILD_TAG}"
                         sh "docker image tag secret-santa-backend:${BUILD_TAG} ghcr.io/ideaforgee/secretsanta/secret-santa-backend:${BUILD_TAG}"
