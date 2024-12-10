@@ -30,12 +30,12 @@ pipeline {
                 [ -d ~/.ssh ] || mkdir ~/.ssh && chmod 0700 ~/.ssh
                 ssh-keyscan -t rsa,dsa ${SSH_HOST} >> ~/.ssh/known_hosts
 
-                      ssh -t ${SSH_USER}@${SSH_HOST} << ENDSSH
-                    cd secret-santa
-                    UI_BUILD_NUMBER=${params.UI_BUILD_NUMBER} BACKEND_BUILD_NUMBER=${params.BACKEND_BUILD_NUMBER} docker compose up -d
-                    docker compose logs
-                    exit
-                        ENDSSH
+                    ssh -t ${SSH_USER}@${SSH_HOST} << ENDSSH
+                        cd secret-santa
+                        UI_BUILD_NUMBER=${params.UI_BUILD_NUMBER} BACKEND_BUILD_NUMBER=${params.BACKEND_BUILD_NUMBER} docker compose up -d
+                        docker compose logs
+                        exit
+                    ENDSSH
                 """
                 }
                 
