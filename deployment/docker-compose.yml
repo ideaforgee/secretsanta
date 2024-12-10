@@ -11,7 +11,7 @@ services:
     depends_on:
       - secret-santa-backend
     ports:
-      - "3000:80"
+      - "8083:80"
     networks:
       - webnet_secret-santa
     volumes:
