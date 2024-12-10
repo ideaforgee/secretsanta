@@ -35,7 +35,7 @@ pipeline {
                               UI_BUILD_NUMBER=${params.UI_BUILD_NUMBER} BACKEND_BUILD_NUMBER=${params.BACKEND_BUILD_NUMBER} docker compose up -d
                               docker compose logs
                               exit
-                        ENDSSH'
+                        'ENDSSH'
                       """
                 }
                 
