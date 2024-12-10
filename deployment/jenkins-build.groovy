@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        GIT_CREDENTIALS_ID = 'secret-santa-jenkins'
+        GIT_CREDENTIALS_ID = 'Secret-Santa-Jenkins'
         BUILD_TAG = 'latest'
         UI_IMAGE = 'secret-santa-ui'
         BACKEND_IMAGE = 'secret-santa-backend'
