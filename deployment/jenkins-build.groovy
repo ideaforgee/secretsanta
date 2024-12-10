@@ -27,7 +27,7 @@ pipeline {
             steps {
                 script {
                     echo "Checking out branch: ${params.BRANCH_NAME}"
-                    git branch: "${params.BRANCH_NAME}", credentialsId: "${GIT_CREDENTIALS_ID}", url: 'https://github.com/IdeaaForgee/secretsanta.git'
+                    git branch: "${params.BRANCH_NAME}", credentialsId: "${GIT_CREDENTIALS_ID}", url: 'https://github.com/ideaforgee/secretsanta.git'
                 }
             }
         }
@@ -53,8 +53,8 @@ pipeline {
                         sh "docker tag secret-santa-ui secret-santa-ui:${BUILD_TAG}"
                         sh "docker tag secret-santa-backend secret-santa-backend:${BUILD_TAG}"
 
-                        sh "docker image tag secret-santa-ui:${BUILD_TAG} github.com/IdeaaForgee/secretsanta/secret-santa-ui:${BUILD_TAG}"
-                        sh "docker image tag secret-santa-backend:${BUILD_TAG} github.com/IdeaaForgee/secretsanta/secret-santa-backend:${BUILD_TAG}"
+                        sh "docker image tag secret-santa-ui:${BUILD_TAG} github.com/ideaforgee/secretsanta/secret-santa-ui:${BUILD_TAG}"
+                        sh "docker image tag secret-santa-backend:${BUILD_TAG} github.com/ideaforgee/secretsanta/secret-santa-backend:${BUILD_TAG}"
 
                         echo "----------------- Tagged Docker images Build:${BUILD_TAG}  -----------------"
                     }
@@ -73,7 +73,7 @@ pipeline {
                         
                         docker.withRegistry('https://github.com', GIT_CREDENTIALS_ID) {
                             
-                            def uiImage = docker.image("github.com/IdeaaForgee/secretsanta/secret-santa-ui:${BUILD_TAG}")
+                            def uiImage = docker.image("github.com/ideaforgee/secretsanta/secret-santa-ui:${BUILD_TAG}")
                             echo "----------------- Pushing UI image to registry -----------------"
                             uiImage.push()
                         
@@ -81,7 +81,7 @@ pipeline {
 
                         docker.withRegistry('https://github.com', GIT_CREDENTIALS_ID) {
 
-                            def backendImage = docker.image("github.com/IdeaaForgee/secretsanta/secret-santa-backend:${BUILD_TAG}")
+                            def backendImage = docker.image("github.com/ideaforgee/secretsanta/secret-santa-backend:${BUILD_TAG}")
                             echo "----------------- Pushing Backend image to registry -----------------"
                             backendImage.push()
                         
