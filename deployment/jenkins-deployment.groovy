@@ -26,17 +26,17 @@ pipeline {
             steps {
                 
                 sshagent(credentials: [SSH_KEY]) {
-                  sh """
-                      [ -d ~/.ssh ] || mkdir ~/.ssh && chmod 0700 ~/.ssh
-                      ssh-keyscan -t rsa,dsa ${SSH_HOST} >> ~/.ssh/known_hosts
-                      
-                      ssh -t -t  ${SSH_USER}@${SSH_HOST} 'bash -s << 'ENDSSH'
-                              cd secret-santa
-                              UI_BUILD_NUMBER=${params.UI_BUILD_NUMBER} BACKEND_BUILD_NUMBER=${params.BACKEND_BUILD_NUMBER} docker compose up -d
-                              docker compose logs
-                              exit
-                        'ENDSSH'
-                      """
+                sh """
+                [ -d ~/.ssh ] || mkdir ~/.ssh && chmod 0700 ~/.ssh
+                ssh-keyscan -t rsa,dsa ${SSH_HOST} >> ~/.ssh/known_hosts
+
+                      ssh -t ${SSH_USER}@${SSH_HOST} << ENDSSH
+                    cd secret-santa
+                    UI_BUILD_NUMBER=${params.UI_BUILD_NUMBER} BACKEND_BUILD_NUMBER=${params.BACKEND_BUILD_NUMBER} docker compose up -d
+                    docker compose logs
+                    exit
+                        ENDSSH
+                """
                 }
                 
                 
