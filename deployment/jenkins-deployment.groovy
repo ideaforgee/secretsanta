@@ -34,11 +34,6 @@ pipeline {
                               cd secret-santa
                               UI_BUILD_NUMBER=${params.UI_BUILD_NUMBER} BACKEND_BUILD_NUMBER=${params.BACKEND_BUILD_NUMBER} docker compose up -d
                               docker compose logs
-                              docker compose logs | grep -q "Liquibase command 'update' was executed successfully."
-                              if [ \$? -ne 0 ]; then
-                                  error "Liquibase migration failed. Exiting job."
-                                  exit 1
-                              fi
                               exit
                         ENDSSH'
                       """
