@@ -1,5 +1,5 @@
 const express = require('express');
-const http = require('http');
+const https = require('https');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const gameRoutes = require('./routes/GameRoute.js');
@@ -13,7 +13,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.BACKEND_PORT;
-const server = http.createServer(app);
+const server = https.createServer(app);
 
 app.use(cors());
 app.use(bodyParser.json());
