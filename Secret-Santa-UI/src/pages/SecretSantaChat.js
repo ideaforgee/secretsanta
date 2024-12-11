@@ -126,7 +126,7 @@ const SecretSantaChat = () => {
         }
 
         return () => {
-            if (websocket) {
+            if (!websocket) {
                 console.log('Closing WebSocket connection...');
                 websocket.close();
             }
