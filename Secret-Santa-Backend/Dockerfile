@@ -13,8 +13,8 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# Expose port 5001
-EXPOSE 5001
+# Expose port 80
+EXPOSE 80
 
 # Start server
 CMD ["npm", "start"]
