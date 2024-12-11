@@ -19,7 +19,7 @@ services:
   secret-santa-backend:
     image: "ghcr.io/ideaforgee/secretsanta/secret-santa-backend:${BACKEND_BUILD_NUMBER}"
     ports:
-      - "5001:5001"
+      - "5001:80"
     env_file:
       - ./.env
     networks:
