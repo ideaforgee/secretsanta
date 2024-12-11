@@ -1,6 +1,6 @@
 /* Main container */
 .container {
-    background-image: url('../../../assets/logoutTheme.png');
+    background-image: url('../../../assets/logoutTheme.jpg');
     background-size: cover; /* Ensures the image covers the container */
     background-position: center; /* Keeps the image centered */
     height: 100vh; /* Ensures the container takes full viewport height */

@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { loginHandler } from '../../../services/authService.js';
 import { useAlert } from './../../../context/AlertContext.js';
 import { useAuth } from './../../../context/AuthContext';
-import logoutTheme from  '../../../assets/logoutTheme.png';
 import "./LoginPage.css";
 
 const Login = () => {
@@ -44,15 +43,6 @@ const Login = () => {
 
   const handleSignUpClick = () => {
     navigate('/register');
-  };
-
-  const backgroundStyle = {
-    backgroundImage: `url(${logoutTheme})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    height: '100vh',
-    width: '100%'
   };
 
   return (

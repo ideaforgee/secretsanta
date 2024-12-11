@@ -1,20 +1,5 @@
 .home-container {
-    background-image: url('../assets/logoutTheme.png');
-    background-size: cover;
-    background-position: center;
-    height: 100vh;
-    width: 100%;
-    overflow: hidden;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    transition: 0.5s;
-}
-
-.home-container {
-    background-image: url('../assets/logoutTheme.png');
+    background-image: url('../assets/logoutTheme.jpg');
     background-size: cover;
     background-position: center;
     height: 100vh;

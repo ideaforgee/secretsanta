@@ -143,11 +143,11 @@ function GameStatus() {
             </div>
           </div>
           <div className='game-action-container'>
-            <button className='game-actions' style={{ width: '252px', filter: (isGameActive && userId === hostId) ? 'none' : 'blur(2px)' }} onClick={endSecretSantaGame} disabled={(isGameActive && userId === hostId)}>
+            <button className='game-actions' style={{ width: '252px', filter: (isGameActive && userId === hostId) ? 'none' : 'blur(2px)' }} onClick={endSecretSantaGame} disabled={(!isGameActive && userId === hostId)}>
               {(isGameActive && userId === hostId) ? <FaStopCircle /> : <LockIcon />}
               End Game
             </button>
-            <button className='game-actions' style={{ width: '252px', filter: (!isGameActive && userId === hostId) ? 'none' : 'blur(2px)' }} onClick={startSecretSantaGame} disabled={(!isGameActive && userId == hostId)}>
+            <button className='game-actions' style={{ width: '252px', filter: (!isGameActive && userId === hostId) ? 'none' : 'blur(2px)' }} onClick={startSecretSantaGame} disabled={(isGameActive && userId == hostId)}>
               {(!isGameActive && userId === hostId) ? <FaPlay /> : <LockIcon />}
               Start Game
             </button>
