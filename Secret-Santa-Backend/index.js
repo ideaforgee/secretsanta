@@ -38,8 +38,8 @@ app.use(authRoutes);
 app.use(messageRoutes);
 app.use(wishlistRoutes);
 
-// Initialize the WebSocket server
-initializeSocketServer(io);
+// Initialize the WebSocket server (passing the same HTTP server for WebSocket functionality)
+initializeSocketServer(server); // Use the same server instance here
 
 // Start the server
 server.listen(PORT, () => {
