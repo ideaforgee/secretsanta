@@ -212,7 +212,7 @@ const joinUserToSecretSantaGame = async (userId, gameCode) => {
       ? commonService.createResponse(httpResponse.SUCCESS, result)
       : commonService.createResponse(httpResponse.BAD_REQUEST, messages.INVALID_GAME_CODE);
   } catch (error) {
-    return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
+    return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, messages.INVALID_GAME_CODE);
   }
 };
 

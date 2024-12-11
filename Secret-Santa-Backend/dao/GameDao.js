@@ -109,23 +109,38 @@ const updateSecretSantaGameOnGameStart = async (gameId, inputData) => {
 */
 const joinUserToSecretSantaGame = async (userId, gameCode) => {
   try {
-    const query = `
-    INSERT INTO userGame (userId, gameId)
-    SELECT ?, g.id
-    FROM games g
-    WHERE g.code = ? and g.isActive = 0
-    ON DUPLICATE KEY UPDATE
-      gameId = VALUES(gameId)
-    RETURNING gameId;
-  `;
+    const selectQuery = `
+      SELECT gameId
+      FROM userGame
+      WHERE userId = ? AND gameId = (
+        SELECT g.id
+        FROM games g
+        WHERE g.code = ?
+      );
+    `;
 
-    const [result] = await db.query(query, [userId, gameCode]);
-    return result[0]?.gameId ?? null;
+    const [existingGame] = await db.query(selectQuery, [userId, gameCode]);
+
+    if (existingGame.length > 0) {
+      return existingGame[0]?.gameId ?? null;
+    }
+
+    const insertQuery = `
+      INSERT INTO userGame (userId, gameId)
+      SELECT ?, g.id
+      FROM games g
+      WHERE g.code = ? AND g.isActive = 0;
+    `;
+
+    await db.query(insertQuery, [userId, gameCode]);
+
+    const [newGame] = await db.query(selectQuery, [userId, gameCode]);
+    return newGame[0]?.gameId ?? null;
+
   } catch (err) {
     throw new Error(err.message);
   }
 };
-
 
 /**
  * Retrieves the Secret Santa game information based on its game code.

@@ -10,8 +10,14 @@ const connections = new Map();
  */
 const initializeSocketServer = (server) => {
     const webSocketServer = new WebSocket.Server({ server });
+    console.log(server);
+    webSocketServer.on('headers', (headers) => {
+        console.log(headers);
+        headers.push('Access-Control-Allow-Origin: *');
+    });
 
     webSocketServer.on('connection', (webSocket, req) => {
+        console.log(req);
         const parsedUrl = url.parse(req.url, true);
         const userId = parsedUrl.query.userId;
 
