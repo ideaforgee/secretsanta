@@ -1,22 +1,34 @@
 const express = require('express');
-const https = require('https');
+const http = require('http');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const dotenv = require('dotenv');
+
 const gameRoutes = require('./routes/GameRoute.js');
 const authRoutes = require('./routes/authRoutes');
 const wishlistRoutes = require('./routes/WishlistRoute');
-const dotenv = require('dotenv');
-const messageRoutes = require("./routes/messageRoutes");
-const { initializeSocketServer } = require("./service/SocketService");
+const messageRoutes = require('./routes/messageRoutes');
+
+const { initializeSocketServer } = require('./service/SocketService');
+const { Server } = require('socket.io');
 require('./service/SchedulerService.js');
+
 dotenv.config();
 
 const app = express();
-const PORT = process.env.BACKEND_PORT;
-const server = https.createServer(app);
+const PORT = process.env.BACKEND_PORT || 5002;
 
+const server = http.createServer(app);
+
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"],
+    },
+});
+
+// Middleware
 app.use(cors());
-app.use(bodyParser.json());
 app.use(bodyParser.json());
 app.use(express.json());
 
@@ -24,11 +36,12 @@ app.use(express.json());
 app.use(gameRoutes);
 app.use(authRoutes);
 app.use(messageRoutes);
-app.use(messageRoutes);
 app.use(wishlistRoutes);
 
-initializeSocketServer(server);
+// Initialize the WebSocket server
+initializeSocketServer(io);
 
+// Start the server
 server.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
