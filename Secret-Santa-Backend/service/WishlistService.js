@@ -48,7 +48,7 @@ async function addWishToUserWishlist(userId, gameId, wish) {
     if (receiver?.email) {
       await emailService.sendAddWishSecretSantaEmail(receiver.email);
     }
-s
+
     return commonService.createResponse(httpResponse.SUCCESS, message.WISH_ADDED_SUCCESSFULLY);
   } catch (err) {
     return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, err.message);

@@ -10,7 +10,6 @@ import * as Constant from '../constants/secretSantaConstants';
 import * as messageService from '../services/messageService';
 import Message from '../features/message';
 import ErrorComponent from '../components/Error/ErrorComponent';
-import secretSantaTheme from '../assets/secretSantaTheme.jpg';
 import '../pages/SecretSantaChat.css';
 
 const SecretSantaChat = () => {
@@ -26,11 +25,15 @@ const SecretSantaChat = () => {
     const [chatMode, setChatMode] = useState(null);
     const [secretSantaMessagesHidden, setSecretSantaMessagesHidden] = useState(true);
     const [giftNinjaMessagesHidden, setGiftNinjaMessagesHidden] = useState(true);
+    const [retryCount, setRetryCount] = useState(0);
 
     const santaMessagesEndRef = useRef(null);
     const ninjaMessagesEndRef = useRef(null);
     const chatModeRef = useRef(chatMode);
     const navigate = useNavigate();
+
+    const MAX_RETRIES = 10;
+    const RETRY_INTERVAL = 5000;
 
     const toggleBadgeVisibility = (setHidden, value) => setHidden(value);
 
@@ -88,6 +91,30 @@ const SecretSantaChat = () => {
         }
     };
 
+    const initializeWebSocket = () => {
+        const websocket = connectWebSocket(userId, handleWebSocketMessage);
+
+        websocket.onclose = () => {
+            console.log('WebSocket connection closed. Retrying...');
+            if (retryCount < MAX_RETRIES) {
+                setTimeout(() => {
+                    setRetryCount((prev) => prev + 1);
+                    initializeWebSocket();
+                }, RETRY_INTERVAL);
+            } else {
+                console.error('Max WebSocket reconnection attempts reached.');
+                setErrorPopUp({ message: 'Connection lost. Please refresh the page.', show: true });
+            }
+        };
+
+        websocket.onopen = () => {
+            console.log('WebSocket connection established.');
+            setRetryCount(0);
+        };
+
+        setWs(websocket);
+    };
+
     const sendMessage = () => {
         if (!ws || !(secretSantaInputMessage || giftNinjaInputMessage)) return;
 
@@ -119,16 +146,14 @@ const SecretSantaChat = () => {
         fetchChatMessages();
         fetchUnReadMessages();
 
-        let websocket;
         if (userId) {
-            websocket = connectWebSocket(userId, handleWebSocketMessage);
-            setWs(websocket);
+            initializeWebSocket();
         }
 
         return () => {
-            if (!websocket) {
+            if (ws) {
                 console.log('Closing WebSocket connection...');
-                websocket.close();
+                ws.close();
             }
         };
     }, [userId]);
@@ -156,7 +181,10 @@ const SecretSantaChat = () => {
                     onKeyDown={handleKeyPress}
                     className='message-input'
                 />
-                <button onClick={sendMessage} className='send-button'>
+                <button
+                    onClick={sendMessage}
+                    className={`send-button ${inputValue.trim() ? 'send-button-enable' : ''}`}
+                >
                     <FaPaperPlane />
                 </button>
             </footer>

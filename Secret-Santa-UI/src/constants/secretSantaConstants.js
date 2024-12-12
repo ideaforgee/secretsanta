@@ -1,5 +1,3 @@
-import secretSantaTheme from '../assets/secretSantaTheme.jpg';
-import sdf from '../assets/sdf.jpg';
 import bgg from '../assets/bgg.jpg';
 
 export const CHAT_BOX_TYPE = {
