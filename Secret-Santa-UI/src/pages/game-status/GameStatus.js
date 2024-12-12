@@ -42,6 +42,9 @@ function GameStatus() {
 
   const startSecretSantaGame = async () => {
     try {
+      if (!isGameActive && userId !== hostId) {
+        return;
+      }
       await gameService.startGame(gameId);
       window.location.reload();
     } catch (error) {
@@ -51,6 +54,9 @@ function GameStatus() {
 
   const endSecretSantaGame = async () => {
     try {
+      if (isGameActive && userId !== hostId) {
+        return;
+      }
       await gameService.endGame(gameId);
       localStorage.removeItem(GAME_ID_KEY)
       navigate(Constant.ROUTE_PATH.DASHBOARD);
@@ -83,6 +89,9 @@ function GameStatus() {
 
   const onClickExitGame = async () => {
     try {
+      if (isGameActive) {
+        return;
+      }
       await gameService.exitGame(userId, gameId);
       navigate(Constant.ROUTE_PATH.DASHBOARD);
       localStorage.removeItem(GAME_ID_KEY)
