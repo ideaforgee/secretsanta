@@ -1,4 +1,5 @@
 const db = require("../config/db.js");
+const encryptDecryptService = require('../service/EncryptionAndDecryptionService');
 
 /**
  * Retrieves the Secret Santa wishlist for a specific user and game.
@@ -57,13 +58,14 @@ const addWishToUserWishlist = async (userId, gameId, wish) => {
  */
 const getGiftNinjaWishlist = async (userId, gameId) => {
   try {
-    const giftNinjaId = `
+    const query = `
       SELECT ug.giftNinjaId FROM userGame ug
       WHERE userId = ?
       AND gameId = ?`;
 
-    const [result] = await db.query(giftNinjaId, [userId, gameId]);
-    const results = await getUserSecretSantaWishlist(result[0]?.giftNinjaId, gameId);
+    const [result] = await db.query(query, [userId, gameId]);
+    const giftNinjaId = encryptDecryptService.decrypt(result[0]?.giftNinjaId);
+    const results = await getUserSecretSantaWishlist(giftNinjaId, gameId);
     return results ?? [];
   } catch (error) {
     throw new Error(error.message);
