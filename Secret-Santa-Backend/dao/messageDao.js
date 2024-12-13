@@ -8,7 +8,8 @@ const db = require('../config/db');
  */
 const getMessagesByUserAndGame = async (userId, gameId) => {
     try {
-        const result = await db.query('CALL GetMessages(?, ?)', [parseInt(userId, 10), parseInt(gameId, 10)]);
+        const senderId = encryptDecryptService.decrypt(Number(userId));
+        const result = await db.query('CALL GetMessages(?, ?)', [senderId, Number(gameId)]);
 
         return result[0] ?? null;
     } catch (error) {
@@ -31,7 +32,8 @@ const saveSenderMessage = async (content, userId, gameId, chatBoxType) => {
     try {
         const encryptedReceiverId = await getReceiverIdForSenderAndGame(userId, gameId, chatBoxType);
         const receiverId = encryptDecryptService.decrypt(encryptedReceiverId);
-        await db.query('CALL InsertMessage(?, ?, ?, ?)', [content, userId, gameId, receiverId, chatBoxType]);
+        const senderId = encryptDecryptService.decrypt(userId);
+        await db.query('CALL InsertMessage(?, ?, ?, ?)', [content, senderId, gameId, receiverId, chatBoxType]);
     } catch (error) {
         console.error('Error saving message:', error);
     }
