@@ -4,6 +4,7 @@ const gameDao = require('../dao/GameDao.js');
 const messages = require('../constant/SecretSantaMessages.js');
 const emailService = require('../service/EmailService.js');
 const httpResponse = require('../HttpResponse.js');
+const encryptDecryptService = require('../service/EncryptionAndDecryptionService');
 const commonService = require('../service/CommonService');
 
 /**
@@ -159,8 +160,8 @@ const getDataForUpdateUserGame = (assignedUsers) => {
     const giftNinjaIndex = (index - 1 + assignedUsers.length) % assignedUsers.length;
     return {
       id: user.id,
-      secretSantaId: user.secretSanta?.id,
-      giftNinjaId: assignedUsers[giftNinjaIndex].id,
+      secretSantaId: encryptDecryptService.encrypt(user.secretSanta?.id),
+      giftNinjaId: encryptDecryptService.encrypt(assignedUsers[giftNinjaIndex].id),
     };
   });
 };

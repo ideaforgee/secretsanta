@@ -29,7 +29,9 @@ const getMessagesByUserAndGame = async (userId, gameId) => {
  */
 const saveSenderMessage = async (content, userId, gameId, chatBoxType) => {
     try {
-        await db.query('CALL InsertMessage(?, ?, ?, ?)', [content, userId, gameId, chatBoxType]);
+        const encryptedReceiverId = await getReceiverIdForSenderAndGame(userId, gameId, chatBoxType);
+        const receiverId = encryptDecryptService.decrypt(encryptedReceiverId);
+        await db.query('CALL InsertMessage(?, ?, ?, ?)', [content, userId, gameId, receiverId, chatBoxType]);
     } catch (error) {
         console.error('Error saving message:', error);
     }

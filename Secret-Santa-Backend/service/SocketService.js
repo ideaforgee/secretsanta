@@ -2,6 +2,7 @@ const WebSocket = require('ws');
 const url = require('url');
 const messageService = require('./MessageService');
 const messageDao = require('../dao/messageDao');
+const encryptDecryptService = require('../service/EncryptionAndDecryptionService');
 const connections = new Map();
 
 /**
@@ -28,9 +29,10 @@ const initializeSocketServer = (server) => {
                 console.log(`Message received from ${userId}:`, message);
                 const parsedMessage = JSON.parse(message);
                 if (parsedMessage.type == 'message') {
-                    const receiverId = await messageDao.getReceiverIdForSenderAndGame(
+                    const encryptedReceiverId = await messageDao.getReceiverIdForSenderAndGame(
                         parsedMessage.userId, parsedMessage.gameId, parsedMessage.chatBoxType
                     );
+                    const receiverId = encryptDecryptService.decrypt(encryptedReceiverId);
                     messageService.dispatchMessageToUser(receiverId, parsedMessage, connections);
                     await messageService.processIncomingMessage(userId, parsedMessage);
                 }
