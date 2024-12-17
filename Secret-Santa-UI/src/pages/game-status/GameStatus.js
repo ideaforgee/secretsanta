@@ -42,7 +42,7 @@ function GameStatus() {
 
   const startSecretSantaGame = async () => {
     try {
-      if (!isGameActive && userId !== hostId) {
+      if (isGameActive || userId !== hostId) {
         return;
       }
       await gameService.startGame(gameId);
@@ -54,7 +54,7 @@ function GameStatus() {
 
   const endSecretSantaGame = async () => {
     try {
-      if (isGameActive && userId !== hostId) {
+      if (!isGameActive || userId !== hostId) {
         return;
       }
       await gameService.endGame(gameId);
