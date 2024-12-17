@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const encryptDecryptService = require('../service/EncryptionAndDecryptionService');
 
 /**
  * Fetch messages for a specific user and game.
@@ -8,9 +9,8 @@ const db = require('../config/db');
  */
 const getMessagesByUserAndGame = async (userId, gameId) => {
     try {
-        const senderId = encryptDecryptService.decrypt(Number(userId));
-        const result = await db.query('CALL GetMessages(?, ?)', [senderId, Number(gameId)]);
-
+        const senderId = encryptDecryptService.encrypt(Number(userId));
+        const result = await db.query('CALL GetMessages(?, ?, ?)', [userId, senderId, Number(gameId)]);
         return result[0] ?? null;
     } catch (error) {
         console.error('Error fetching messages:', error);
@@ -31,9 +31,8 @@ const getMessagesByUserAndGame = async (userId, gameId) => {
 const saveSenderMessage = async (content, userId, gameId, chatBoxType) => {
     try {
         const encryptedReceiverId = await getReceiverIdForSenderAndGame(userId, gameId, chatBoxType);
-        const receiverId = encryptDecryptService.decrypt(encryptedReceiverId);
-        const senderId = encryptDecryptService.decrypt(userId);
-        await db.query('CALL InsertMessage(?, ?, ?, ?)', [content, senderId, gameId, receiverId, chatBoxType]);
+        const senderId = encryptDecryptService.encrypt(userId);
+        await db.query('CALL InsertMessage(?, ?, ?, ?, ?)', [content, senderId, gameId, encryptedReceiverId, chatBoxType]);
     } catch (error) {
         console.error('Error saving message:', error);
     }

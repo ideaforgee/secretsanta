@@ -1,4 +1,5 @@
 const db = require("../config/db.js");
+const encryptDecryptService = require('../service/EncryptionAndDecryptionService');
 const { registerUserForSecretSanta } = require("../controller/authController.js");
 
 /**
@@ -239,10 +240,11 @@ const validateIfGameExist = async (gameId) => {
 
 const getReceiverEmailForGameByUserId = async (userId, gameId) => {
   try {
-    const query = `SELECT users.email FROM userGame
-      INNER JOIN users ON userGame.userId = users.id
-      WHERE secretSantaId = ? AND gameId = ? LIMIT 1`;
-    const [result] = await db.query(query, [userId, gameId]);
+    const secretSanta = 'SELECT secretSantaId FROM userGame WHERE userId = ? AND gameId = ?';
+    const [response] = await db.query(secretSanta, [userId, gameId])
+    const decryptedSecretSantaId = encryptDecryptService.decrypt(response[0]?.secretSantaId);
+    const query = 'SELECT email FROM users WHERE id = ?'
+    const [result] = await db.query(query, [decryptedSecretSantaId]);
     return result[0] ?? null;
   } catch (error) {
     throw new Error(error.message);
