@@ -2,6 +2,7 @@ const userDao = require('../dao/UserDao.js');
 const httpResponse = require('../HttpResponse.js');
 const messages = require('../constant/SecretSantaMessages');
 const commonService = require('../service/CommonService');
+const mailService = require('./EmailService.js');
 
 /**
  * Register a new user.
@@ -46,4 +47,48 @@ const loginUser = async (email, password) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+/**
+ * Send link to rest Password.
+ * @param {string} email - User's email.
+ * @returns {Promise<object>} - Response object with Email or an error message.
+ */
+const forgetPassword = async (email) => {
+  try {
+    const user = await userDao.getUserByEmail(email);
+    if (!user) {
+      return commonService.createResponse(httpResponse.BAD_REQUEST, messages.NO_USER_EXISTS);
+    }
+
+    const token = commonService.generateTokenToResetPassword(user.id);
+
+    mailService.sendRestPasswordEmail(email, token);
+    return commonService.createResponse(httpResponse.SUCCESS, { email });
+  } catch (error) {
+    return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, messages.SERVER_ERROR);
+  }
+};
+
+/**
+ * Rest Password of the user.
+ * @param {string} newPassword - User's new Password.
+ * @param {string} userId - User's id
+ * @returns {Promise<object>} - Response object with Email or an error message.
+ */
+const resetPassword = async (newPassword, userId) => {
+  try {
+    const user = await userDao.getUserDetailsById(userId);
+    if (!user) {
+      return commonService.createResponse(httpResponse.BAD_REQUEST, messages.NO_USER_EXISTS);
+    }
+
+    const result = await userDao.updateUserPassword(newPassword, userId);
+    return commonService.createResponse(httpResponse.SUCCESS, { result });
+  } catch (error) {
+    return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, messages.SERVER_ERROR);
+  }
+};
+
+
+
+
+module.exports = { registerUser, loginUser, forgetPassword, resetPassword };

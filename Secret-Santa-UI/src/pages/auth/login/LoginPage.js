@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { loginHandler } from '../../../services/authService.js';
 import { useAlert } from './../../../context/AlertContext.js';
 import { useAuth } from './../../../context/AuthContext';
+import * as Constant from '../../../constants/secretSantaConstants.js';
 import "./LoginPage.css";
 
 const Login = () => {
@@ -45,6 +46,10 @@ const Login = () => {
     navigate('/register');
   };
 
+  const handleForgetPasswordClick = () => {
+    navigate(Constant.ROUTE_PATH.FORGET_PASSWORD);
+  }
+
   return (
     <div className="container" >
       <form onSubmit={formik.handleSubmit}>
@@ -73,7 +78,7 @@ const Login = () => {
           />
           {formik.touched.password && formik.errors.password && <div>{formik.errors.password}</div>}
         </div>
-
+        <a onClick={handleForgetPasswordClick} style={ {fontWeight: 600,}}>Forgot Password ? (Click Here)</a>
         <button type="submit" className="submit-btn">
           Log In
         </button>

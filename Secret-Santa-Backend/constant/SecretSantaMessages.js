@@ -21,4 +21,7 @@ module.exports = {
     EXIT_GAME_SUCCESSFULLY: 'Exit game successfully',
     INVALID_GAME_CODE: 'Invalid code code',
     SUCCESS: 'Success',
+    VERIFICATION_LINK_SENT: 'Verification link send Successfully',
+    RESET_PASSWORD_SUCCESS: 'Password reset Successfully',
+    UNABLE_TO_RESET_PASSWORD: 'Unable to reset password'
 };
