@@ -252,6 +252,29 @@ const validateIfGameExist = async (gameId) => {
   }
 };
 
+const createGroup = async (userId, groupName) => {
+  if (!userId || !groupName) {
+    return res.status(400).json({ error: "userId and groupName are required" });
+  }
+  try {
+    const user = await userDao.getUserDetailsById(Number(userId));
+    const groupCode = generateUniqueGameCode(groupName);
+
+    await gameDao.createGroup(groupName, groupCode, user.id);
+    await emailService.sendCreatedGroupEmail(user, groupCode, groupName);
+
+    return commonService.createResponse(
+      httpResponse.CREATED,
+      messages.GROUP_CREATED_SUCCESSFULLY
+    );
+  } catch (error) {
+    return commonService.createResponse(
+      httpResponse.INTERNAL_SERVER_ERROR,
+      error.message
+    );
+  }
+};
+
 module.exports = {
   createSecretSantaNewGame,
   startSecretSantaGame,
@@ -260,5 +283,6 @@ module.exports = {
   getGameActiveStatus,
   exitSecretSantaGame,
   endGameAndDeleteData,
-  validateIfGameExist
+  validateIfGameExist,
+  createGroup
 };

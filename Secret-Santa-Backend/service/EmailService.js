@@ -85,11 +85,25 @@ const sendAddWishSecretSantaEmail = async (email) => {
   await sendEmail(email, emailSubject, emailBody);
 }
 
+/**
+ * Sends an email to the user with their Secret Santa game code.
+ *
+ * @param {Object} user - The user object containing name and email.
+ * @param {string} groupCode - The group code.
+ * @param {string} groupName - The group name.
+ */
+const sendCreatedGroupEmail = async (user, groupCode, groupName) => {
+  const emailSubject = "🎮 Your Group Code is Here! 🎮";
+  const emailBody = await loadTemplate("groupCreatedCodeEmail.html", { name: (user.name).toUpperCase(), groupCode, groupName });
+  await sendEmail(user.email, emailSubject, emailBody);
+}
+
 
 module.exports = {
   sendCreatedSecretSantaGameEmail,
   sendAssignedSecretSantaEmail,
   sendSecretSantaSentMessageEmail,
   sendEmail,
-  sendAddWishSecretSantaEmail
+  sendAddWishSecretSantaEmail,
+  sendCreatedGroupEmail
 };
