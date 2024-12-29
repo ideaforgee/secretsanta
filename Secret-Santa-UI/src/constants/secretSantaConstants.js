@@ -24,7 +24,10 @@ export const EMPTY = '';
 export const JOIN_GAME = 'Join Game';
 export const GAME_STATUS = 'Game Status';
 export const JOIN = 'Join';
+export const GAME_ASSIST = 'OK';
+export const GAME_ASSIST_TITLE = 'GAME ASSIST';
 export const GET = 'Get';
+export const GAME_ASSIST_PLACEHOLDER_TEXT = 'Enter Group Code';
 
 export const TALK_TO_USER = {
   SECRET_SANTA: 'Talk to My Secret Santa',
@@ -45,7 +48,10 @@ export const ROUTE_PATH = {
   GAME: '/game',
   LOGIN: '/login',
   REGISTER: '/register',
-  DEFAULT: '/'
+  DEFAULT: '/',
+  FUN_ZONE: '/fun-zone',
+  GAME_ZONE: '/game-zone',
+  GAME_ASSIST: '/game-assist'
 }
 
 export const ALERT_MESSAGES = {

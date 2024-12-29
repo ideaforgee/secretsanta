@@ -18,6 +18,9 @@ import GameStatus from './pages/game-status/GameStatus';
 import { setupInterceptors } from './services/axionsInstance';
 import { ROUTE_PATH } from './constants/secretSantaConstants';
 import "./App.css";
+import BasePage from './pages/base-page/BasePage';
+import GameZone from './pages/game-zone/GameZone';
+import GameAssist from './pages/game-assist/GameAssist';
 
 
 const App = () => {
@@ -57,6 +60,18 @@ const App = () => {
               <Route
                 path={ROUTE_PATH.GAME_STATUS}
                 element={<ProtectedGamedRoute element={<GameStatus />} />}
+              />
+              <Route
+                path={ROUTE_PATH.FUN_ZONE}
+                element={<BasePage/>}
+              />
+              <Route
+                path={ROUTE_PATH.GAME_ZONE}
+                element={<GameZone/>}
+              />
+              <Route
+                path={ROUTE_PATH.GAME_ASSIST}
+                element={<GameAssist/>}
               />
             </Routes>
           </AuthProvider>

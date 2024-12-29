@@ -14,7 +14,7 @@ const Login = () => {
 
   useEffect(() => {
     if (user) {
-      navigate('/secret-santa');
+      navigate('/fun-zone');
     }
   }, [user, navigate]);
 
@@ -34,7 +34,7 @@ const Login = () => {
 
         login(response);
 
-        navigate('/secret-santa');
+        navigate('/fun-zone');
       } catch (error) {
         showAlert(error.data ?? error.message ?? 'Login failed', 'error');
       }
