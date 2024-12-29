@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f0f8fa;
+    }
+
+    .email-container {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 15px;
+      background: #ffffff;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+      text-align: center;
+      padding: 20px;
+      background: #d7e9f7;
+      color: #4a707c;
+      font-size: 24px;
+      font-weight: bold;
+      border-radius: 10px;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    .header span {
+      color: #a6c8db;
+    }
+
+    .greeting {
+      text-align: center;
+      color: #4a707c;
+      font-size: 18px;
+      margin: 15px 0;
+      line-height: 1.6;
+    }
+
+    .assigned {
+      text-align: center;
+      margin: 20px 0;
+      font-size: 20px;
+      color: #ffffff;
+      background: #a6c8db;
+      border-radius: 10px;
+      padding: 15px;
+    }
+
+    .rules {
+      font-size: 16px;
+      color: #4a707c;
+      margin-top: 20px;
+      line-height: 1.8;
+      padding: 15px;
+      background: #eaf4fc;
+      border-radius: 10px;
+    }
+
+    .rules ul {
+      padding-left: 20px;
+      margin: 0;
+      list-style-type: none;
+    }
+
+    .rules ul li {
+      margin-bottom: 10px;
+      color: #4a707c;
+    }
+
+    .rules ul li::before {
+      content: '🎮 ';
+      font-size: 16px;
+      color: #a6c8db;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      padding: 15px;
+      color: #4a707c;
+      font-size: 16px;
+      font-weight: bold;
+      background: #f1f7fc;
+      border-radius: 10px;
+      line-height: 1.6;
+    }
+
+    .footer span {
+      display: block;
+      font-size: 14px;
+      font-weight: normal;
+      color: #7795a3;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="header">
+      🎮 <span>{{groupName}}</span> 🎮 
+    </div>
+    <div class="greeting">
+      Hey <strong>{{name}}</strong>!<br><br>
+      Welcome to the ultimate game experience! Your exclusive group code is:
+    <div class="assigned"><strong>{{groupCode}}</strong></div>
+      Share it with your squad to kick off the fun and start building your dream team!
+    </div>
+    <div class="rules">
+      🚀 <strong>How to Play:</strong><br>
+      <ul>
+        <li>Gather your teammates and share the code.</li>
+        <li>Form alliances, create strategies, and bring your A-game.</li>
+        <li>Remember, it's all about teamwork and having a blast!</li>
+      </ul>
+    </div>
+    <div class="footer">
+      Let the Game Begin! 🎮 <br>
+      Team <em>@IdeaaForgee</em>
+      <span>“Play together, bond forever!”</span>
+    </div>
+  </div>
+</body>
+</html>

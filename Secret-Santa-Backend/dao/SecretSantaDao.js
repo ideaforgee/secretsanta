@@ -1,5 +1,5 @@
 const db = require("../config/db.js");
-const encryptDecryptService = require('../service/EncryptionAndDecryptionService.js');
+const encryptDecryptService = require('../service/EncryptionAndDecryptionService');
 
 /**
  * Saves a new game to the database.
@@ -259,6 +259,19 @@ const getReceiverEmailForGameByUserId = async (userId, gameId) => {
   }
 }
 
+const createGroup = async (name, code, hostId) => {
+  const query = `
+    INSERT INTO groups (name, code, hostId)
+      VALUES (?, ?, ?)
+  `;
+
+  try {
+    await db.query(query, [name, code, hostId]);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 module.exports = {
   saveNewSecretSantaGame,
   addNewSecretSantaGame,
@@ -274,5 +287,6 @@ module.exports = {
   validateIfGameExist,
   getGameIdsForEndByScheduler,
   getReceiverEmailForGameByUserId,
-  setGameAsInActive
+  setGameAsInActive,
+  createGroup
 };
