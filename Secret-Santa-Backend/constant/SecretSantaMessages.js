@@ -21,4 +21,6 @@ module.exports = {
     EXIT_GAME_SUCCESSFULLY: 'Exit game successfully',
     INVALID_GAME_CODE: 'Invalid code code',
     SUCCESS: 'Success',
+    GAME_ALREADY_STARTED: 'Game has been already started',
+    GAME_ENDED_SUCCESSFULLY: 'Game has been end successfully'
 };

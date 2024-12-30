@@ -106,6 +106,12 @@ const startSecretSantaGame = async (gameId) => {
       return commonService.createResponse(httpResponse.UNPROCESSABLE, messages.NOT_ENOUGH_PARTICIPANTS);
     }
 
+    const result = await gameDao.getGameActiveStatus(gameId);
+
+    if (result.isActive) {
+      return commonService.createResponse(httpResponse.UNPROCESSABLE, messages.GAME_ALREADY_STARTED);
+    }
+
     const shuffledUsers = shuffleAndAssignSecretSanta(users);
     const inputData = getDataForUpdateUserGame(shuffledUsers);
 
@@ -227,8 +233,10 @@ const joinUserToSecretSantaGame = async (userId, gameCode) => {
  */
 const endGameAndDeleteData = async (gameId) => {
   try {
-    const result = await gameDao.deleteAllGameRelatedData(gameId);
-    return commonService.createResponse(httpResponse.SUCCESS, result);
+    // const result = await gameDao.deleteAllGameRelatedData(gameId);
+    // return commonService.createResponse(httpResponse.SUCCESS, result);
+    await gameDao.setGameAsInActive(gameId);
+    return commonService.createResponse(httpResponse.SUCCESS, messages.GAME_ENDED_SUCCESSFULLY);
   } catch (error) {
     return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
   }
