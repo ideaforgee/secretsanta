@@ -17,6 +17,8 @@ import GamePlay from '../src/pages/join-game/GamePlay';
 import GameStatus from './pages/game-status/GameStatus';
 import { setupInterceptors } from './services/axionsInstance';
 import { ROUTE_PATH } from './constants/secretSantaConstants';
+import ResetPassword from './pages/auth/reset-password/ResetPassword';
+import ForgotPassword from './pages/auth/forget-password/ForgetPassword';
 import "./App.css";
 
 
@@ -37,6 +39,8 @@ const App = () => {
             <Routes>
               <Route path={ROUTE_PATH.DEFAULT} element={<HomePage />} />
               <Route path={ROUTE_PATH.LOGIN} element={<LoginPage />} />
+              <Route path={ROUTE_PATH.FORGET_PASSWORD} element={<ForgotPassword />} />
+              <Route path={ROUTE_PATH.RESET_PASSWORD} element={<ResetPassword />} />
               <Route path={ROUTE_PATH.REGISTER} element={<RegisterPage />} />
               <Route
                 path={ROUTE_PATH.DASHBOARD}

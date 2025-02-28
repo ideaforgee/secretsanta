@@ -86,10 +86,19 @@ const sendAddWishSecretSantaEmail = async (email) => {
 }
 
 
+const sendRestPasswordEmail = async (email, token) => {
+  const link = `https://secret-santa.thecodeinsight.com/reset-password?token=${token}`;
+  const emailSubject = `Password Reset Request!`;
+  const emailBody = await loadTemplate('resetPasswordEmail.html', {link: link});
+  await sendEmail(email, emailSubject, emailBody);
+}
+
+
 module.exports = {
   sendCreatedSecretSantaGameEmail,
   sendAssignedSecretSantaEmail,
   sendSecretSantaSentMessageEmail,
   sendEmail,
-  sendAddWishSecretSantaEmail
+  sendAddWishSecretSantaEmail,
+  sendRestPasswordEmail
 };

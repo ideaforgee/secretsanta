@@ -89,6 +89,10 @@ input:focus {
     width: 100%;
     margin-top: 10px;
 }
+a {
+    color: black;
+    cursor: pointer;
+}
 
 .signup{
     background-color: #4C489D;

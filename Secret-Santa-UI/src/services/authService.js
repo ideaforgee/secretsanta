@@ -1,7 +1,8 @@
 
 import axiosInstance from '../services/axionsInstance';
 import { GAME_ID_KEY } from '../constants/appConstant';
-// import jwt_decode from 'jwt-decode';
+import { cardActionAreaClasses } from '@mui/material';
+import { jwtDecode } from 'jwt-decode';
 
 const TOKEN_KEY = 'token';
 const USER_KEY = 'userId';
@@ -38,6 +39,28 @@ export const loginHandler = async (email, password) => {
   }
 };
 
+export const forgetPasswordHandler = async (email) => {
+  try {
+    const response = await axiosInstance.post('api/auth/forgetPassword', { email });
+    const { success } = response.data.data;
+
+    return success;
+  } catch (error) {
+    throw error.response ? error.response : 'Froget Password Failed';
+  }
+}
+
+export const resetPasswordHandler = async (newPassword, userId) => {
+  try {
+    const response = await axiosInstance.post('api/auth/resetPassword', { newPassword, userId });
+    const { success } = response.data.data;
+
+    return success;
+  } catch (error) {
+    throw error.response ? error.response : "Reset Password Failed";
+  }
+}
+
 export const logout = () => {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
@@ -67,13 +90,11 @@ export const isTokenValid = (token) => {
   if (!token) return false;
 
   try {
-    // const decodedToken = jwt_decode(token);
-  
-    // const currentTime = Date.now() / 1000;
-
-    // if (decodedToken.exp < currentTime) {
-    //   return false;
-    // }
+    const decodedToken = jwtDecode(token);
+    const currentTime = Math.floor(Date.now() / 1000);
+    if (decodedToken.exp && decodedToken.exp < currentTime) {
+      return false;
+    }
     return true;
   } catch (error) {
     return false;

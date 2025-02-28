@@ -45,6 +45,8 @@ export const ROUTE_PATH = {
   GAME: '/game',
   LOGIN: '/login',
   REGISTER: '/register',
+  FORGET_PASSWORD: '/forget-password',
+  RESET_PASSWORD: '/reset-password',
   DEFAULT: '/'
 }
 
