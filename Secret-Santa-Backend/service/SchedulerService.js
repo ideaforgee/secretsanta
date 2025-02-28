@@ -19,15 +19,15 @@ rule.minute = 0;
  */
 const autoStartOrEndGame = async () => {
     try {
-        const gameIdsToStart = await gameDao.getGameIdsForStartByScheduler();
-        for (const gameId of gameIdsToStart) {
-            await gameService.startSecretSantaGame(gameId);
-        }
+        // const gameIdsToStart = await gameDao.getGameIdsForStartByScheduler();
+        // for (const gameId of gameIdsToStart) {
+        //     await gameService.startSecretSantaGame(gameId);
+        // }
 
-        const gameIdsToEnd = await gameDao.getGameIdsForEndByScheduler();
-        for (const gameId of gameIdsToEnd) {
-            await gameService.endGameAndDeleteData(gameId);
-        }
+        // const gameIdsToEnd = await gameDao.getGameIdsForEndByScheduler();
+        // for (const gameId of gameIdsToEnd) {
+        //     await gameService.endGameAndDeleteData(gameId);
+        // }
     } catch (error) {
         console.log(error.message);
         throw new Error(error.message);

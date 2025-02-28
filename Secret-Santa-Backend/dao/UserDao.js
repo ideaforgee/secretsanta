@@ -56,4 +56,21 @@ const getUserDetailsById = async (userId) => {
   }
 }
 
-module.exports = { registerUser, getUserByEmail, verifyPassword, getUserDetailsById };
+/**
+ * Update user's password.
+ * @param {string} newPassword - The new password entered by the user.
+ * @param {string} userId - User's id.
+ * @returns {Promise<boolean>} - True if successfully updated the password or error.
+ */
+const updateUserPassword = async (newPassword, userId) => {
+  try {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const query = `UPDATE users SET password = ? WHERE id = ?;`
+    const [result] = await promisePool.query(query, [hashedPassword, userId]);
+    return true;
+  } catch (err) {
+    throw new Error(messages.UNABLE_TO_RESET_PASSWORD);
+  }
+}
+
+module.exports = { registerUser, getUserByEmail, verifyPassword, getUserDetailsById, updateUserPassword };

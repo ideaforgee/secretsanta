@@ -237,6 +237,15 @@ const validateIfGameExist = async (gameId) => {
   }
 };
 
+const setGameAsInActive = async (gameId) => {
+  const query = `UPDATE games SET isActive = 0 where id = ?`;
+  try {
+    await db.query(query, [gameId]);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 const getReceiverEmailForGameByUserId = async (userId, gameId) => {
   try {
     const secretSanta = 'SELECT secretSantaId FROM userGame WHERE userId = ? AND gameId = ?';
@@ -278,5 +287,6 @@ module.exports = {
   validateIfGameExist,
   getGameIdsForEndByScheduler,
   getReceiverEmailForGameByUserId,
-  createGroup
+  createGroup,
+  setGameAsInActive
 };
