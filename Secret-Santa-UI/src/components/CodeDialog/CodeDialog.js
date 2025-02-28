@@ -18,7 +18,7 @@ import ErrorComponent from '../Error/ErrorComponent.js';
 const GAME_CODE_REGEX = /^[a-zA-Z0-9]+$/;
 const GAME_CODE_LENGTH = 8;
 
-function CodeDialog({ open, onClose, buttonText, dialogTitle, onSubmit, resetForm }) {
+function CodeDialog({ open, onClose, buttonText, dialogTitle, onSubmit, resetForm, placeholderText }) {
     const navigate = useNavigate();
     const [gameCode, setGameCode] = useState('');
     const [submitted, setSubmitted] = useState(false);
@@ -82,7 +82,7 @@ function CodeDialog({ open, onClose, buttonText, dialogTitle, onSubmit, resetFor
             <DialogContent className='dialog-content'>
                 <form fullWidth onSubmit={handleSubmit} className='code-form'>
                     <TextField
-                        label='Enter Game Code'
+                        label={placeholderText || 'Enter Game Code'}
                         fullWidth
                         margin='normal'
                         variant='outlined'

@@ -1,0 +1,53 @@
+.dialog-title-create-group {
+    background-color: var(--primary-color);
+    padding: 16px;
+    border-bottom: 1px solid #ddd;
+}
+
+.dialog-content {
+    background-color: #fff;
+    padding: 24px;
+}
+
+.create-group-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    margin: 0;
+    box-shadow: none;
+    background-color: white;
+}
+
+.input-field {
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.dialog-actions {
+    padding: 16px;
+    justify-content: center;
+}
+
+.create-group-form .MuiDialogActions-root .cancel-button, .create-button {
+    color: var(--primary-button-color);
+    padding: 8px 16px;
+}
+
+.create-group-form .MuiDialogActions-root .cancel-button {
+    background-color: #f5f5f5;
+    color: var(--primary-button-color-hover);
+}
+
+.create-group-form .MuiDialogActions-root .create-button {
+    background-color: var(--primary-button-color);
+    color: var(--primary-text-color);
+    font-weight: 600;
+}
+
+.create-group-form .MuiDialogActions-root .cancel-button:hover {
+    background-color: var(--secondary-button-color-hover);
+}
+
+.create-group-form .MuiDialogActions-root .create-button:hover {
+    background-color: var(--primary-button-color-hover);
+}
