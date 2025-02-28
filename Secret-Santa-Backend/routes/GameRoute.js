@@ -12,5 +12,6 @@ router.get('/api/game/isActive/:gameId', protect, gameController.getGameActiveSt
 router.delete('/api/game/endGame/:gameId', protect, gameController.endGame);
 router.post('/api/game/exit', protect, gameController.exitSecretSantaGame);
 router.post('/api/game/validateGame', protect, gameController.validateIfGameExist);
+router.post('/api/game/createGroup', gameController.createGroup);
 
 module.exports = router;
