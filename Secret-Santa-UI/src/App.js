@@ -23,6 +23,7 @@ import "./App.css";
 import BasePage from './pages/base-page/BasePage';
 import GameZone from './pages/game-zone/GameZone';
 import GameAssist from './pages/game-assist/GameAssist';
+import MasterMind from './pages/master-mind/MasterMind';
 
 
 const App = () => {
@@ -67,15 +68,19 @@ const App = () => {
               />
               <Route
                 path={ROUTE_PATH.FUN_ZONE}
-                element={<BasePage/>}
+                element={<ProtectedRoute element={<BasePage />} />}
               />
               <Route
                 path={ROUTE_PATH.GAME_ZONE}
-                element={<GameZone/>}
+                element={<ProtectedRoute element={<GameZone />} />}
               />
               <Route
                 path={ROUTE_PATH.GAME_ASSIST}
-                element={<GameAssist/>}
+                element={<ProtectedRoute element={<GameAssist />} />}
+              />
+              <Route
+                path={ROUTE_PATH.MASTER_MIND}
+                element={<ProtectedRoute element={<MasterMind />} />}
               />
             </Routes>
           </AuthProvider>

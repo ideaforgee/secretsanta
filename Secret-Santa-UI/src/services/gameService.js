@@ -60,3 +60,43 @@ export const validateGameId = (gameId) => {
         data: { gameId },
     });
 };
+
+export const createNewMasterMindGame = (userId, severity) => {
+    return handleRequest({
+        method: 'post',
+        url: '/api/game/createNewMasterMindGame',
+        data: { userId, severity },
+    });
+};
+
+export const getUserMasterGameInfo = (userId, masterMindGameId) => {
+    return handleRequest({
+        method: 'post',
+        url: '/api/game/getUserMasterGameInfo',
+        data: { userId, masterMindGameId },
+    });
+};
+
+export const validateUserMasterMindLevel = (userId, masterMindGameId, level, guess) => {
+    return handleRequest({
+        method: 'post',
+        url: '/api/game/validateUserMasterMindLevel',
+        data: { userId, masterMindGameId, level, guess },
+    });
+};
+
+export const getRealPatternForMasterMindGame = (masterMindGameId) => {
+    return handleRequest({
+        method: 'post',
+        url: '/api/game/getRealPatternForMasterMindGame',
+        data: { masterMindGameId },
+    });
+};
+
+export const setIsCompleteTrue = (userId, masterMindGameId) => {
+    return handleRequest({
+        method: 'post',
+        url: '/api/game/setIsCompleteTrue',
+        data: { userId, masterMindGameId },
+    });
+};

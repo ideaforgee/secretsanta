@@ -1,0 +1,176 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background: #f0f0f0;
+    text-align: center;
+    padding: 20px;
+}
+
+.game-container {
+    max-width: 100%;
+    margin: auto;
+    padding: 20px;
+    background: #616161;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+h1 {
+    color: #333;
+}
+
+.instructions {
+    font-size: 14px;
+    color: black;
+}
+
+.game-board {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.level {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    opacity: 0.5;
+    transition: opacity 0.3s;
+    justify-content: center;
+    width: 100%;
+    position: relative;
+    position: relative;
+    /* Taaki hint-box ko relative position me rakha ja sake */
+    padding-right: 20px;
+    /* Thoda gap dene ke liye */
+    padding-right: 20px; /* Keep the gap for hint-box */
+
+}
+
+.level.active {
+    opacity: 1;
+}
+
+.color-slot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #aaa;
+    background: white;
+    cursor: pointer;
+}
+
+.color-slot:hover {
+    border-color: black;
+}
+
+.color-palette {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.color-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    cursor: grab;
+}
+
+.verify-btn {
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #007bff;
+    color: white;
+    transition: 0.3s;
+}
+
+.verify-btn.disabled {
+    background: gray;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.quit-btn{
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #fe745f;
+    color: white;
+    transition: 0.3s;
+}
+
+.home-btn{
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #855ffe;
+    color: white;
+    transition: 0.3s;
+}
+
+.quit-btn.disabled {
+    background: gray;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.home-btn.disabled {
+    background: gray;
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.color-slot {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #aaa;
+    background: #cfcfcf;
+    cursor: pointer;
+}
+
+.hint-box {
+    display: flex;
+    gap: 5px;
+    position: absolute;
+    display: flex;
+    right: 10px;
+
+}
+
+.hint-circle {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 1px solid black;
+}
+
+.hint-circle.red {
+    background: red;
+}
+
+.hint-circle.white {
+    background: white;
+}
+
+.buttons {
+    display: flex;
+    gap: 15px; /* Gap between the buttons */
+    justify-content: flex-end;
+}

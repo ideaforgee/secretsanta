@@ -1,4 +1,5 @@
 import bgg from '../assets/bgg.jpg';
+import fzg from '../assets/fzg.jpg';
 
 export const CHAT_BOX_TYPE = {
     SECRET_SANTA: 'secretSanta',
@@ -11,6 +12,15 @@ export const NOTIFICATION_TYPE = {
 
 export const BACKGROUND_STYLE = {
   backgroundImage: `url(${bgg})`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+  height: '100vh',
+  width: '100%',
+};
+
+export const FUN_ZONE_STYLE = {
+  backgroundImage: `url(${fzg})`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
   backgroundRepeat: 'no-repeat',
@@ -53,7 +63,8 @@ export const ROUTE_PATH = {
   DEFAULT: '/',
   FUN_ZONE: '/fun-zone',
   GAME_ZONE: '/game-zone',
-  GAME_ASSIST: '/game-assist'
+  GAME_ASSIST: '/game-assist',
+  MASTER_MIND: '/master-mind'
 }
 
 export const ALERT_MESSAGES = {
@@ -67,6 +78,7 @@ export const ALERT_MESSAGES = {
   INVALID_CODE: 'Enter a valid Game Code',
   GAME_NOT_CREATED: 'Game is not created.',
   SUCCESSFULLY_ADDED: 'Wish added to wishlist!',
+  RETURNED_TO_FUN_ZONE: 'Returned to fun zone'
 };
 
 export const DIALOG_REASONS = {

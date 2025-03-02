@@ -25,5 +25,6 @@ module.exports = {
     GAME_ENDED_SUCCESSFULLY: 'Game has been end successfully',
     VERIFICATION_LINK_SENT: 'Verification link send Successfully',
     RESET_PASSWORD_SUCCESS: 'Password reset Successfully',
-    UNABLE_TO_RESET_PASSWORD: 'Unable to reset password'
+    UNABLE_TO_RESET_PASSWORD: 'Unable to reset password',
+    SUCCESSFULLY_COMPLETED: 'Master mind game has successfully completed'
 };

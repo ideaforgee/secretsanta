@@ -9,7 +9,7 @@ function Navbar() {
     const navigate = useNavigate();
 
     const handleHomeClick = () => {
-        navigate(ROUTE_PATH.DASHBOARD);
+        navigate(ROUTE_PATH.GAME_ZONE);
     };
 
     return (
@@ -22,7 +22,7 @@ function Navbar() {
                 />
             </div>
             <div className='navbar-center'>
-                <h1 className='navbar-heading'>Secret Santa</h1>
+                <h1 className='navbar-heading'>Fun Zone</h1>
             </div>
             <div className='navbar-right'>
                 <LogoutButton />

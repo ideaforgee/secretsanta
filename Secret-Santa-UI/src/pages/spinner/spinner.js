@@ -15,7 +15,7 @@ const Spinner = () => {
           <HashLoader color="#ff6f61" loading={isLoading} size={50} />
         </div>
       </div>
-      <p className="spinner-text">Preparing your Secret Santa surprise...</p>
+      <p className="spinner-text">Preparing your Fun Zone surprise...</p>
     </div>
   );
 };
