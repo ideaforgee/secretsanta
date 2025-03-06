@@ -1,13 +1,11 @@
 const db = require('../config/db.js');
 const userDao = require('../dao/UserDao.js');
-const gameDao = require('../dao/GameDao.js');
+const secretSantaDao = require('../dao/SecretSantaDao.js');
 const messages = require('../constant/SecretSantaMessages.js');
-const emailService = require('../service/EmailService.js');
+const emailService = require('./EmailService.js');
 const httpResponse = require('../HttpResponse.js');
-const encryptDecryptService = require('../service/EncryptionAndDecryptionService');
-const commonService = require('../service/CommonService');
-const EasyOrMediumColorMap = require('../constant/MasterMindConstants.js')
-const HardOrExpertColorMap = require('../constant/MasterMindConstants.js')
+const encryptDecryptService = require('./EncryptionAndDecryptionService.js');
+const commonService = require('./CommonService.js');
 
 /**
  * Creates a new Secret Santa game.
@@ -28,7 +26,7 @@ const createSecretSantaNewGame = async (userId, gameInfo) => {
     const user = await userDao.getUserDetailsById(Number(userId));
     const newGame = generateNewGame(user, gameInfo);
 
-    await gameDao.saveNewSecretSantaGame(newGame);
+    await secretSantaDao.saveNewSecretSantaGame(newGame);
     await emailService.sendCreatedSecretSantaGameEmail(user, newGame.gameCode);
 
     return commonService.createResponse(httpResponse.SUCCESS, messages.CREATED_GAME_SUCCESSFULLY);
@@ -102,13 +100,13 @@ const generateUniqueGameCode = (hostName) => {
  */
 const startSecretSantaGame = async (gameId) => {
   try {
-    const users = await gameDao.getAllUsersForByGameId(gameId);
+    const users = await secretSantaDao.getAllUsersForByGameId(gameId);
 
     if (!gameId || users.length < 2) {
       return commonService.createResponse(httpResponse.UNPROCESSABLE, messages.NOT_ENOUGH_PARTICIPANTS);
     }
 
-    const result = await gameDao.getGameActiveStatus(gameId);
+    const result = await secretSantaDao.getGameActiveStatus(gameId);
 
     if (result.isActive) {
       return commonService.createResponse(httpResponse.UNPROCESSABLE, messages.GAME_ALREADY_STARTED);
@@ -117,7 +115,7 @@ const startSecretSantaGame = async (gameId) => {
     const shuffledUsers = shuffleAndAssignSecretSanta(users);
     const inputData = getDataForUpdateUserGame(shuffledUsers);
 
-    await gameDao.updateSecretSantaGameOnGameStart(gameId, inputData);
+    await secretSantaDao.updateSecretSantaGameOnGameStart(gameId, inputData);
     await emailService.sendAssignedSecretSantaEmail(shuffledUsers);
 
     return commonService.createResponse(httpResponse.SUCCESS, messages.ASSIGNED_SECRET_SANTA_SUCCESSFULLY);
@@ -184,7 +182,7 @@ const getDataForUpdateUserGame = (assignedUsers) => {
  */
 const getSecretSantaGameInfo = async (gameId) => {
   try {
-    const [result] = await gameDao.getSecretSantaGameInfoByGameCode(Number(gameId));
+    const [result] = await secretSantaDao.getSecretSantaGameInfoByGameCode(Number(gameId));
     return commonService.createResponse(httpResponse.SUCCESS, result);
   } catch (error) {
     return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
@@ -193,7 +191,7 @@ const getSecretSantaGameInfo = async (gameId) => {
 
 const getGameActiveStatus = async (gameId) => {
   try {
-    const result = await gameDao.getGameActiveStatus(gameId);
+    const result = await secretSantaDao.getGameActiveStatus(gameId);
     return commonService.createResponse(httpResponse.SUCCESS, result);
   } catch (error) {
     return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
@@ -216,7 +214,7 @@ const joinUserToSecretSantaGame = async (userId, gameCode) => {
   }
 
   try {
-    const result = await gameDao.joinUserToSecretSantaGame(Number(userId), gameCode);
+    const result = await secretSantaDao.joinUserToSecretSantaGame(Number(userId), gameCode);
     return result
       ? commonService.createResponse(httpResponse.SUCCESS, result)
       : commonService.createResponse(httpResponse.BAD_REQUEST, messages.INVALID_GAME_CODE);
@@ -235,9 +233,9 @@ const joinUserToSecretSantaGame = async (userId, gameCode) => {
  */
 const endGameAndDeleteData = async (gameId) => {
   try {
-    // const result = await gameDao.deleteAllGameRelatedData(gameId);
+    // const result = await secretSantaDao.deleteAllGameRelatedData(gameId);
     // return commonService.createResponse(httpResponse.SUCCESS, result);
-    await gameDao.setGameAsInActive(gameId);
+    await secretSantaDao.setGameAsInActive(gameId);
     return commonService.createResponse(httpResponse.SUCCESS, messages.GAME_ENDED_SUCCESSFULLY);
   } catch (error) {
     return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
@@ -246,7 +244,7 @@ const endGameAndDeleteData = async (gameId) => {
 
 const exitSecretSantaGame = async (userId, gameId) => {
   try {
-    await gameDao.exitSecretSantaGame(Number(userId), Number(gameId));
+    await secretSantaDao.exitSecretSantaGame(Number(userId), Number(gameId));
     return commonService.createResponse(httpResponse.SUCCESS, messages.EXIT_GAME_SUCCESSFULLY);
   } catch (error) {
     return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
@@ -255,146 +253,12 @@ const exitSecretSantaGame = async (userId, gameId) => {
 
 const validateIfGameExist = async (gameId) => {
   try {
-    const result = await gameDao.validateIfGameExist(Number(gameId));
+    const result = await secretSantaDao.validateIfGameExist(Number(gameId));
     return commonService.createResponse(httpResponse.SUCCESS, result);
   } catch (error) {
     return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
   }
 };
-
-const createNewMasterMindGame = async (userId, severity) => {
-  try {
-    const masterMindGamePattern = generateMasterMindGamePattern(severity);
-    const masterMindGameId = await gameDao.createNewMasterMindGame(userId, masterMindGamePattern);
-    return commonService.createResponse(httpResponse.SUCCESS, masterMindGameId);
-  }
-  catch (error) {
-    return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
-  }
-};
-
-const generateMasterMindGamePattern = (severity) => {
-  const allColors = severity === 'Easy' || severity === 'Medium' ? EasyOrMediumColorMap : HardOrExpertColorMap;
-  const shuffledKeys = Object.keys(allColors).sort(() => Math.random() - 0.5);
-  let numbers;
-  if (severity === 'Easy') {
-    numbers = shuffledKeys.slice(0, 4).map(Number);
-  } else {
-    numbers = Array.from({ length: 4 }, () => Number(shuffledKeys[Math.floor(Math.random() * shuffledKeys.length)]));
-  }
-  return numbers?.join(',');
-}
-
-
-const getUserMasterGameInfo = async (userId, masterMindGameId) => {
-  try {
-    const response = await gameDao.getUserMasterGameInfo(userId, masterMindGameId);
-    const userMasterGameInfo = processMasterMindData(response);
-    return commonService.createResponse(httpResponse.SUCCESS, userMasterGameInfo);
-  }
-  catch (error) {
-    return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
-  }
-};
-
-const processMasterMindData = (rows) => {
-  const levels = Array(8).fill().map(() => Array(4).fill(null));
-  const hints = Array(8).fill().map(() => []);
-  let maxLevel = -1;
-  let gameComplete = false;
-
-  rows.forEach(({ level, guess, hint, isComplete }) => {
-    if (level >= 0 && level < 10) {
-      levels[level] = guess ? guess.split(",").map(Number) : Array(4).fill(null);
-      hints[level] = hint ? hint.split(",") : [];
-
-      maxLevel = Math.max(maxLevel, level);
-      if (isComplete === 1) {
-        gameComplete = true;
-      }
-    }
-  });
-
-  const currentLevel = maxLevel + 1 < 8 ? maxLevel + 1 : 7;
-  const verifiedLevels = Array.from({ length: currentLevel }, (_, i) => i);
-
-  return { levels, hints, currentLevel, verifiedLevels, gameComplete };
-};
-
-const getRealPatternForMasterMindGame = async (masterMindGameId) => {
-  try {
-    const response = await gameDao.getMasterMindGamePatternForUser(masterMindGameId);
-    return commonService.createResponse(httpResponse.SUCCESS, response.pattern);
-  }
-  catch (error) {
-    return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
-  }
-};
-
-
-const validateUserMasterMindLevel = async (userId, masterMindGameId, level, guess) => {
-  try {
-    const response = await gameDao.getMasterMindGamePatternForUser(masterMindGameId);
-    const hint = getHintForUserMasterMindGameGuess(guess, response.pattern);
-    const userGuess = guess?.join(',');
-    let isComplete = 0;
-    if (hint === 'red,red,red,red') {
-      isComplete = 1;
-    }
-    await gameDao.saveUserMasterMindGameLevel(Number(userId), Number(masterMindGameId), level, userGuess, hint, isComplete);
-    return commonService.createResponse(httpResponse.SUCCESS, hint);
-  }
-  catch (error) {
-    return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
-  }
-};
-
-function getRedHintCount(guess, actualPattern) {
-  let redCount = 0;
-  for (let i = 0; i < 4; i++) {
-    if (guess[i] === actualPattern[i]) {
-      redCount++;
-    }
-  }
-  return redCount;
-}
-
-function getWhiteHintCount(guess, actualPattern) {
-  let whiteCount = 0;
-  const remainingColors = {};
-
-  for (let i = 0; i < 4; i++) {
-    if (guess[i] !== actualPattern[i]) {
-      remainingColors[actualPattern[i]] = (remainingColors[actualPattern[i]] || 0) + 1;
-    }
-  }
-
-  for (let i = 0; i < 4; i++) {
-    if (guess[i] !== actualPattern[i] && remainingColors[guess[i]] > 0) {
-      whiteCount++;
-      remainingColors[guess[i]]--;
-    }
-  }
-
-  return whiteCount;
-}
-
-function getHintForUserMasterMindGameGuess(guess, actualPattern) {
-  const guessArray = guess.map(Number);
-  const patternArray = actualPattern.split(",").map(Number);
-
-  const redCount = getRedHintCount(guessArray, patternArray);
-  const whiteCount = getWhiteHintCount(guessArray, patternArray);
-
-  const hints = Array(redCount).fill("red").concat(Array(whiteCount).fill("white"));
-  return hints?.join(',');
-}
-
-
-const setIsCompleteTrue = async (userId, masterMindGameId) => {
-  await gameDao.setIsCompleteTrue(userId, masterMindGameId);
-  return commonService.createResponse(httpResponse.SUCCESS, messages.SUCCESSFULLY_COMPLETED);
-}
 
 module.exports = {
   createSecretSantaNewGame,
@@ -404,10 +268,5 @@ module.exports = {
   getGameActiveStatus,
   exitSecretSantaGame,
   endGameAndDeleteData,
-  validateIfGameExist,
-  createNewMasterMindGame,
-  getUserMasterGameInfo,
-  validateUserMasterMindLevel,
-  getRealPatternForMasterMindGame,
-  setIsCompleteTrue
+  validateIfGameExist
 };

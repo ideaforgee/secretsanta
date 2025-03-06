@@ -1,6 +1,6 @@
 const schedule = require('node-schedule');
-const gameDao = require('../dao/GameDao');
-const gameService = require('../service/GameService');
+const secretSantaDao = require('../dao/SecretSantaDao');
+const secretSantaService = require('./SecretSantaService');
 
 // Configure the rule to run daily at 5:00 AM
 const rule = new schedule.RecurrenceRule();
@@ -19,14 +19,14 @@ rule.minute = 0;
  */
 const autoStartOrEndGame = async () => {
     try {
-        // const gameIdsToStart = await gameDao.getGameIdsForStartByScheduler();
+        // const gameIdsToStart = await secretSantaDao.getGameIdsForStartByScheduler();
         // for (const gameId of gameIdsToStart) {
-        //     await gameService.startSecretSantaGame(gameId);
+        //     await secretSantaService.startSecretSantaGame(gameId);
         // }
 
-        // const gameIdsToEnd = await gameDao.getGameIdsForEndByScheduler();
+        // const gameIdsToEnd = await secretSantaDao.getGameIdsForEndByScheduler();
         // for (const gameId of gameIdsToEnd) {
-        //     await gameService.endGameAndDeleteData(gameId);
+        //     await secretSantaService.endGameAndDeleteData(gameId);
         // }
     } catch (error) {
         console.log(error.message);

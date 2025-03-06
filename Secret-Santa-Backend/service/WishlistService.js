@@ -1,6 +1,6 @@
 const wishListDao = require('../dao/WishlistDao.js');
 const commonService = require('../service/CommonService.js');
-const gameDao = require('../dao/GameDao.js');
+const secretSantaDao = require('../dao/SecretSantaDao.js');
 const emailService = require('./EmailService.js');
 const httpResponse = require('../HttpResponse.js');
 const message = require('../constant/SecretSantaMessages.js');
@@ -44,7 +44,7 @@ async function addWishToUserWishlist(userId, gameId, wish) {
 
   try {
     await wishListDao.addWishToUserWishlist(userId, gameId, wish);
-    const receiver = await gameDao.getReceiverEmailForGameByUserId(userId, gameId);
+    const receiver = await secretSantaDao.getReceiverEmailForGameByUserId(userId, gameId);
     if (receiver?.email) {
       await emailService.sendAddWishSecretSantaEmail(receiver.email);
     }

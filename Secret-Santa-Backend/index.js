@@ -4,10 +4,11 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
-const gameRoutes = require('./routes/GameRoute.js');
+const secretSantaRoutes = require('./routes/SecretSantaRoute.js');
 const authRoutes = require('./routes/authRoutes');
 const wishlistRoutes = require('./routes/WishlistRoute');
 const messageRoutes = require('./routes/messageRoutes');
+const masterMindRoutes = require('./routes/MasterMindRoute.js');
 
 const { initializeSocketServer } = require('./service/SocketService');
 const { Server } = require('socket.io');
@@ -33,10 +34,11 @@ app.use(bodyParser.json());
 app.use(express.json());
 
 // Routes
-app.use(gameRoutes);
+app.use(secretSantaRoutes);
 app.use(authRoutes);
 app.use(messageRoutes);
 app.use(wishlistRoutes);
+app.use(masterMindRoutes);
 
 // Initialize the WebSocket server (passing the same HTTP server for WebSocket functionality)
 initializeSocketServer(server); // Use the same server instance here

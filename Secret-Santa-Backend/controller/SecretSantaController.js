@@ -1,4 +1,4 @@
-const gameService = require('../service/GameService.js');
+const secretSantaService = require('../service/SecretSantaService.js');
 const response = require('../utils/response.js');
 const message = require('../constant/SecretSantaMessages.js');
 require("dotenv").config();
@@ -40,7 +40,7 @@ require("dotenv").config();
 
 const createNewSecretSantaGame = async (req, res) => {
   const { userId, payload: gameInfo } = req.body;
-  const result = await gameService.createSecretSantaNewGame(userId, gameInfo);
+  const result = await secretSantaService.createSecretSantaNewGame(userId, gameInfo);
   return response(res, result.status, message.SUCCESS, result.response);
 };
 
@@ -73,7 +73,7 @@ const createNewSecretSantaGame = async (req, res) => {
 
 const startSecretSantaGame = async (req, res) => {
   const { gameId } = req.body;
-  const result = await gameService.startSecretSantaGame(Number(gameId));
+  const result = await secretSantaService.startSecretSantaGame(Number(gameId));
   return response(res, result.status, message.SUCCESS, result.response);
 };
 
@@ -111,7 +111,7 @@ const startSecretSantaGame = async (req, res) => {
 
 const getSecretSantaGameInfo = async (req, res) => {
   const { gameId } = req.params;
-  const result = await gameService.getSecretSantaGameInfo(gameId);
+  const result = await secretSantaService.getSecretSantaGameInfo(gameId);
   response(res, result.status, message.SUCCESS, result.response);
 };
 
@@ -146,13 +146,13 @@ const getSecretSantaGameInfo = async (req, res) => {
 
 const joinUserToSecretSantaGame = async (req, res) => {
   const { userId, gameCode } = req.body;
-  const result = await gameService.joinUserToSecretSantaGame(userId, gameCode);
+  const result = await secretSantaService.joinUserToSecretSantaGame(userId, gameCode);
   return response(res, result.status, message.SUCCESS, result.response);
 };
 
 const getGameActiveStatus = async (req, res) => {
   const { gameId } = req.params;
-  const result = await gameService.getGameActiveStatus(gameId);
+  const result = await secretSantaService.getGameActiveStatus(gameId);
   return response(res, result.status, message.SUCCESS, result.response);
 };
 
@@ -185,52 +185,21 @@ const getGameActiveStatus = async (req, res) => {
 
 const endGame = async (req, res) => {
   const { gameId } = req.params;
-  const result = await gameService.endGameAndDeleteData(gameId);
+  const result = await secretSantaService.endGameAndDeleteData(gameId);
   return response(res, result.status, message.SUCCESS, result.response);
 };
 
 const exitSecretSantaGame = async (req, res) => {
   const { gameId, userId } = req.body;
-  const result = await gameService.exitSecretSantaGame(userId, gameId);
+  const result = await secretSantaService.exitSecretSantaGame(userId, gameId);
   return response(res, result.status, message.SUCCESS, result.response);
 };
 
 const validateIfGameExist = async (req, res) => {
   const { gameId } = req.body;
-  const result = await gameService.validateIfGameExist(gameId);
+  const result = await secretSantaService.validateIfGameExist(gameId);
   return response(res, result.status, message.SUCCESS, result.response);
 };
-
-const createNewMasterMindGame = async (req, res) => {
-  const { userId, severity } = req.body;
-  const result = await gameService.createNewMasterMindGame(userId, severity);
-  return response(res, result.status, message.SUCCESS, result.response);
-};
-
-const getUserMasterGameInfo = async (req, res) => {
-  const { userId, masterMindGameId } = req.body;
-  const result = await gameService.getUserMasterGameInfo(userId, masterMindGameId);
-  return response(res, result.status, message.SUCCESS, result.response);
-};
-
-const validateUserMasterMindLevel = async (req, res) => {
-  const { userId, masterMindGameId, level, guess } = req.body;
-  const result = await gameService.validateUserMasterMindLevel(userId, masterMindGameId, level, guess);
-  return response(res, result.status, message.SUCCESS, result.response);
-};
-
-const getRealPatternForMasterMindGame = async (req, res) => {
-  const { masterMindGameId } = req.body;
-  const result = await gameService.getRealPatternForMasterMindGame(masterMindGameId);
-  return response(res, result.status, message.SUCCESS, result.response);
-};
-
-const setIsCompleteTrue = async (req, res) => {
-  const { userId, masterMindGameId } = req.body;
-  const result = await gameService.setIsCompleteTrue(userId, masterMindGameId);
-  return response(res, result.status, message.SUCCESS, result.response);
-};
-
 
 module.exports = {
   createNewSecretSantaGame,
@@ -240,10 +209,5 @@ module.exports = {
   getGameActiveStatus,
   exitSecretSantaGame,
   endGame,
-  validateIfGameExist,
-  createNewMasterMindGame,
-  getUserMasterGameInfo,
-  validateUserMasterMindLevel,
-  getRealPatternForMasterMindGame,
-  setIsCompleteTrue
+  validateIfGameExist
 };
