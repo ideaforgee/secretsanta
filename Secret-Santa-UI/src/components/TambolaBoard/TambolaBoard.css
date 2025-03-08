@@ -2,7 +2,12 @@
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     gap: 10px;
-    width: 400px;
+    padding: 16px;
+    width: fit-content;
+    height: fit-content;
+    background: #f6e9a2;
+    border: 2px solid;
+    border-radius: 10px;
 }
 
 .number {
@@ -12,12 +17,15 @@
     align-items: center;
     justify-content: center;
     border: 1px solid #000;
+    font-weight: 600;
     background-color: #fff;
-    cursor: pointer;
     border-radius: 5px;
     transition: background 0.3s;
+    background-color: #f6e9a2;
+    border-radius: 50%;
 }
 
 .number.called {
-    background-color: yellow;
+    background-color: brown;
+    color: #fff;
 }

@@ -93,6 +93,22 @@ export const getRealPatternForMasterMindGame = (masterMindGameId) => {
     });
 };
 
+export const getTabmolaGameDetais  = (userId, tambolaGameId) => {
+    return handleRequest({
+        method: 'post',
+        url: '/api/game/getTabmolaGameDetais',
+        data: { userId, tambolaGameId },
+    });
+};
+
+export const generateTicketsForTambolaGame  = (tambolaGameId) => {
+    return handleRequest({
+        method: 'post',
+        url: '/api/game/generateTicketsForTambolaGame',
+        data: { tambolaGameId },
+    });
+};
+
 export const setIsCompleteTrue = (userId, masterMindGameId) => {
     return handleRequest({
         method: 'post',
