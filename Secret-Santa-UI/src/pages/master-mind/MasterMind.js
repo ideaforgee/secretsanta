@@ -9,14 +9,6 @@ import ReturnFunZonePopUp from '../../components/ReturnFunZonePopUp/ReturnFunZon
 import Navbar from '../../components/navbar/Navbar';
 import * as Constant from '../../constants/secretSantaConstants';
 import { useAlert } from '../../context/AlertContext.js';
-import {
-  colorsForEasyAndMedium,
-  colorsMapForEasyAndMedium,
-  colorsForHardAndExpert,
-  colorsMapForHardAndExpert,
-  totalLevelForHardMode,
-  totalLevelForRatherThanHardMode
-} from '../../constants/masterMindConstant';
 
 
 const MasterMind = () => {

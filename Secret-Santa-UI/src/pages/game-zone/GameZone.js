@@ -17,7 +17,7 @@ function GameZone() {
     const [isPopupVisible, setPopupVisible] = useState(false);
 
     const onClickSecretSantaGame = () => {
-        navigate('/secret-santa');
+        navigate(Constant.ROUTE_PATH.DASHBOARD);
     }
 
     const handleLevelSelect = async (severity) => {
@@ -25,18 +25,23 @@ function GameZone() {
         localStorage.setItem(MASTER_MIND_GAME_KEY, masterMindGameId);
         localStorage.setItem(MASTER_MIND_GAME_SEVERITY_KEY, severity);
         setPopupVisible(false);
-        navigate('/master-mind');
+        navigate(Constant.ROUTE_PATH.MASTER_MIND);
     };
 
     const onClickMasterMindGame = () => {
         if (!localStorage.getItem(MASTER_MIND_GAME_KEY)) {
             setPopupVisible(true);
         } else {
-            navigate('/master-mind');
+            navigate(Constant.ROUTE_PATH.MASTER_MIND);
         }
     }
 
     const onClickHousieGame = () => {
+        // if (!localStorage.getItem(TAMBOLA_GAME_KEY)) {
+        //     setPopupVisible(true);
+        // } else {
+            navigate(Constant.ROUTE_PATH.TAMBOLA);
+        // }
     }
 
     const cards = [

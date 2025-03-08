@@ -64,7 +64,8 @@ export const ROUTE_PATH = {
   FUN_ZONE: '/fun-zone',
   GAME_ZONE: '/game-zone',
   GAME_ASSIST: '/game-assist',
-  MASTER_MIND: '/master-mind'
+  MASTER_MIND: '/master-mind',
+  TAMBOLA: '/tambola'
 }
 
 export const ALERT_MESSAGES = {

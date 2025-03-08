@@ -24,6 +24,7 @@ import BasePage from './pages/base-page/BasePage';
 import GameZone from './pages/game-zone/GameZone';
 import GameAssist from './pages/game-assist/GameAssist';
 import MasterMind from './pages/master-mind/MasterMind';
+import Tambola from './pages/tambola/Tambola';
 
 
 const App = () => {
@@ -81,6 +82,10 @@ const App = () => {
               <Route
                 path={ROUTE_PATH.MASTER_MIND}
                 element={<ProtectedRoute element={<MasterMind />} />}
+              />
+              <Route
+                path={ROUTE_PATH.TAMBOLA}
+                element={<ProtectedRoute element={<Tambola />} />}
               />
             </Routes>
           </AuthProvider>
