@@ -117,11 +117,15 @@ const getTambolaGameDetails = async (userId, tambolaGameId) => {
 const sendCurrentNumberToAllUser = async (tambolaGameId, currentNumber, connections) => {
     try {
         const users = await tambolaDao.getUsersForTambolaGame(tambolaGameId);
+        const messageData = {
+            type: 'withDrawnNumbers',
+            message: currentNumber
+        }
 
         for (let user of users) {
-            const webSocket = connections.get(user.id?.toString());
+            const webSocket = connections.get(user.userId?.toString());
             if (webSocket && webSocket.readyState === WebSocket.OPEN) {
-                webSocket.send(JSON.stringify(currentNumber));
+                webSocket.send(JSON.stringify(messageData));
             }
         }
 
@@ -138,43 +142,47 @@ const verifyTambolaGameClaim = async (claimType, userId, tambolaGameId, connecti
         const userData = await tambolaDao.gatUserDataForTambolaGame(userId, tambolaGameId)
 
         let { ticketNumbers, markedNumbers } = userData[0];
-        ticketNumbers = JSON.parse(ticketNumbers);
-        markedNumbers = JSON.parse(markedNumbers);
+        ticketNumbers = JSON.parse(ticketNumbers) ?? [];
+        markedNumbers = JSON.parse(markedNumbers) ?? [];
 
         const [gameData] = await tambolaDao.gatTambolaGameData(tambolaGameId);
 
-        const withdrawnNumbers = JSON.parse(gameData[0].withdrawnNumbers);
+        const withdrawnNumbers = JSON.parse(gameData.withdrawnNumbers) ?? [];
 
         const isLineMarked = (line) => line.every(num => num === null || withdrawnNumbers.includes(num));
 
         let isValidClaim = false;
 
         switch (claimType) {
-            case 'topLine':
+            case 'Top Line':
                 isValidClaim = isLineMarked(ticket[0]);
                 break;
-            case 'middleLine':
+            case 'Middle Line':
                 isValidClaim = isLineMarked(ticket[1]);
                 break;
-            case 'bottomLine':
+            case 'Bottom Line':
                 isValidClaim = isLineMarked(ticket[2]);
                 break;
-            case 'earlyFive':
-                const markedCount = markedNumbers.filter(num => withdrawnNumbers.includes(num)).length;
+            case 'Early Five':
+                const markedCount = markedNumbers?.filter(num => withdrawnNumbers.includes(num)).length;
                 isValidClaim = markedCount >= 5;
                 break;
-            case 'fullHouse':
-                isValidClaim = ticket.flat().every(num => num === null || withdrawnNumbers.includes(num));
+            case 'Full House':
+                isValidClaim = ticketNumbers.flat().every(num => num === null || withdrawnNumbers.includes(num));
                 break;
             default:
                 returns;
         }
 
+        const messageData = {
+            type: 'claim'
+        }
 
         if (!isValidClaim) {
             const webSocket = connections.get(userId?.toString());
             if (webSocket && webSocket.readyState === WebSocket.OPEN) {
-                webSocket.send(claimType, 'unClaimed');
+                messageData.message = `Your claimed for ${claimType} is false. Your current score is reduce by 5.`
+                webSocket.send(JSON.stringify(messageData));
             }
         } else {
             const users = await tambolaDao.getUsersForTambolaGame(tambolaGameId);
@@ -182,7 +190,9 @@ const verifyTambolaGameClaim = async (claimType, userId, tambolaGameId, connecti
             for (let user of users) {
                 const webSocket = connections.get(user.id?.toString());
                 if (webSocket && webSocket.readyState === WebSocket.OPEN) {
-                    webSocket.send(claimType, 'claimed');
+                    messageData.message = `${user.name} has successfully claimed${claimType}.`
+                    messageData.claimType = claimType;
+                    webSocket.send(JSON.stringify(messageData));
                 }
             }
             await tambolaDao.updateTambolaGameClaims(tambolaGameId, userId);

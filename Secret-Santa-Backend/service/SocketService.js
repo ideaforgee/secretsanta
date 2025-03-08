@@ -68,7 +68,7 @@ async function handleTambolaWithDrawnNumbers(parsedMessage, userId) {
 
 async function handleTambolaMarkedNumbers(parsedMessage, userId) {
     console.log(`${userId} marked numbers: ${parsedMessage.markedNumbers}`);
-    await tambolaDao.saveUserMarkedNumbers(userId, parsedMessage.markedNumbers, parsedMessage.tambolaGameId);
+    await tambolaDao.saveUserMarkedNumbers(Number(userId), parsedMessage.markedNumbers, parsedMessage.tambolaGameId);
 }
 
 async function handleTambolaClaim(parsedMessage, userId) {

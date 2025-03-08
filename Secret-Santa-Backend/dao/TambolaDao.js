@@ -98,10 +98,10 @@ const getTambolaGameDetails = async (userId, tambolaGameId) => {
 };
 
 const saveUserMarkedNumbers = async (userId, markedNUmbers, tambolaGameId) => {
-  const query = `UPDATE UserTambolaGame SET markedNumbers = ? WHERE userId = AND tambolaGameId = ?`;
+  const query = `UPDATE UserTambolaGame SET markedNumbers = ? WHERE userId = ? AND tambolaGameId = ?`;
 
   try {
-    await db.query(query, [markedNUmbers, userId, tambolaGameId]);
+    await db.query(query, [JSON.stringify(markedNUmbers), userId, tambolaGameId]);
   } catch (err) {
     throw new Error(err.message);
   }
@@ -111,7 +111,7 @@ const updateTambolaWithDrawnNumbers = async (tambolaGameId, withDrawnNumbers) =>
   const query = `UPDATE TambolaGames SET withdrawnNumbers = ? WHERE id = ?`;
 
   try {
-    await db.query(query, [withDrawnNumbers, tambolaGameId]);
+    await db.query(query, [JSON.stringify(withDrawnNumbers), tambolaGameId]);
   } catch (err) {
     throw new Error(err.message);
   }
