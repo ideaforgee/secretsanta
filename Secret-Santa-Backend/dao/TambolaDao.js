@@ -141,7 +141,7 @@ const gatTambolaGameData = async (tambolaGameId) => {
   }
 };
 
-const updateTambolaGameClaims = async (tambolaGameId, userId) => {
+const updateTambolaGameClaims = async (tambolaGameId, userId, claimType) => {
   const query =
     `INSERT INTO TambolaGameClaims (tambolaGameId, ${claimType}, createdAt)
      VALUES (?, ?, NOW())

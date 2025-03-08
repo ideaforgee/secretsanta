@@ -1,7 +1,7 @@
 .tambola-ticket {
     display: grid;
     grid-template-rows: repeat(3, 1fr);
-    gap: 5px;
+    gap: 2vh;
     border: 2px solid black;
     border-radius: 8px;
     padding: 10px;
@@ -29,12 +29,12 @@
 .ticket-row {
     display: grid;
     grid-template-columns: repeat(9, 1fr);
-    gap: 5px;
+    gap: 2vh;
 }
 
 .ticket-cell {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -43,18 +43,18 @@
     cursor: pointer;
     font-size: 18px;
     font-weight: bold;
-    background-color: lightyellow;
+    background-color: var(--tambola-ticket-cell);
 }
 
 .ticket-cell.filled {
-    background-color: lightyellow;
+    background-color: var(--tambola-ticket-cell);
 }
 
 .ticket-cell.empty {
-    background-color: lightyellow;
+    background-color: var(--tambola-ticket-cell);
 }
 
 .ticket-cell.marked {
-    background-color: brown;
-    color: white;
+    background-color: var(--tambola-marked-element);
+    color: var(--tambola-marked-text-color);
 }

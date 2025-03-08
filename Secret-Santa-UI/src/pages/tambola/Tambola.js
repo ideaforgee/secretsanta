@@ -79,10 +79,13 @@ const Tambola = () => {
 
   const handleWebSocketMessage = (messageData) => {
     if (messageData.type === 'claim' && messageData.claimType) {
-      setMarkedClaims(markedClaims.forEach(claim => claim !== messageData.claimType));
+      setMarkedClaims([...markedClaims, messageData.claimType]);
+    }
+    if (messageData.type === 'claim') {
       setPopupMessage(messageData.message);
       setShowPopup(true);
     }
+
     if (messageData.type === 'withDrawnNumbers') {
       const allWithDrawnNumbers = [...withDrawnNumbers, Number(messageData.message)];
       setWithDrawnNumbers(allWithDrawnNumbers);
@@ -133,6 +136,12 @@ const Tambola = () => {
         {/* Tambola Board */}
         <TambolaBoard drawnNumbers={withDrawnNumbers} />
 
+        {status === TambolaGameStatus.Active && hostId === Number(userId) && (
+            <button className="start-game-button" onClick={handleDrawNumberClick}>
+              Draw Number
+            </button>
+          )}
+
         {/* Right Section */}
         <div className="right-section">
           {/* Tambola Ticket */}
@@ -147,11 +156,11 @@ const Tambola = () => {
             </button>
           )}
 
-          {status === TambolaGameStatus.Active && hostId === Number(userId) && (
+          {/* {status === TambolaGameStatus.Active && hostId === Number(userId) && (
             <button className="start-game-button" onClick={handleDrawNumberClick}>
               Draw Number
             </button>
-          )}
+          )} */}
 
         </div>
       </div>

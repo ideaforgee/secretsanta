@@ -9,4 +9,12 @@
 
     --primary-text-color: #332711;
     --secondary-text-color: #69b2f0;
+
+    --tambola-board-bg: #f6e9a2;
+    --tambola-ticket-cell: #ffffe0;
+    --tambola-marked-element: #a52a2a;
+    --tambola-text-color: #000000;
+    --tambola-marked-text-color: #ffffff;
+    --tambola-buttons-color: #f6e9a2;
+    --tambola-buttons-hover: #dacc83;
 }

@@ -206,14 +206,14 @@ const verifyTambolaGameClaim = async (claimType, userId, tambolaGameId, connecti
             const users = await tambolaDao.getUsersForTambolaGame(tambolaGameId);
 
             for (let user of users) {
-                const webSocket = connections.get(user.id?.toString());
+                const webSocket = connections.get(user.userId?.toString());
                 if (webSocket && webSocket.readyState === WebSocket.OPEN) {
                     messageData.message = `${user.name} has successfully claimed${claimType}.`
                     messageData.claimType = claimType;
                     webSocket.send(JSON.stringify(messageData));
                 }
             }
-            await tambolaDao.updateTambolaGameClaims(tambolaGameId, userId);
+            await tambolaDao.updateTambolaGameClaims(tambolaGameId, userId, claimType);
             await tambolaDao.updateTambolaGameStatus(tambolaGameId, 'Complete');
         }
 
