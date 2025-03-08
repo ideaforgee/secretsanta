@@ -86,9 +86,85 @@ const saveUserTicketForTambolaGame = async (ticket, userId, tambolaGameId) => {
   }
 };
 
+const getTambolaGameDetails = async (userId, tambolaGameId) => {
+  const query = `CALL GetTambolaGameDetails(?, ?)`;
+
+  try {
+    const [response] = await db.query(query, [userId, tambolaGameId]);
+    return response;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+const saveUserMarkedNumbers = async (userId, markedNUmbers, tambolaGameId) => {
+  const query = `UPDATE UserTambolaGame SET markedNumbers = ? WHERE userId = AND tambolaGameId = ?`;
+
+  try {
+    await db.query(query, [markedNUmbers, userId, tambolaGameId]);
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+const updateTambolaWithDrawnNumbers = async (tambolaGameId, withDrawnNumbers) => {
+  const query = `UPDATE TambolaGames SET withdrawnNumbers = ? WHERE id = ?`;
+
+  try {
+    await db.query(query, [withDrawnNumbers, tambolaGameId]);
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+const gatUserDataForTambolaGame = async (userId, tambolaGameId) => {
+  const query = `SELECT ticketNumbers, markedNumbers FROM UserTambolaGame WHERE userId = ? AND tambolaGameId = ?`;
+
+  try {
+    const [response] = await db.query(query, [userId, tambolaGameId]);
+    return response;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+const gatTambolaGameData = async (tambolaGameId) => {
+  const query = `SELECT withdrawnNumbers FROM TambolaGames WHERE id = ?`;
+
+  try {
+    const [response] = await db.query(query, [tambolaGameId]);
+    return response;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+const updateTambolaGameClaims = async (tambolaGameId, userId) => {
+  const query =
+    `INSERT INTO TambolaGameClaims (tambolaGameId, ${claimType}, createdAt)
+     VALUES (?, ?, NOW())
+     ON DUPLICATE KEY UPDATE ${claimType} =
+     CASE
+         WHEN ${claimType} IS NULL THEN VALUES(${claimType})
+         ELSE ${claimType}
+     END;`;
+
+  try {
+    await db.query(query, [tambolaGameId, userId]);
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
 module.exports = {
   saveNewTambolaGame,
   joinUserToTambolaGame,
   getUsersForTambolaGame,
-  saveUserTicketForTambolaGame
+  saveUserTicketForTambolaGame,
+  getTambolaGameDetails,
+  updateTambolaWithDrawnNumbers,
+  saveUserMarkedNumbers,
+  gatUserDataForTambolaGame,
+  gatTambolaGameData,
+  updateTambolaGameClaims
 };

@@ -1,6 +1,8 @@
 const WebSocket = require('ws');
 const url = require('url');
 const messageService = require('./MessageService');
+const tambolaService = require('./TambolaService');
+const tambolaDao = require('../dao/TambolaDao');
 const messageDao = require('../dao/messageDao');
 const encryptDecryptService = require('../service/EncryptionAndDecryptionService');
 const connections = new Map();
@@ -60,14 +62,18 @@ const initializeSocketServer = (server) => {
 
 async function handleTambolaWithDrawnNumbers(parsedMessage, userId) {
     console.log(`current number is ${parsedMessage.currentNumber} and till withdrawn numbers are: ${parsedMessage.withDrawnNumbers}`);
+    tambolaService.sendCurrentNumberToAllUser(parsedMessage.tambolaGameId, parsedMessage.currentNumber, connections);
+    tambolaDao.updateTambolaWithDrawnNumbers(parsedMessage.tambolaGameId, parsedMessage.withDrawnNumbers);
 }
 
 async function handleTambolaMarkedNumbers(parsedMessage, userId) {
     console.log(`${userId} marked numbers: ${parsedMessage.markedNumbers}`);
+    await tambolaDao.saveUserMarkedNumbers(userId, parsedMessage.markedNumbers, parsedMessage.tambolaGameId);
 }
 
 async function handleTambolaClaim(parsedMessage, userId) {
     console.log(`${parsedMessage.claimType} claimed by ${userId}`);
+    tambolaService.verifyTambolaGameClaim(parsedMessage.claimType, userId, parsedMessage.tambolaGameId, connections)
 }
 
 async function handleSecretSantaChat(parsedMessage, userId) {

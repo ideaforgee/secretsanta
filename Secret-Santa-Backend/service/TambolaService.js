@@ -5,6 +5,7 @@ const secretSantaService = require('../service/SecretSantaService');
 const commonService = require('../service/CommonService');
 const messages = require('../constant/SecretSantaMessages.js');
 const emailService = require('./EmailService.js');
+const WebSocket = require('ws');
 
 const createNewTambolaGame = async (userId) => {
     try {
@@ -104,8 +105,100 @@ function shuffle(array) {
     return array;
 }
 
+const getTambolaGameDetails = async (userId, tambolaGameId) => {
+    try {
+        const result = await tambolaDao.getTambolaGameDetails(userId, tambolaGameId);
+        return commonService.createResponse(httpResponse.SUCCESS, result);
+    } catch (error) {
+        return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
+    }
+};
+
+const sendCurrentNumberToAllUser = async (tambolaGameId, currentNumber, connections) => {
+    try {
+        const users = await tambolaDao.getUsersForTambolaGame(tambolaGameId);
+
+        for (let user of users) {
+            const webSocket = connections.get(user.id?.toString());
+            if (webSocket && webSocket.readyState === WebSocket.OPEN) {
+                webSocket.send(JSON.stringify(currentNumber));
+            }
+        }
+
+        return commonService.createResponse(httpResponse.SUCCESS, messages.SUCCESSFULLY_STARTED)
+
+    } catch (error) {
+        return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
+    }
+};
+
+const verifyTambolaGameClaim = async (claimType, userId, tambolaGameId, connections) => {
+
+    try {
+        const userData = await tambolaDao.gatUserDataForTambolaGame(userId, tambolaGameId)
+
+        let { ticketNumbers, markedNumbers } = userData[0];
+        ticketNumbers = JSON.parse(ticketNumbers);
+        markedNumbers = JSON.parse(markedNumbers);
+
+        const [gameData] = await tambolaDao.gatTambolaGameData(tambolaGameId);
+
+        const withdrawnNumbers = JSON.parse(gameData[0].withdrawnNumbers);
+
+        const isLineMarked = (line) => line.every(num => num === null || withdrawnNumbers.includes(num));
+
+        let isValidClaim = false;
+
+        switch (claimType) {
+            case 'topLine':
+                isValidClaim = isLineMarked(ticket[0]);
+                break;
+            case 'middleLine':
+                isValidClaim = isLineMarked(ticket[1]);
+                break;
+            case 'bottomLine':
+                isValidClaim = isLineMarked(ticket[2]);
+                break;
+            case 'earlyFive':
+                const markedCount = markedNumbers.filter(num => withdrawnNumbers.includes(num)).length;
+                isValidClaim = markedCount >= 5;
+                break;
+            case 'fullHouse':
+                isValidClaim = ticket.flat().every(num => num === null || withdrawnNumbers.includes(num));
+                break;
+            default:
+                returns;
+        }
+
+
+        if (!isValidClaim) {
+            const webSocket = connections.get(userId?.toString());
+            if (webSocket && webSocket.readyState === WebSocket.OPEN) {
+                webSocket.send(claimType, 'unClaimed');
+            }
+        } else {
+            const users = await tambolaDao.getUsersForTambolaGame(tambolaGameId);
+
+            for (let user of users) {
+                const webSocket = connections.get(user.id?.toString());
+                if (webSocket && webSocket.readyState === WebSocket.OPEN) {
+                    webSocket.send(claimType, 'claimed');
+                }
+            }
+            await tambolaDao.updateTambolaGameClaims(tambolaGameId, userId);
+        }
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
+
 module.exports = {
     createNewTambolaGame,
     joinUserToTambolaGame,
-    generateTicketsForTambolaGame
+    generateTicketsForTambolaGame,
+    getTambolaGameDetails,
+    sendCurrentNumberToAllUser,
+    verifyTambolaGameClaim
 }

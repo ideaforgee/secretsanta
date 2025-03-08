@@ -20,8 +20,15 @@ const generateTicketsForTambolaGame = async (req, res) => {
     return response(res, result.status, message.SUCCESS, result.response);
 };
 
+const getTambolaGameDetails = async (req, res) => {
+    const { userId, tambolaGameId } = req.body;
+    const result = await tambolaService.getTambolaGameDetails(userId, tambolaGameId);
+    return response(res, result.status, message.SUCCESS, result.response);
+};
+
 module.exports = {
     createNewTambolaGame,
     joinUserToTambolaGame,
-    generateTicketsForTambolaGame
+    generateTicketsForTambolaGame,
+    getTambolaGameDetails
 };

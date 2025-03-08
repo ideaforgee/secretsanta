@@ -105,11 +105,6 @@ const Tambola = () => {
         console.log("Clicked on ticket number:", num);
     };
 
-    const handleClaimClick = (claimType) => {
-        // ws.send(JSON.stringify({ type: Constant.NOTIFICATION_TYPE.CLAIM, claimType: claimType }));
-        console.log("Claimed:", claimType);
-    };
-
     const handleStartGameClick = async () => {
       const res = await generateTicketsForTambolaGame(tambolaGameId);
     };
@@ -122,6 +117,11 @@ const Tambola = () => {
       const newNumber = availableNumbers[randomIndex];
       setWithDrawnNumbers([...withDrawnNumbers, newNumber]);
     };
+
+  const handleClaimClick = (claimType) => {
+    ws.send(JSON.stringify({ type: Constant.NOTIFICATION_TYPE.CLAIM, claimType: claimType, markedNumbers: markedNumbers }));
+    console.log("Claimed:", claimType);
+  };
 
   return (
         <div className="tambola-parent-container">
