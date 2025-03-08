@@ -17,7 +17,7 @@ const Tambola = () => {
   const [errorPopUp, setErrorPopUp] = useState({ message: '', show: false });
   const [markedNumbers, setMarkedNumbers] = useState([]);
   const [hostId, setHostId] = useState(0);
-  const [withDrawnNumbers, setWithDrawnNumbers] = useState([]);
+  const [allWithDrawnNumbers, setAllWithDrawnNumbers] = useState([]);
   const [ticketNumbers, setTicketNumbers] = useState(Array(3).fill().map(() => []));
   const [markedClaims, setMarkedClaims] = useState([]);
   const [status, setStatus] = useState('');
@@ -36,7 +36,7 @@ const Tambola = () => {
       setMarkedClaims(tambolaGameDetails.markedClaims);
       setHostId(tambolaGameDetails.hostId);
       setStatus(tambolaGameDetails.status);
-      setWithDrawnNumbers(tambolaGameDetails.withdrawnNumbers);
+      setAllWithDrawnNumbers(tambolaGameDetails.withdrawnNumbers);
       setTicketNumbers(tambolaGameDetails.ticketNumbers);
 
       if (userId) {
@@ -79,7 +79,7 @@ const Tambola = () => {
 
   const handleWebSocketMessage = (messageData) => {
     if (messageData.type === 'claim' && messageData.claimType) {
-      setMarkedClaims([...markedClaims, messageData.claimType]);
+      setMarkedClaims(messageData.markedClaims);
     }
     if (messageData.type === 'claim') {
       setPopupMessage(messageData.message);
@@ -87,8 +87,8 @@ const Tambola = () => {
     }
 
     if (messageData.type === 'withDrawnNumbers') {
-      const allWithDrawnNumbers = [...withDrawnNumbers, Number(messageData.message)];
-      setWithDrawnNumbers(allWithDrawnNumbers);
+      const tambolaGameAllWithDrawnNumbers = [messageData.withDrawnNumbers, Number(messageData.message)];
+      setAllWithDrawnNumbers(tambolaGameAllWithDrawnNumbers[0]);
       setPopupMessage(Number(messageData.message));
       setShowPopup(true);
     }
@@ -106,22 +106,20 @@ const Tambola = () => {
 
   const handleStartGameClick = async () => {
     await generateTicketsForTambolaGame(tambolaGameId);
-    ws.send(JSON.stringify({ type: Constant.NOTIFICATION_TYPE.START_TAMBOLA_GAME }));
+    ws.send(JSON.stringify({ type: Constant.NOTIFICATION_TYPE.START_TAMBOLA_GAME, tambolaGameId: tambolaGameId }));
   };
 
   const handleDrawNumberClick = async () => {
     const allNumbers = Array.from({ length: 90 }, (_, i) => i + 1);
-    const availableNumbers = allNumbers.filter(num => !withDrawnNumbers.includes(num));
+    const availableNumbers = allNumbers.filter(num => !allWithDrawnNumbers.includes(num));
 
     const randomIndex = Math.floor(Math.random() * availableNumbers.length);
     const newNumber = availableNumbers[randomIndex];
-    const allWithDrawnNumbers = [...withDrawnNumbers, newNumber];
-    setWithDrawnNumbers([...withDrawnNumbers, newNumber]);
-    sendWithDrawnNotification(allWithDrawnNumbers, newNumber)
-  };
-
-  const sendWithDrawnNotification = (allWithDrawnNumbers, newNumber) => {
-    ws.send(JSON.stringify({ type: Constant.NOTIFICATION_TYPE.WITH_DRAWN_NUMBERS, withDrawnNumbers: allWithDrawnNumbers, tambolaGameId: tambolaGameId, currentNumber: newNumber }));
+    const tambolaGameAllWithDrawnNumbers = [...allWithDrawnNumbers, newNumber];
+    setAllWithDrawnNumbers(tambolaGameAllWithDrawnNumbers);
+    ws.send(JSON.stringify({ type: Constant.NOTIFICATION_TYPE.WITH_DRAWN_NUMBERS, withDrawnNumbers: tambolaGameAllWithDrawnNumbers, tambolaGameId: tambolaGameId, currentNumber: newNumber }));
+    setPopupMessage(newNumber);
+    setShowPopup(true);
   };
 
   const handleClaimClick = (claimType) => {
@@ -134,9 +132,9 @@ const Tambola = () => {
       <div className="tambola-container">
         <Popup message={popupMessage} visible={showPopup} onClose={() => setShowPopup(false)} />
         {/* Tambola Board */}
-        <TambolaBoard drawnNumbers={withDrawnNumbers} />
+        <TambolaBoard drawnNumbers={allWithDrawnNumbers} />
 
-        {status === TambolaGameStatus.Active && hostId === Number(userId) && (
+        {status === TambolaGameStatus.Active && allWithDrawnNumbers.length <= 90 && hostId === Number(userId) && (
             <button className="start-game-button" onClick={handleDrawNumberClick}>
               Draw Number
             </button>
@@ -155,13 +153,6 @@ const Tambola = () => {
               Start Game
             </button>
           )}
-
-          {/* {status === TambolaGameStatus.Active && hostId === Number(userId) && (
-            <button className="start-game-button" onClick={handleDrawNumberClick}>
-              Draw Number
-            </button>
-          )} */}
-
         </div>
       </div>
     </div>

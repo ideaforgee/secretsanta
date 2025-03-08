@@ -152,7 +152,7 @@ const updateTambolaGameClaims = async (tambolaGameId, userId, claimType) => {
      END;`;
 
   try {
-    await db.query(query, [tambolaGameId, userId]);
+    await db.query(query, [Number(tambolaGameId), Number(userId)]);
   } catch (err) {
     throw new Error(err.message);
   }
@@ -163,6 +163,17 @@ const updateTambolaGameStatus = async (tambolaGameId, status) => {
 
   try {
     await db.query(query, [status, tambolaGameId]);
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+const getAllClaimsForTambolaGame = async (tambolaGameId) => {
+  const query = ` SELECT * FROM TambolaGameClaims WHERE tambolaGameId = ?`;
+
+  try {
+    const [result] = await db.query(query, [tambolaGameId]);
+    return result[0] ?? [];
   } catch (err) {
     throw new Error(err.message);
   }
@@ -179,5 +190,6 @@ module.exports = {
   gatUserDataForTambolaGame,
   gatTambolaGameData,
   updateTambolaGameClaims,
-  updateTambolaGameStatus
+  updateTambolaGameStatus,
+  getAllClaimsForTambolaGame
 };

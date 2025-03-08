@@ -69,7 +69,7 @@ async function handleTambolaStartGame(parsedMessage, userId) {
     const users = await tambolaDao.getUsersForTambolaGame(parsedMessage.tambolaGameId);
 
     for (let user of users) {
-        const webSocket = connections.get(user.id?.toString());
+        const webSocket = connections.get(user.userId?.toString());
         if (webSocket && webSocket.readyState === WebSocket.OPEN) {
             const messageData = {type: parsedMessage.type}
             webSocket.send(JSON.stringify(messageData));
@@ -79,7 +79,7 @@ async function handleTambolaStartGame(parsedMessage, userId) {
 
 async function handleTambolaWithDrawnNumbers(parsedMessage, userId) {
     console.log(`current number is ${parsedMessage.currentNumber} and till withdrawn numbers are: ${parsedMessage.withDrawnNumbers}`);
-    tambolaService.sendCurrentNumberToAllUser(parsedMessage.tambolaGameId, parsedMessage.currentNumber, connections);
+    tambolaService.sendCurrentNumberToAllUser(userId, parsedMessage.tambolaGameId, parsedMessage.currentNumber, parsedMessage.withDrawnNumbers, connections);
     tambolaDao.updateTambolaWithDrawnNumbers(parsedMessage.tambolaGameId, parsedMessage.withDrawnNumbers);
 }
 
@@ -90,7 +90,7 @@ async function handleTambolaMarkedNumbers(parsedMessage, userId) {
 
 async function handleTambolaClaim(parsedMessage, userId) {
     console.log(`${parsedMessage.claimType} claimed by ${userId}`);
-    tambolaService.verifyTambolaGameClaim(parsedMessage.claimType, userId, parsedMessage.tambolaGameId, connections)
+    tambolaService.verifyTambolaGameClaim(parsedMessage.claimType, userId, parsedMessage.tambolaGameId, connections);
 }
 
 async function handleSecretSantaChat(parsedMessage, userId) {

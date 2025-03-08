@@ -107,15 +107,22 @@ function shuffle(array) {
     return array;
 }
 
+const getAllMarkedClaims = (tambolaGameDetails) => {
+    const { topLine, middleLine, bottomLine, earlyFive, fullHouse } = tambolaGameDetails;
+    return Object.entries({ topLine, middleLine, bottomLine, earlyFive, fullHouse })
+    .filter(([_, value]) => value !== null)
+    .map(([key]) =>
+        key.replace(/([A-Z])/g, ' $1')
+            .trim()
+            .replace(/\b\w/g, (char) => char.toUpperCase())
+    );
+};
+
 const getTambolaGameDetails = async (userId, tambolaGameId) => {
     try {
         const result = await tambolaDao.getTambolaGameDetails(userId, tambolaGameId);
 
-        const { topLine, middleLine, bottomLine, earlyFive, fullHouse } = result[0];
-
-        const allMarkedClaims = Object.entries({ topLine, middleLine, bottomLine, earlyFive, fullHouse })
-        .filter(([_, value]) => value !== null)
-        .map(([key]) => key);
+        const allMarkedClaims = getAllMarkedClaims(result[0]);
 
         const response = {
             hostId: result[0]?.hostId,
@@ -132,17 +139,18 @@ const getTambolaGameDetails = async (userId, tambolaGameId) => {
     }
 };
 
-const sendCurrentNumberToAllUser = async (tambolaGameId, currentNumber, connections) => {
+const sendCurrentNumberToAllUser = async (userId, tambolaGameId, currentNumber, withDrawnNumbers, connections) => {
     try {
         const users = await tambolaDao.getUsersForTambolaGame(tambolaGameId);
         const messageData = {
             type: 'withDrawnNumbers',
+            withDrawnNumbers: withDrawnNumbers,
             message: currentNumber
         }
 
         for (let user of users) {
             const webSocket = connections.get(user.userId?.toString());
-            if (webSocket && webSocket.readyState === WebSocket.OPEN) {
+            if (user.userId !== Number(userId) && webSocket && webSocket.readyState === WebSocket.OPEN) {
                 webSocket.send(JSON.stringify(messageData));
             }
         }
@@ -204,17 +212,23 @@ const verifyTambolaGameClaim = async (claimType, userId, tambolaGameId, connecti
             }
         } else {
             const users = await tambolaDao.getUsersForTambolaGame(tambolaGameId);
+            const claims = await tambolaDao.getAllClaimsForTambolaGame(tambolaGameId);
+            const markedClaims = getAllMarkedClaims(claims);
+
+            messageData.markedClaims = [...markedClaims, claimType];
 
             for (let user of users) {
                 const webSocket = connections.get(user.userId?.toString());
                 if (webSocket && webSocket.readyState === WebSocket.OPEN) {
-                    messageData.message = `${user.name} has successfully claimed${claimType}.`
+                    messageData.message = `Someone has successfully claimed${claimType}.`
                     messageData.claimType = claimType;
                     webSocket.send(JSON.stringify(messageData));
                 }
             }
-            await tambolaDao.updateTambolaGameClaims(tambolaGameId, userId, claimType);
-            await tambolaDao.updateTambolaGameStatus(tambolaGameId, 'Complete');
+            await tambolaDao.updateTambolaGameClaims(tambolaGameId, userId, claimType.replaceAll(' ', ''));
+            if (claimType === 'Full House') {
+                await tambolaDao.updateTambolaGameStatus(tambolaGameId, 'Complete');
+            }
         }
 
     } catch (err) {
