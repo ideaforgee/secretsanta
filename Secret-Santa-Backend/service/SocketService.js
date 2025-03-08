@@ -34,6 +34,10 @@ const initializeSocketServer = (server) => {
                     handleSecretSantaChat(parsedMessage, userId);
                 }
 
+                if (parsedMessage.type == 'startTambolaGame') {
+                    handleTambolaStartGame(parsedMessage, userId);
+                }
+
                 if (parsedMessage.type == 'withDrawnNumbers') {
                     handleTambolaWithDrawnNumbers(parsedMessage, userId);
                 }
@@ -59,6 +63,19 @@ const initializeSocketServer = (server) => {
 
     console.log('WebSocket server initialized');
 };
+
+async function handleTambolaWithDrawnNumbers(parsedMessage, userId) {
+    console.log(`${userId} has start tambola game`);
+    const users = await tambolaDao.getUsersForTambolaGame(parsedMessage.tambolaGameId);
+
+    for (let user of users) {
+        const webSocket = connections.get(user.id?.toString());
+        if (webSocket && webSocket.readyState === WebSocket.OPEN) {
+            const messageData = {type: parsedMessage.type}
+            webSocket.send(JSON.stringify(messageData));
+        }
+    }
+}
 
 async function handleTambolaWithDrawnNumbers(parsedMessage, userId) {
     console.log(`current number is ${parsedMessage.currentNumber} and till withdrawn numbers are: ${parsedMessage.withDrawnNumbers}`);

@@ -158,6 +158,16 @@ const updateTambolaGameClaims = async (tambolaGameId, userId) => {
   }
 };
 
+const updateTambolaGameStatus = async (tambolaGameId, status) => {
+  const query = `UPDATE TambolaGames SET status = ? WHERE id = ?`;
+
+  try {
+    await db.query(query, [status, tambolaGameId]);
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
 module.exports = {
   saveNewTambolaGame,
   joinUserToTambolaGame,
@@ -168,5 +178,6 @@ module.exports = {
   saveUserMarkedNumbers,
   gatUserDataForTambolaGame,
   gatTambolaGameData,
-  updateTambolaGameClaims
+  updateTambolaGameClaims,
+  updateTambolaGameStatus
 };

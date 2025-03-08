@@ -8,7 +8,7 @@ const demoTicket = [
 ];
 
 const TambolaTicket = ({ ticketData, markedNumbers, onNumberClick }) => {
-  const isGameNotStarted = ticketData.length === 0;
+  const isGameNotStarted = !ticketData[0]?.length;
 
   return (
     <div className="ticket-container">
@@ -16,9 +16,9 @@ const TambolaTicket = ({ ticketData, markedNumbers, onNumberClick }) => {
         {isGameNotStarted && <div className="ticket-overlay">Game is not started yet</div>}
       <div className={`tambola-ticket ${isGameNotStarted ? "blurred" : ""}`}>
 
-        {(isGameNotStarted ? demoTicket : ticketData).map((row, rowIndex) => (
+        {(isGameNotStarted ? demoTicket : ticketData)?.map((row, rowIndex) => (
           <div key={rowIndex} className="ticket-row">
-            {row.map((num, colIndex) => (
+            {row?.map((num, colIndex) => (
               <div
                 key={colIndex}
                 className={`ticket-cell ${num !== 0 ? "clickable" : "empty"} ${

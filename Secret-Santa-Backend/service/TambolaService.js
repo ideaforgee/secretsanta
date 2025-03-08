@@ -10,12 +10,12 @@ const WebSocket = require('ws');
 const createNewTambolaGame = async (userId) => {
     try {
         const user = await userDao.getUserDetailsById(Number(userId));
-        const gameCode = secretSantaService.generateUniqueGameCode(user.name);
+        const tambolaGameCode = secretSantaService.generateUniqueGameCode(user.name);
 
-        const tambolaGameId = await tambolaDao.saveNewTambolaGame(userId, gameCode);
+        const tambolaGameId = await tambolaDao.saveNewTambolaGame(userId, tambolaGameCode);
         //await emailService.sendCreatedSecretSantaGameEmail(user, gameCode);
 
-        return commonService.createResponse(httpResponse.SUCCESS, tambolaGameId);
+        return commonService.createResponse(httpResponse.SUCCESS, {tambolaGameId, gameCode: tambolaGameCode});
     }
     catch (error) {
         return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
@@ -61,6 +61,8 @@ const generateTicketsForTambolaGame = async (tambolaGameId) => {
             const ticket = generateTambolaTicket();
             await tambolaDao.saveUserTicketForTambolaGame(ticket, user.userId, tambolaGameId);
         }
+
+        await tambolaDao.updateTambolaGameStatus(tambolaGameId, 'Active');
 
         return commonService.createResponse(httpResponse.SUCCESS, messages.SUCCESSFULLY_STARTED)
 
@@ -116,11 +118,11 @@ const getTambolaGameDetails = async (userId, tambolaGameId) => {
         .map(([key]) => key);
 
         const response = {
-            hostId: result[0].hostId,
-            withdrawnNumbers: result[0].withdrawnNumbers,
-            ticketNumbers: result[0].ticketNumbers,
-            markedNumbers: result[0].markedNumbers,
-            status: result[0].status,
+            hostId: result[0]?.hostId,
+            withdrawnNumbers: JSON.parse(result[0]?.withdrawnNumbers) ?? [],
+            ticketNumbers: result[0]?.ticketNumbers ? JSON.parse(result[0].ticketNumbers) : [[], [], []],
+            markedNumbers: JSON.parse(result[0]?.markedNumbers) ?? [],
+            status: result[0]?.status,
             markedClaims: allMarkedClaims
         };
 
@@ -212,6 +214,7 @@ const verifyTambolaGameClaim = async (claimType, userId, tambolaGameId, connecti
                 }
             }
             await tambolaDao.updateTambolaGameClaims(tambolaGameId, userId);
+            await tambolaDao.updateTambolaGameStatus(tambolaGameId, 'Complete');
         }
 
     } catch (err) {

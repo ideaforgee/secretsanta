@@ -4,7 +4,7 @@ import TambolaTicket from "../../components/TambolaTicket/TambolaTicket";
 import TambolaClaims from "../../components/TambolaClaims/TambolaClaims";
 import { generateTicketsForTambolaGame, getTambolaGameDetails } from "../../services/gameService";
 import { connectWebSocket } from '../../websocket';
-import { USER_KEY } from '../../constants/appConstant';
+import { USER_KEY, TAMBOLA_GAME_KEY } from '../../constants/appConstant';
 import * as Constant from '../../constants/secretSantaConstants';
 import "./Tambola.css";
 import { TambolaGameStatus } from "../../constants/TambolaConstants";
@@ -30,12 +30,12 @@ const Tambola = () => {
   useEffect(() => {
     const fetchData = async () => {
       const tambolaGameDetails = await getTambolaGameDetails(userId, tambolaGameId);
-      setMarkedNumbers(tambolaGameDetails.markedNumbers ?? []);
-      setMarkedClaims(tambolaGameDetails.markedClaims ?? []);
+      setMarkedNumbers(tambolaGameDetails.markedNumbers);
+      setMarkedClaims(tambolaGameDetails.markedClaims);
       setHostId(tambolaGameDetails.hostId);
       setStatus(tambolaGameDetails.status);
-      setWithDrawnNumbers(tambolaGameDetails.withdrawnNumbers ?? []);
-      setTicketNumbers(tambolaGameDetails.markedNumbers ?? []);
+      setWithDrawnNumbers(tambolaGameDetails.withdrawnNumbers);
+      setTicketNumbers(tambolaGameDetails.ticketNumbers);
 
       if (userId) {
         initializeWebSocket();
@@ -78,12 +78,16 @@ const Tambola = () => {
   const handleWebSocketMessage = (messageData) => {
     if(messageData.type === 'claim' && messageData.claimType) {
       setMarkedClaims(markedClaims.forEach(claim => claim !== messageData.claimType));
+      // show popup with messageData.message;
     }
     if(messageData.type === 'withDrawnNumbers') {
       const allWithDrawnNumbers = [...withDrawnNumbers, Number(messageData.message)];
       setWithDrawnNumbers(allWithDrawnNumbers);
+      // show popup with messageData.message;
     }
-    // show popup with messageData.message;
+    if(messageData.type === 'startTambolaGame') {
+      window.location.reload();
+    }
   };
 
   const handleTicketNumberClick = (num) => {
@@ -95,6 +99,7 @@ const Tambola = () => {
 
   const handleStartGameClick = async () => {
     await generateTicketsForTambolaGame(tambolaGameId);
+    ws.send(JSON.stringify({ type: Constant.NOTIFICATION_TYPE.START_TAMBOLA_GAME }));
   };
 
   const handleDrawNumberClick = async () => {

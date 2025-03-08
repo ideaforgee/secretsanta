@@ -8,6 +8,7 @@ export const CHAT_BOX_TYPE = {
 
 export const NOTIFICATION_TYPE = {
     MESSAGE: 'message',
+    START_TAMBOLA_GAME: 'startTambolaGame',
     WITH_DRAWN_NUMBERS: 'withDrawnNumbers',
     MARKED_NUMBERS: 'markedNumbers',
     CLAIM: 'claim'
