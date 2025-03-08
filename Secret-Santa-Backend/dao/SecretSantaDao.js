@@ -259,19 +259,6 @@ const getReceiverEmailForGameByUserId = async (userId, gameId) => {
   }
 }
 
-const createGroup = async (name, code, hostId) => {
-  const query = `
-    INSERT INTO groups (name, code, hostId)
-      VALUES (?, ?, ?)
-  `;
-
-  try {
-    await db.query(query, [name, code, hostId]);
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
 module.exports = {
   saveNewSecretSantaGame,
   addNewSecretSantaGame,
@@ -287,6 +274,5 @@ module.exports = {
   validateIfGameExist,
   getGameIdsForEndByScheduler,
   getReceiverEmailForGameByUserId,
-  setGameAsInActive,
-  createGroup
+  setGameAsInActive
 };

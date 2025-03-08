@@ -201,12 +201,6 @@ const validateIfGameExist = async (req, res) => {
   return response(res, result.status, message.SUCCESS, result.response);
 };
 
-const createGroup = async (req, res) => {
-  const { userId, groupName } = req.body;
-  const result = await gameService.createGroup(userId, groupName);
-  return response(res, result.status, message.SUCCESS, result.response);
-};
-
 module.exports = {
   createNewSecretSantaGame,
   startSecretSantaGame,
@@ -215,6 +209,5 @@ module.exports = {
   getGameActiveStatus,
   exitSecretSantaGame,
   endGame,
-  validateIfGameExist,
-  createGroup
+  validateIfGameExist
 };
