@@ -26,5 +26,7 @@ module.exports = {
     VERIFICATION_LINK_SENT: 'Verification link send Successfully',
     RESET_PASSWORD_SUCCESS: 'Password reset Successfully',
     UNABLE_TO_RESET_PASSWORD: 'Unable to reset password',
-    SUCCESSFULLY_COMPLETED: 'Master mind game has successfully completed'
+    SUCCESSFULLY_COMPLETED: 'Master mind game has successfully completed',
+    SUCCESSFULLY_STARTED: 'Tambola game has successfully started',
+    USERS_COUNT_INVALID: 'Users should be greater than 1'
 };

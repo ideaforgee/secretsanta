@@ -263,6 +263,7 @@ const validateIfGameExist = async (gameId) => {
 module.exports = {
   createSecretSantaNewGame,
   startSecretSantaGame,
+  generateUniqueGameCode,
   getSecretSantaGameInfo,
   joinUserToSecretSantaGame,
   getGameActiveStatus,
