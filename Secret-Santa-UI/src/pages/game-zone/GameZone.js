@@ -2,19 +2,30 @@ import React, { useState } from 'react'
 import { Box, Card, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import "./GameZone.css"
-import { MASTER_MIND_GAME_KEY, MASTER_MIND_GAME_SEVERITY_KEY } from '../../constants/appConstant'
-import { createNewMasterMindGame } from '../../services/gameService'
+import { MASTER_MIND_GAME_KEY, MASTER_MIND_GAME_SEVERITY_KEY, TAMBOLA_GAME_KEY, USER_KEY } from '../../constants/appConstant'
+import { createNewMasterMindGame, createNewTambolaGame, joinUserToTambolaGame } from '../../services/gameService'
 import LevelPopUp from '../../components/LevelPopUp/LevelPopUp'
 import * as Constant from '../../constants/secretSantaConstants.js';
 import secretSantaImg from '../../assets/christmasbg.jpg';
 import masterMindImg from '../../assets/MasterMindBg.jpg';
 import tambolaImg from '../../assets/housieBg.jpg';
+import CodeDialog from '../../components/CodeDialog/CodeDialog.js';
+import TambolaDashboardPopup from '../../components/TambolaDashboard/TambolaDashboard.js';
+import { useAlert } from '../../context/AlertContext.js';
+import TambolaTicket from '../../components/TambolaTicket/TambolaTicket.js';
 
 function GameZone() {
 
     const navigate = useNavigate();
-    const userId = localStorage.getItem('userId');
+    const { showAlert } = useAlert();
+    const [resetForm, setResetForm] = useState(false);
+    const [openJoinGame, setOpenJoinGame] = useState(false);
+    const [buttonText, setButtonText] = useState(Constant.EMPTY);
+    const [dialogTitle, setDialogTitle] = useState(Constant.EMPTY);
+    const [onSubmitHandler, setOnSubmitHandler] = useState(() => { });
+    const userId = localStorage.getItem(USER_KEY);
     const [isPopupVisible, setPopupVisible] = useState(false);
+    const [isTambolaDashboardVisible, setIsTambolaDashboardVisible] = useState(false);
 
     const onClickSecretSantaGame = () => {
         navigate(Constant.ROUTE_PATH.DASHBOARD);
@@ -37,11 +48,45 @@ function GameZone() {
     }
 
     const onClickHousieGame = () => {
-        // if (!localStorage.getItem(TAMBOLA_GAME_KEY)) {
-        //     setPopupVisible(true);
-        // } else {
+        if (!localStorage.getItem(TAMBOLA_GAME_KEY)) {
+            setIsTambolaDashboardVisible(true);
+        } else {
             navigate(Constant.ROUTE_PATH.TAMBOLA);
-        // }
+        }
+    }
+
+    const onClickTambolaHostGame = async () => {
+        const response = await createNewTambolaGame(userId);
+        setIsTambolaDashboardVisible(false);
+        showAlert(response.message, Constant.SUCCESS);
+    }
+
+    const onClickTambolaJoinGame = async (tambolaGameCode) => {
+        if (localStorage.getItem(TAMBOLA_GAME_KEY)) {
+            navigate(Constant.ROUTE_PATH.TAMBOLA);
+        } else {
+            setResetForm(true);
+            setOnSubmitHandler(() => handleJoinGameSubmit);
+            setButtonText(Constant.JOIN);
+            setDialogTitle(Constant.JOIN_GAME);
+            setOpenJoinGame(true);
+        }
+    }
+
+    const handleJoinGameSubmit = async (gameCode) => {
+        try {
+          const response = await joinUserToTambolaGame(userId, gameCode);
+          if (response) {
+            return { gameId: response,key: TAMBOLA_GAME_KEY , path: Constant.ROUTE_PATH.TAMBOLA };
+          }
+        } catch (error) {
+          throw error;
+        }
+      };
+
+    const handleCloseJoinGame = async () => {
+        setResetForm(false);
+        setOpenJoinGame(false);
     }
 
     const cards = [
@@ -116,6 +161,23 @@ function GameZone() {
                         onLevelSelect={handleLevelSelect}
                     />
                 )}
+                {isTambolaDashboardVisible && (
+                    <TambolaDashboardPopup
+                        visible={isTambolaDashboardVisible}
+                        onClose={() => setIsTambolaDashboardVisible(false)}
+                        onJoinGame={onClickTambolaJoinGame}
+                        onHostGame={onClickTambolaHostGame}
+                    />
+                )}
+
+                <CodeDialog
+                    open={openJoinGame}
+                    onClose={handleCloseJoinGame}
+                    buttonText={buttonText}
+                    dialogTitle={dialogTitle}
+                    onSubmit={onSubmitHandler}
+                    resetForm={resetForm}
+                ></CodeDialog>
             </Box>
         </div>
     )

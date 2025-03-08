@@ -8,6 +8,7 @@ import { USER_KEY, TAMBOLA_GAME_KEY } from '../../constants/appConstant';
 import * as Constant from '../../constants/secretSantaConstants';
 import "./Tambola.css";
 import { TambolaGameStatus } from "../../constants/TambolaConstants";
+import Popup from "../../components/Popup/Popup";
 
 
 const Tambola = () => {
@@ -20,6 +21,8 @@ const Tambola = () => {
   const [ticketNumbers, setTicketNumbers] = useState(Array(3).fill().map(() => []));
   const [markedClaims, setMarkedClaims] = useState([]);
   const [status, setStatus] = useState('');
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState(null);
 
   const userId = localStorage.getItem(USER_KEY);
   //const tambolaGameId = localStorage.getItem(TAMBOLA_GAME_KEY);
@@ -111,6 +114,8 @@ const Tambola = () => {
     const allWithDrawnNumbers = [...withDrawnNumbers, newNumber];
     setWithDrawnNumbers(allWithDrawnNumbers);
     ws.send(JSON.stringify({ type: Constant.NOTIFICATION_TYPE.WITH_DRAWN_NUMBERS, withDrawnNumbers: withDrawnNumbers, tambolaGameId: tambolaGameId, currentNumber: newNumber }));
+      setPopupMessage(newNumber);
+      setShowPopup(true);
   };
 
   const handleClaimClick = (claimType) => {
@@ -119,26 +124,27 @@ const Tambola = () => {
   };
 
   return (
-    <div className="tambola-parent-container">
-      <div className="tambola-container">
-        {/* Tambola Board */}
-        <TambolaBoard drawnNumbers={withDrawnNumbers} />
+        <div className="tambola-parent-container">
+          <div className="tambola-container">
+              <Popup message={popupMessage} visible={showPopup} onClose={() => setShowPopup(false)} />
+              {/* Tambola Board */}
+              <TambolaBoard drawnNumbers={withDrawnNumbers} />
+      
+              {/* Right Section */}
+              <div className="right-section">
+              {/* Tambola Ticket */}
+              <TambolaTicket ticketData={ticketNumbers} markedNumbers={markedNumbers} onNumberClick={handleTicketNumberClick} />
+      
+              {/* Claim Buttons */}
+              <TambolaClaims onClaimClick={handleClaimClick} isGameStarted= {status === TambolaGameStatus.Active} disabledClaims= {markedClaims}/>
 
-        {/* Right Section */}
-        <div className="right-section">
-          {/* Tambola Ticket */}
-          <TambolaTicket ticketData={ticketNumbers} markedNumbers={markedNumbers} onNumberClick={handleTicketNumberClick} />
-
-          {/* Claim Buttons */}
-          <TambolaClaims onClaimClick={handleClaimClick} isGameStarted={status === TambolaGameStatus.Active} disabledClaims={markedClaims} />
-
-          {status === TambolaGameStatus.InActive && hostId === userId && (
+          {status === TambolaGameStatus.InActive && hostId === Number(userId) && (
             <button className="start-game-button" onClick={handleStartGameClick}>
               Start Game
             </button>
           )}
 
-          {status === TambolaGameStatus.Active && hostId === userId && (
+          {status === TambolaGameStatus.Active && hostId === Number(userId) && (
             <button className="start-game-button" onClick={handleDrawNumberClick}>
               Draw Number
             </button>

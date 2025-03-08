@@ -33,7 +33,7 @@ function CodeDialog({ open, onClose, buttonText, dialogTitle, onSubmit, resetFor
             try {
                 const response = await onSubmit(gameCode);
                 if (response.gameId) {
-                    localStorage.setItem(GAME_ID_KEY, response.gameId);
+                    localStorage.setItem(response.key, response.gameId);
                     showAlert(Constant.ALERT_MESSAGES.SUCCESSFULLY_JOINED, Constant.SUCCESS);
                     navigate(response.path);
                 } else {

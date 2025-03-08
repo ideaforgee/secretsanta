@@ -93,6 +93,22 @@ export const getRealPatternForMasterMindGame = (masterMindGameId) => {
     });
 };
 
+export const createNewTambolaGame  = (userId) => {
+    return handleRequest({
+        method: 'post',
+        url: '/api/game/createNewTambolaGame',
+        data: { userId }
+    });
+};
+
+export const joinUserToTambolaGame  = (userId, gameCode) => {
+    return handleRequest({
+        method: 'post',
+        url: '/api/game/joinUserToTambolaGame',
+        data: { userId, gameCode }
+    });
+};
+
 export const getTambolaGameDetails  = (userId, tambolaGameId) => {
     return handleRequest({
         method: 'post',

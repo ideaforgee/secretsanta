@@ -79,7 +79,7 @@ function Dashboard() {
     try {
       const response = await joinGameHandler(userId, gameCode);
       if (response) {
-        return { gameId: response, path: Constant.ROUTE_PATH.GAME };
+        return { gameId: response,key: GAME_ID_KEY, path: Constant.ROUTE_PATH.GAME };
       }
     } catch (error) {
       throw error;
