@@ -3,18 +3,7 @@ import "../Congrats/CongratulationsPopup.css"
 import { getRealPatternForMasterMindGame } from "../../services/gameService";
 import { MASTER_MIND_GAME_KEY } from '../../constants/appConstant';
 
-const colorMap = {
-  1: "red",
-  2: "green",
-  3: "black",
-  4: "white",
-  5: "blue",
-  6: "yellow",
-  7: "orange",
-  8: "purple",
-};
-
-const QuitPopup = ({ onClose }) => {
+const QuitPopup = ({ onClose, colorMap }) => {
   const [pattern, setPattern] = useState([]);
   const masterMindGameId = localStorage.getItem(MASTER_MIND_GAME_KEY);
 

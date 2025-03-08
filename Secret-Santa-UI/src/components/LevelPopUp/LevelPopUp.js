@@ -7,6 +7,7 @@ function LevelPopUp ({ onClose, onLevelSelect }) {
       <div className="popup-container">
         <h2>Select Difficulty Level</h2>
         <div className="level-options">
+          <button className="level-btn" onClick={() => onLevelSelect('Basic')}>Basic</button>
           <button className="level-btn" onClick={() => onLevelSelect('Easy')}>Easy</button>
           <button className="level-btn" onClick={() => onLevelSelect('Medium')}>Medium</button>
           <button className="level-btn" onClick={() => onLevelSelect('Hard')}>Hard</button>

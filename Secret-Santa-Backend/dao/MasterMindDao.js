@@ -1,25 +1,45 @@
 const db = require("../config/db.js");
 
-const createNewMasterMindGame = async (userId, pattern) => {
+const createNewMasterMindGame = async (userId, pattern, severity) => {
   const query = `
-      INSERT INTO masterMindGames (pattern, hostId, isActive)
-      VALUES (?, ?, ?)
+      INSERT INTO masterMindGames (pattern, hostId, isActive, severity)
+       VALUES (?, ?, ?, ?)
     `;
 
   try {
-    const [result] = await db.query(query, [pattern, userId, 1]);
+    const [result] = await db.query(query, [pattern, userId, 1, severity]);
     return result.insertId;
   } catch (err) {
     throw new Error(err.message);
   }
 };
 
+const getGameConfig = async (severity) => {
+  const query = `SELECT * FROM masterMindConfig WHERE severity = ?`;
+  try {
+    const [result] = await db.query(query, [severity]);
+    return result[0] ?? [];
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+const getMasterMindGameColors = async (colorCount) => {
+  const query = `SELECT * FROM colors LIMIT ?`;
+  try {
+    const [result] = await db.query(query, [colorCount]);
+    return result ?? [];
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 
 const getUserMasterGameInfo = async (userId, masterMindGameId) => {
   try {
     const query = `CALL GetMasterMindGameDetails(?, ?)`;
     const [response] = await db.query(query, [userId, masterMindGameId]);
-    return response[0] ?? [];
+    return response ?? [];
   } catch (error) {
     throw new Error(error.message);
   }
@@ -66,5 +86,7 @@ module.exports = {
   getUserMasterGameInfo,
   getMasterMindGamePatternForUser,
   saveUserMasterMindGameLevel,
-  setIsCompleteTrue
+  setIsCompleteTrue,
+  getGameConfig,
+  getMasterMindGameColors
 };

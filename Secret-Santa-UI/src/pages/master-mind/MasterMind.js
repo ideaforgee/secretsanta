@@ -9,12 +9,14 @@ import ReturnFunZonePopUp from '../../components/ReturnFunZonePopUp/ReturnFunZon
 import Navbar from '../../components/navbar/Navbar';
 import * as Constant from '../../constants/secretSantaConstants';
 import { useAlert } from '../../context/AlertContext.js';
-import { colorsForEasyAndMedium,
+import {
+  colorsForEasyAndMedium,
   colorsMapForEasyAndMedium,
   colorsForHardAndExpert,
   colorsMapForHardAndExpert,
   totalLevelForHardMode,
-  totalLevelForRatherThanHardMode } from '../../constants/masterMindConstant';
+  totalLevelForRatherThanHardMode
+} from '../../constants/masterMindConstant';
 
 
 const MasterMind = () => {
@@ -22,10 +24,9 @@ const MasterMind = () => {
   const userId = localStorage.getItem(USER_KEY);
   const masterMindGameId = localStorage.getItem(MASTER_MIND_GAME_KEY);
   const masterMindGameSeverityLevel = localStorage.getItem(MASTER_MIND_GAME_SEVERITY_KEY);
-  const totalNumberOfLevel = masterMindGameSeverityLevel === "Hard" ? totalLevelForHardMode : totalLevelForRatherThanHardMode;
 
   const [selectedColor, setSelectedColor] = useState(null);
-  const [levels, setLevels] = useState(Array(totalNumberOfLevel).fill().map(() => Array(4).fill(null)));
+  const [levels, setLevels] = useState(Array(8).fill().map(() => Array(4).fill(null)));
   const [hints, setHints] = useState(Array(8).fill().map(() => []));
   const [currentLevel, setCurrentLevel] = useState(0);
   const [verifiedLevels, setVerifiedLevels] = useState([]);
@@ -33,15 +34,12 @@ const MasterMind = () => {
   const [isCongratsPopUpDisplay, setCongratsPopUpDisplay] = useState(false);
   const [isQuitPopUpDisplay, setQuitPopUpDisplay] = useState(false);
   const [isReturnFunZonePopUpDisplay, setReturnFunZonePopUpDisplay] = useState(false);
+  const [totalLevels, setTotalLevels] = useState(0);
+  const [totalGusses, setTotalGusses] = useState(0);
+  const [colors, setAllColors] = useState([]);
+  const [colorMap, setColorMap] = useState({});
   const navigate = useNavigate();
   const { showAlert } = useAlert();
-
-
-  const colors = masterMindGameSeverityLevel === 'Easy' || masterMindGameSeverityLevel === 'Medium'
-    ? colorsForEasyAndMedium : colorsForHardAndExpert;
-
-  const colorMap = masterMindGameSeverityLevel === 'Easy' || masterMindGameSeverityLevel === 'Medium'
-    ? colorsMapForEasyAndMedium : colorsMapForHardAndExpert;
 
   const reverseColorMap = Object.fromEntries(Object.entries(colorMap).map(([num, color]) => [color, Number(num)]));
 
@@ -49,29 +47,40 @@ const MasterMind = () => {
     const fetchData = async () => {
       try {
         const response = await getUserMasterGameInfo(userId, masterMindGameId);
+        setTotalLevels(response.totalLevels);
+        setColorMap(response.allColors);
+        setTotalGusses(response.totalGusses);
+        setCurrentLevel(response.currentLevel ?? 0);
+        setVerifiedLevels(response.verifiedLevels ?? []);
+        setGameComplete(response.gameComplete ?? false);
 
-        if (response.levels.length) {
-          setLevels(response.levels ?? Array(totalNumberOfLevel).fill().map(() => Array(4).fill(null)));
-          setHints(response.hints ?? Array(8).fill().map(() => []));
-          setCurrentLevel(response.currentLevel ?? 0);
-          setVerifiedLevels(response.verifiedLevels ?? []);
-          setGameComplete(response.gameComplete ?? false);
+        setAllColors(response.allColors = Object.values(response.allColors));
 
-          if (response.gameComplete) {
-            const hasFourRedHints = response.hints?.some(hintArray =>
-              hintArray.filter(hint => hint === "red").length === 4
-            );
+        setLevels(
+          response.levels.length
+            ? response.levels
+            : Array(response.totalLevels).fill().map(() => Array(response.totalGusses).fill(null))
+        );
+        setHints(
+          response.hints.length
+            ? response.hints
+            : Array(response.totalLevels).fill().map(() => [])
+        );
 
-            if (hasFourRedHints) {
-              setCongratsPopUpDisplay(true);
-            } else {
-              setQuitPopUpDisplay(true);
-            }
+        if (response.gameComplete) {
+          const hasFourRedHints = response.hints?.some(hintArray =>
+            hintArray.filter(hint => hint === "red").length === response.totalGusses
+          );
+
+          if (hasFourRedHints) {
+            setCongratsPopUpDisplay(true);
+          } else {
+            setQuitPopUpDisplay(true);
           }
+        }
 
-          if (currentLevel === 9) {
-            await setIsCompleteTrue(userId, masterMindGameId);
-          }
+        if (response.currentLevel === response.totalLevels + 1) {
+          await setIsCompleteTrue(userId, masterMindGameId);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -79,6 +88,7 @@ const MasterMind = () => {
     };
     fetchData();
   }, []);
+
 
   const handleQuit = async () => {
     await setIsCompleteTrue(userId, masterMindGameId);
@@ -98,13 +108,13 @@ const MasterMind = () => {
   }
 
   const handleDragStart = (color, levelIndex = null, slotIndex = null) => {
-    if (!gameComplete && !verifiedLevels.includes(levelIndex)) {
+    if (!gameComplete && !verifiedLevels?.includes(levelIndex)) {
       setSelectedColor({ color, levelIndex, slotIndex });
     }
   };
 
   const handleDrop = (levelIndex, slotIndex) => {
-    if (!gameComplete && levelIndex === currentLevel && !verifiedLevels.includes(levelIndex)) {
+    if (!gameComplete && levelIndex === currentLevel && !verifiedLevels?.includes(levelIndex)) {
       const newLevels = [...levels];
       if (selectedColor) {
         if (selectedColor.levelIndex !== null && selectedColor.slotIndex !== null) {
@@ -123,7 +133,7 @@ const MasterMind = () => {
       selectedColor &&
       selectedColor.levelIndex !== null &&
       selectedColor.slotIndex !== null &&
-      !verifiedLevels.includes(selectedColor.levelIndex)
+      !verifiedLevels?.includes(selectedColor.levelIndex)
     ) {
       const newLevels = [...levels];
       newLevels[selectedColor.levelIndex][selectedColor.slotIndex] = null;
@@ -135,11 +145,13 @@ const MasterMind = () => {
   const handleVerify = async () => {
     if (!gameComplete && levels[currentLevel].every((slot) => slot !== null)) {
       const result = await validateUserMasterMindLevel(userId, masterMindGameId, currentLevel, levels[currentLevel]);
-      if (result === 'red,red,red,red') {
+      const resutlArray = result.split(",").map(String);
+      const isAllRed = resutlArray?.every(code => code === 'red') && resutlArray?.length === totalGusses;
+      if (isAllRed) {
         setCongratsPopUpDisplay(true);
         setGameComplete(true);
       }
-      if (currentLevel === 7 && result !== 'red,red,red,red') {
+      if (currentLevel === totalLevels - 1 && !isAllRed) {
         setQuitPopUpDisplay(true);
         setGameComplete(true);
       }
@@ -149,7 +161,7 @@ const MasterMind = () => {
         return newHints;
       });
       setVerifiedLevels([...verifiedLevels, currentLevel]);
-      setCurrentLevel((prev) => Math.min(prev + 1, 7));
+      setCurrentLevel((prev) => Math.min(prev + 1, totalLevels - 1));
     }
   };
 
@@ -171,7 +183,7 @@ const MasterMind = () => {
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={() => handleDrop(levelIndex, slotIndex)}
                 onDragStart={() => handleDragStart(colorCode, levelIndex, slotIndex)}
-                draggable={!gameComplete && colorCode !== null && !verifiedLevels.includes(levelIndex)}
+                draggable={!gameComplete && colorCode !== null && !verifiedLevels?.includes(levelIndex)}
               ></div>
             ))}
             <div className="hint-box">
@@ -198,6 +210,7 @@ const MasterMind = () => {
       <div>
         {isCongratsPopUpDisplay && (
           <CongratsPopup
+            colorMap={colorMap}
             onClose={() => {
               setCongratsPopUpDisplay(false);
             }}
@@ -206,6 +219,7 @@ const MasterMind = () => {
 
         {isQuitPopUpDisplay && (
           <QuitPopup
+            colorMap={colorMap}
             onClose={() => {
               setQuitPopUpDisplay(false);
             }}
@@ -215,7 +229,7 @@ const MasterMind = () => {
       </div>
       <div class="buttons">
         <button className={`quit-btn ${(gameComplete || currentLevel === 0) ? "disabled" : ""}`} onClick={handleQuit} disabled={gameComplete || currentLevel === 0}>🚪 Quit</button>
-        <button className={`verify-btn ${levels[currentLevel].includes(null) ? "disabled" : ""}`} onClick={handleVerify} disabled={gameComplete || levels[currentLevel].includes(null)}>✅ Verify</button>
+        <button className={`verify-btn ${levels[currentLevel]?.includes(null) ? "disabled" : ""}`} onClick={handleVerify} disabled={gameComplete || levels[currentLevel]?.includes(null)}>✅ Verify</button>
         <button className="home-btn" onClick={handleHomeButton}>🏠 Return to FunZone</button>
       </div>
 

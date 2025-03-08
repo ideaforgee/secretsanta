@@ -1,13 +1,12 @@
 const httpResponse = require('../HttpResponse.js');
 const masterMindDao = require('../dao/MasterMindDao.js');
 const commonService = require('../service/CommonService');
-const EasyOrMediumColorMap = require('../constant/MasterMindConstants.js')
-const HardOrExpertColorMap = require('../constant/MasterMindConstants.js')
+const messages = require('../constant/SecretSantaMessages.js');
 
 const createNewMasterMindGame = async (userId, severity) => {
   try {
-    const masterMindGamePattern = generateMasterMindGamePattern(severity);
-    const masterMindGameId = await masterMindDao.createNewMasterMindGame(userId, masterMindGamePattern);
+    const masterMindGamePattern = await generateMasterMindGamePattern(severity);
+    const masterMindGameId = await masterMindDao.createNewMasterMindGame(userId, masterMindGamePattern, severity);
     return commonService.createResponse(httpResponse.SUCCESS, masterMindGameId);
   }
   catch (error) {
@@ -15,23 +14,29 @@ const createNewMasterMindGame = async (userId, severity) => {
   }
 };
 
-const generateMasterMindGamePattern = (severity) => {
-  const allColors = severity === 'Easy' || severity === 'Medium' ? EasyOrMediumColorMap : HardOrExpertColorMap;
+const generateMasterMindGamePattern = async (severity) => {
+  const gameConfig = await masterMindDao.getGameConfig(severity);
+  const colorArray = await masterMindDao.getMasterMindGameColors(gameConfig.totalColors);
+  const allColors = Object.fromEntries(
+    colorArray.map(({ id, name }) => [id, name])
+);
   const shuffledKeys = Object.keys(allColors).sort(() => Math.random() - 0.5);
   let numbers;
-  if (severity === 'Easy') {
-    numbers = shuffledKeys.slice(0, 4).map(Number);
+  if (severity === 'Basic') {
+    numbers = shuffledKeys.slice(0, gameConfig.totalGusses).map(Number);
   } else {
-    numbers = Array.from({ length: 4 }, () => Number(shuffledKeys[Math.floor(Math.random() * shuffledKeys.length)]));
+    numbers = Array.from({ length: gameConfig.totalGusses }, () => Number(shuffledKeys[Math.floor(Math.random() * shuffledKeys.length)]));
   }
-  return numbers?.join(',');
+  return numbers?.join(',') ;
 }
 
 
 const getUserMasterGameInfo = async (userId, masterMindGameId) => {
   try {
     const response = await masterMindDao.getUserMasterGameInfo(userId, masterMindGameId);
-    const userMasterGameInfo = processMasterMindData(response);
+    const gameInfo = response[0];
+    const gameConfig = response[1];
+    const userMasterGameInfo = await processMasterMindData(gameInfo, gameConfig);
     return commonService.createResponse(httpResponse.SUCCESS, userMasterGameInfo);
   }
   catch (error) {
@@ -39,28 +44,34 @@ const getUserMasterGameInfo = async (userId, masterMindGameId) => {
   }
 };
 
-const processMasterMindData = (rows) => {
-  const levels = Array(8).fill().map(() => Array(4).fill(null));
-  const hints = Array(8).fill().map(() => []);
+const processMasterMindData = async (gameInfo, gameConfig) => {
+  const totalLevels = gameConfig[0]?.totalLevels;
+  const totalGusses = gameConfig[0]?.totalGusses;
+  const colorArray = await masterMindDao.getMasterMindGameColors(gameConfig[0]?.totalColors);
+  const allColors = Object.fromEntries(
+    colorArray.map(({ id, name }) => [id, name])
+);
+  const levels = Array(totalLevels).fill().map(() => Array(totalGusses).fill(null));
+  const hints = Array(totalLevels).fill().map(() => []);
   let maxLevel = -1;
   let gameComplete = false;
 
-  rows.forEach(({ level, guess, hint, isComplete }) => {
-    if (level >= 0 && level < 10) {
-      levels[level] = guess ? guess.split(",").map(Number) : Array(4).fill(null);
-      hints[level] = hint ? hint.split(",") : [];
+  gameInfo.forEach(({ level, guess, hint, isComplete }) => {
 
-      maxLevel = Math.max(maxLevel, level);
-      if (isComplete === 1) {
-        gameComplete = true;
-      }
+    levels[level] = guess ? guess.split(",").map(Number) : Array(totalGusses).fill(null);
+    hints[level] = hint ? hint.split(",") : [];
+
+    maxLevel = Math.max(maxLevel, level);
+    if (isComplete === 1) {
+      gameComplete = true;
     }
+
   });
 
-  const currentLevel = maxLevel + 1 < 8 ? maxLevel + 1 : 7;
+  const currentLevel = maxLevel + 1 < totalLevels + 1 ? maxLevel + 1 : totalLevels;
   const verifiedLevels = Array.from({ length: currentLevel }, (_, i) => i);
 
-  return { levels, hints, currentLevel, verifiedLevels, gameComplete };
+  return { levels, hints, currentLevel, verifiedLevels, gameComplete, totalLevels, totalGusses, allColors };
 };
 
 const getRealPatternForMasterMindGame = async (masterMindGameId) => {
@@ -77,12 +88,13 @@ const getRealPatternForMasterMindGame = async (masterMindGameId) => {
 const validateUserMasterMindLevel = async (userId, masterMindGameId, level, guess) => {
   try {
     const response = await masterMindDao.getMasterMindGamePatternForUser(masterMindGameId);
-    const hint = getHintForUserMasterMindGameGuess(guess, response.pattern);
-    const userGuess = guess?.join(',');
+    const hints = getHintForUserMasterMindGameGuess(guess, response.pattern);
     let isComplete = 0;
-    if (hint === 'red,red,red,red') {
+    if (hints.length === guess.length && hints.every(h=> 'red')) {
       isComplete = 1;
     }
+    const hint = hints?.join(',');
+    const userGuess = guess?.join(',');
     await masterMindDao.saveUserMasterMindGameLevel(Number(userId), Number(masterMindGameId), level, userGuess, hint, isComplete);
     return commonService.createResponse(httpResponse.SUCCESS, hint);
   }
@@ -93,7 +105,7 @@ const validateUserMasterMindLevel = async (userId, masterMindGameId, level, gues
 
 function getRedHintCount(guess, actualPattern) {
   let redCount = 0;
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < guess.length; i++) {
     if (guess[i] === actualPattern[i]) {
       redCount++;
     }
@@ -105,13 +117,13 @@ function getWhiteHintCount(guess, actualPattern) {
   let whiteCount = 0;
   const remainingColors = {};
 
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < guess.length; i++) {
     if (guess[i] !== actualPattern[i]) {
       remainingColors[actualPattern[i]] = (remainingColors[actualPattern[i]] || 0) + 1;
     }
   }
 
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < guess.length; i++) {
     if (guess[i] !== actualPattern[i] && remainingColors[guess[i]] > 0) {
       whiteCount++;
       remainingColors[guess[i]]--;
@@ -128,8 +140,7 @@ function getHintForUserMasterMindGameGuess(guess, actualPattern) {
   const redCount = getRedHintCount(guessArray, patternArray);
   const whiteCount = getWhiteHintCount(guessArray, patternArray);
 
-  const hints = Array(redCount).fill("red").concat(Array(whiteCount).fill("white"));
-  return hints?.join(',');
+  return Array(redCount).fill("red").concat(Array(whiteCount).fill("white"));
 }
 
 
