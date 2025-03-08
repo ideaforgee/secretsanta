@@ -7,7 +7,10 @@ export const CHAT_BOX_TYPE = {
   };
 
 export const NOTIFICATION_TYPE = {
-    MESSAGE: 'message'
+    MESSAGE: 'message',
+    WITH_DRAWN_NUMBERS: 'withDrawnNumbers',
+    MARKED_NUMBERS: 'markedNumbers',
+    CLAIM: 'claim'
 };
 
 export const BACKGROUND_STYLE = {

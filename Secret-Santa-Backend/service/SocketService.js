@@ -29,12 +29,19 @@ const initializeSocketServer = (server) => {
                 console.log(`Message received from ${userId}:`, message);
                 const parsedMessage = JSON.parse(message);
                 if (parsedMessage.type == 'message') {
-                    const encryptedReceiverId = await messageDao.getReceiverIdForSenderAndGame(
-                        parsedMessage.userId, parsedMessage.gameId, parsedMessage.chatBoxType
-                    );
-                    const receiverId = encryptDecryptService.decrypt(encryptedReceiverId);
-                    messageService.dispatchMessageToUser(receiverId, parsedMessage, connections);
-                    await messageService.processIncomingMessage(userId, parsedMessage);
+                    handleSecretSantaChat(parsedMessage, userId);
+                }
+
+                if (parsedMessage.type == 'withDrawnNumbers') {
+                    handleTambolaWithDrawnNumbers(parsedMessage, userId);
+                }
+
+                if (parsedMessage.type == 'markedNumbers') {
+                    handleTambolaMarkedNumbers(parsedMessage, userId);
+                }
+
+                if (parsedMessage.type == 'claim') {
+                    handleTambolaClaim(parsedMessage, userId);
                 }
             });
 
@@ -50,6 +57,27 @@ const initializeSocketServer = (server) => {
 
     console.log('WebSocket server initialized');
 };
+
+async function handleTambolaWithDrawnNumbers(parsedMessage, userId) {
+    console.log(`current number is ${parsedMessage.currentNumber} and till withdrawn numbers are: ${parsedMessage.withDrawnNumbers}`);
+}
+
+async function handleTambolaMarkedNumbers(parsedMessage, userId) {
+    console.log(`${userId} marked numbers: ${parsedMessage.markedNumbers}`);
+}
+
+async function handleTambolaClaim(parsedMessage, userId) {
+    console.log(`${parsedMessage.claimType} claimed by ${userId}`);
+}
+
+async function handleSecretSantaChat(parsedMessage, userId) {
+    const encryptedReceiverId = await messageDao.getReceiverIdForSenderAndGame(
+        parsedMessage.userId, parsedMessage.gameId, parsedMessage.chatBoxType
+    );
+    const receiverId = encryptDecryptService.decrypt(encryptedReceiverId);
+    messageService.dispatchMessageToUser(receiverId, parsedMessage, connections);
+    await messageService.processIncomingMessage(userId, parsedMessage);
+}
 
 module.exports = {
     initializeSocketServer,
