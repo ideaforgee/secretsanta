@@ -173,13 +173,13 @@ const verifyTambolaGameClaim = async (claimType, userId, tambolaGameId, connecti
 
         switch (claimType) {
             case 'Top Line':
-                isValidClaim = isLineMarked(ticket[0]);
+                isValidClaim = isLineMarked(ticketNumbers[0]);
                 break;
             case 'Middle Line':
-                isValidClaim = isLineMarked(ticket[1]);
+                isValidClaim = isLineMarked(ticketNumbers[1]);
                 break;
             case 'Bottom Line':
-                isValidClaim = isLineMarked(ticket[2]);
+                isValidClaim = isLineMarked(ticketNumbers[2]);
                 break;
             case 'Early Five':
                 const markedCount = markedNumbers?.filter(num => withdrawnNumbers.includes(num)).length;

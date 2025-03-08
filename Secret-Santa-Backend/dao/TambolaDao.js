@@ -79,7 +79,7 @@ const getUsersForTambolaGame = async (tambolaGameId) => {
 };
 
 const saveUserTicketForTambolaGame = async (ticket, userId, tambolaGameId) => {
-  const query = `UPDATE UserTambolaGame SET ticketNumber = ? WHERE userId = ? AND tambolaGameId = ?`;
+  const query = `UPDATE UserTambolaGame SET ticketNumbers = ? WHERE userId = ? AND tambolaGameId = ?`;
 
   try {
     await db.query(query, [JSON.stringify(ticket), userId, tambolaGameId]);

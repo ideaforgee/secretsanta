@@ -64,7 +64,7 @@ const initializeSocketServer = (server) => {
     console.log('WebSocket server initialized');
 };
 
-async function handleTambolaWithDrawnNumbers(parsedMessage, userId) {
+async function handleTambolaStartGame(parsedMessage, userId) {
     console.log(`${userId} has start tambola game`);
     const users = await tambolaDao.getUsersForTambolaGame(parsedMessage.tambolaGameId);
 
