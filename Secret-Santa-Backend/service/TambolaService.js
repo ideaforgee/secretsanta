@@ -12,10 +12,10 @@ const createNewTambolaGame = async (userId) => {
         const user = await userDao.getUserDetailsById(Number(userId));
         const gameCode = secretSantaService.generateUniqueGameCode(user.name);
 
-        await tambolaDao.saveNewTambolaGame(userId, gameCode);
+        const tambolaGameId = await tambolaDao.saveNewTambolaGame(userId, gameCode);
         //await emailService.sendCreatedSecretSantaGameEmail(user, gameCode);
 
-        return commonService.createResponse(httpResponse.SUCCESS, gameCode);
+        return commonService.createResponse(httpResponse.SUCCESS, tambolaGameId);
     }
     catch (error) {
         return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
@@ -108,7 +108,23 @@ function shuffle(array) {
 const getTambolaGameDetails = async (userId, tambolaGameId) => {
     try {
         const result = await tambolaDao.getTambolaGameDetails(userId, tambolaGameId);
-        return commonService.createResponse(httpResponse.SUCCESS, result);
+
+        const { topLine, middleLine, bottomLine, earlyFive, fullHouse } = result[0];
+
+        const allMarkedClaims = Object.entries({ topLine, middleLine, bottomLine, earlyFive, fullHouse })
+        .filter(([_, value]) => value !== null)
+        .map(([key]) => key);
+
+        const response = {
+            hostId: result[0].hostId,
+            withdrawnNumbers: result[0].withdrawnNumbers,
+            ticketNumbers: result[0].ticketNumbers,
+            markedNumbers: result[0].markedNumbers,
+            status: result[0].status,
+            markedClaims: allMarkedClaims
+        };
+
+        return commonService.createResponse(httpResponse.SUCCESS, response);
     } catch (error) {
         return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
     }

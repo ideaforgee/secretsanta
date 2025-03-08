@@ -12,15 +12,17 @@ const db = require("../config/db.js");
 const saveNewTambolaGame = async (userId, code) => {
   const query = `
       INSERT INTO TambolaGames (hostId, code, status)
-        VALUES (?, ?, ?)
-    `;
+      VALUES (?, ?, ?);
+  `;
 
   try {
-    await db.query(query, [userId, code, 'InActive']);
+    const [result] = await db.query(query, [userId, code, 'InActive']);
+    return result.insertId;
   } catch (err) {
     throw new Error(err.message);
   }
 };
+
 
 /**
  * Adds a user to a Tambola game based on the game code.
@@ -91,7 +93,7 @@ const getTambolaGameDetails = async (userId, tambolaGameId) => {
 
   try {
     const [response] = await db.query(query, [userId, tambolaGameId]);
-    return response;
+    return response[0] ?? [];
   } catch (err) {
     throw new Error(err.message);
   }
