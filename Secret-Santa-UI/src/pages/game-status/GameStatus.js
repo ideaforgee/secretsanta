@@ -169,7 +169,7 @@ function GameStatus() {
   return (
     <div style={Constant.BACKGROUND_STYLE} >
       <div>
-        <Navbar />
+        <Navbar title={'SECRET SANTA'} />
         <PlayerList players={rows} />
         <button className='exit-game-button' style={{ filter: isGameActive ? 'blur(2px)' : 'none' }} onClick={onClickExitGame} disabled={isGameActive}>
         {!isGameActive ? <ImExit /> : <LockIcon />}

@@ -5,11 +5,11 @@ import { ROUTE_PATH } from '../../constants/secretSantaConstants';
 import LogoutButton from '../LogoutButton/LogoutButton';
 import './Navbar.css';
 
-function Navbar() {
+function Navbar({ title }) {
     const navigate = useNavigate();
 
     const handleHomeClick = () => {
-        navigate(ROUTE_PATH.GAME_ZONE);
+        navigate(ROUTE_PATH.FUN_ZONE);
     };
 
     return (
@@ -22,7 +22,7 @@ function Navbar() {
                 />
             </div>
             <div className='navbar-center'>
-                <h1 className='navbar-heading'>Fun Zone</h1>
+                <h1 className='navbar-heading'>{title}</h1>
             </div>
             <div className='navbar-right'>
                 <LogoutButton />

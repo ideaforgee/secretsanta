@@ -5,6 +5,7 @@ import * as Constant from '../../constants/secretSantaConstants.js';
 import ErrorComponent from '../../components/Error/ErrorComponent.js';
 import { useNavigate } from 'react-router-dom';
 import { Box, Card, Typography } from '@mui/material';
+import Navbar from "../../components/navbar/Navbar";
 import CodeDialog from '../../components/CodeDialog/CodeDialog';
 
 const BasePage = () => {
@@ -65,7 +66,8 @@ const BasePage = () => {
     ];
 
     return (
-        <div className='base-page-container'>
+        <div style={Constant.FUN_ZONE_STYLE} className='base-page-container'>
+            <div><Navbar title={'FUN ZONE'}/></div>
             <Box
                 sx={{
                     display: 'flex',

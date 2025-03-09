@@ -97,10 +97,15 @@ const Tambola = () => {
     if (messageData.type === 'claim' && messageData.claimType) {
       setMarkedClaims(messageData.markedClaims);
       if (messageData.isComplete) {
+        
         setIsCompletePopup(true);
       }
     }
     if (messageData.type === 'claim') {
+      if ("speechSynthesis" in window) {
+        const msg = new SpeechSynthesisUtterance(messageData.message?.toString());
+        window.speechSynthesis.speak(msg);
+      }
       setPopupMessage(messageData.message);
       setShowPopup(true);
     }
@@ -163,13 +168,13 @@ const Tambola = () => {
 
   return (
     <div className="tambola-parent-container">
-      <div><Navbar /></div>
       <div className="tambola-container">
+      <div><Navbar title={'TAMBOLA'}/></div>
         <Popup message={popupMessage} visible={showPopup} onClose={() => setShowPopup(false)} />
         {/* Tambola Board */}
         <TambolaBoard drawnNumbers={allWithDrawnNumbers} />
 
-        {status === TambolaGameStatus.Active && allWithDrawnNumbers.length <= 90 && hostId === Number(userId) && (
+        {status === TambolaGameStatus.Active && allWithDrawnNumbers.length < 90 && hostId === Number(userId) && (
           <button className="withDrawn-button " onClick={handleDrawNumberClick}>
             <BsCapslockFill />
             With Draw
