@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import TambolaBoard from "../../components/TambolaBoard/TambolaBoard";
 import TambolaTicket from "../../components/TambolaTicket/TambolaTicket";
 import TambolaClaims from "../../components/TambolaClaims/TambolaClaims";
+import Navbar from "../../components/navbar/Navbar";
 import { generateTicketsForTambolaGame, getTambolaGameDetails } from "../../services/gameService";
 import { connectWebSocket } from '../../websocket';
 import { useNavigate } from 'react-router-dom';
@@ -162,6 +163,7 @@ const Tambola = () => {
 
   return (
     <div className="tambola-parent-container">
+      <div><Navbar /></div>
       <div className="tambola-container">
         <Popup message={popupMessage} visible={showPopup} onClose={() => setShowPopup(false)} />
         {/* Tambola Board */}
