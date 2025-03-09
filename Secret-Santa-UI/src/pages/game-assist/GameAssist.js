@@ -1,9 +1,23 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Box, Card, Typography } from '@mui/material';
+import GameAnnouncement from '../game-announcement/GameAnnouncement.js';
 
 function GameAssist() {
+    const [resetPrompt, setResetPrompt] = useState(false);
+    const [openAnnouncementPrompt, setOpenAnnouncementPrompt] = useState(false);
+
+    const onGameAnnouncementClick = () => {
+        setResetPrompt(true);
+        setOpenAnnouncementPrompt(true);
+    };
+
+    const handleCloseGameAnnouncementPrompt = () => {
+        setResetPrompt(false);
+        setOpenAnnouncementPrompt(false);
+    };
+
     const cards = [
-        { text: 'Game Announcement', onClick: () => {} },
+        { text: 'Game Announcement', onClick: onGameAnnouncementClick },
         { text: 'Team Splitter', onClick: () => {} },
         { text: 'Buzzer Timer', onClick: () => {} },
         { text: 'Team Discussion', onClick: () => {} },
@@ -52,6 +66,7 @@ function GameAssist() {
                     </Card>
                 ))}
             </Box>
+          {openAnnouncementPrompt && <GameAnnouncement open={openAnnouncementPrompt} onClose={handleCloseGameAnnouncementPrompt} resetPrompt={resetPrompt} />}
         </div>
   )
 }

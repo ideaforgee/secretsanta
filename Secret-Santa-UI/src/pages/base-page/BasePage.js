@@ -6,6 +6,8 @@ import ErrorComponent from '../../components/Error/ErrorComponent.js';
 import { useNavigate } from 'react-router-dom';
 import { Box, Card, Typography } from '@mui/material';
 import CodeDialog from '../../components/CodeDialog/CodeDialog';
+import { GROUP_ID_KEY, USER_KEY } from '../../constants/appConstant.js';
+import { gameAssistHandler } from '../../services/groupService.js';
 
 const BasePage = () => {
     const [openCreateGroup, setOpenCreateGroup] = useState(false);
@@ -17,6 +19,7 @@ const BasePage = () => {
     const [placeholderText, setPlaceholderText] = useState(Constant.EMPTY);
     const [openGroupCode, setOpenGroupCode] = useState(false);
     const navigate = useNavigate();
+    const userId = localStorage.getItem(USER_KEY);
 
     const onClickCreateGroup = () => {
         setResetForm(true);
@@ -31,19 +34,32 @@ const BasePage = () => {
 
     const onClickGameAssist = () => {
         setResetForm(true);
-        setOnSubmitHandler(() => handleGroupCodeSubmit);
-        setPlaceholderText(Constant.GAME_ASSIST_PLACEHOLDER_TEXT);
-        setButtonText(Constant.GAME_ASSIST);
-        setDialogTitle(Constant.GAME_ASSIST_TITLE);
-        setOpenGroupCode(true);
+        if(localStorage.getItem(GROUP_ID_KEY)){
+            navigate(Constant.ROUTE_PATH.GAME_ASSIST);
+            return;
+        } else {
+            setOnSubmitHandler(() => handleGroupCodeSubmit);
+            setPlaceholderText(Constant.GAME_ASSIST_PLACEHOLDER_TEXT);
+            setButtonText(Constant.GAME_ASSIST);
+            setDialogTitle(Constant.GAME_ASSIST_TITLE);
+            setOpenGroupCode(true);
+        }
+        
 
     };
 
-    const handleGroupCodeSubmit = () => {
-        navigate(Constant.ROUTE_PATH.GAME_ASSIST);
+    const handleGroupCodeSubmit = async (groupCode) => {
+        try {
+            const response = await gameAssistHandler({userId, groupCode});
+            if(response) {
+                return { groupId: response, path: Constant.ROUTE_PATH.GAME_ASSIST };
+            }
+        } catch (error) {
+            throw error;
+        }
     };
 
-    const handleCloseJoinGame = () => {
+    const handleCloseGroupAssist = () => {
         setResetForm(false);
         setOpenGroupCode(false);
         navigate(Constant.ROUTE_PATH.HOME);
@@ -118,7 +134,7 @@ const BasePage = () => {
 
             <CodeDialog
                 open={openGroupCode}
-                onClose={handleCloseJoinGame}
+                onClose={handleCloseGroupAssist}
                 buttonText={buttonText}
                 dialogTitle={dialogTitle}
                 onSubmit={onSubmitHandler}

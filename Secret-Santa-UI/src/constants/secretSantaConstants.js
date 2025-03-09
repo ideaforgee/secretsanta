@@ -83,7 +83,9 @@ export const ALERT_MESSAGES = {
   INVALID_CODE: 'Enter a valid Game Code',
   GAME_NOT_CREATED: 'Game is not created.',
   SUCCESSFULLY_ADDED: 'Wish added to wishlist!',
-  RETURNED_TO_FUN_ZONE: 'Returned to fun zone'
+  RETURNED_TO_FUN_ZONE: 'Returned to fun zone',
+  GROUP_CREATED: 'Group Created Successfully!',
+  NO_RECIPIENTS_SELECTED: 'No recipients selected'
 };
 
 export const DIALOG_REASONS = {

@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import './CodeDialog.css';
 import * as Constant from '../../constants/secretSantaConstants';
-import { GAME_ID_KEY } from '../../constants/appConstant';
+import { GAME_ID_KEY, GROUP_ID_KEY } from '../../constants/appConstant';
 import { useAlert } from '../../context/AlertContext.js';
 import { useNavigate } from 'react-router-dom';
 import ErrorComponent from '../Error/ErrorComponent.js';
@@ -34,6 +34,10 @@ function CodeDialog({ open, onClose, buttonText, dialogTitle, onSubmit, resetFor
                 const response = await onSubmit(gameCode);
                 if (response.gameId) {
                     localStorage.setItem(response.key, response.gameId);
+                    showAlert(Constant.ALERT_MESSAGES.SUCCESSFULLY_JOINED, Constant.SUCCESS);
+                    navigate(response.path);
+                } else if (response.groupId) {
+                    localStorage.setItem(GROUP_ID_KEY, response.groupId);
                     showAlert(Constant.ALERT_MESSAGES.SUCCESSFULLY_JOINED, Constant.SUCCESS);
                     navigate(response.path);
                 } else {

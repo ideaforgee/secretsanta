@@ -13,7 +13,8 @@ import ErrorComponent from '../../components/Error/ErrorComponent.js';
 import { useAlert } from './../../context/AlertContext.js';
 import Group from '../../models/Group.js';
 import { USER_KEY } from '../../constants/appConstant';
-import "./CreateGroup.css"
+import "./CreateGroup.css";
+import { createGroupHandler } from '../../services/groupService.js';
 
 function CreateGroup({ open, onClose, resetForm }) {
     const [groupData, setGroupData] = useState(new Group());
@@ -49,14 +50,25 @@ function CreateGroup({ open, onClose, resetForm }) {
         }
 
         if (groupData.groupName && groupData.groupName !== '') {
-            // const payload = {
-            //     userId,
-            //     groupData
-            // };
+            const payload = {
+                userId,
+                groupData
+            };
             
+            await createGroup(payload);
             onClose();
         } else {
             showAlert(Constant.ALERT_MESSAGES.REQUIRED_FIELDS, Constant.ERROR);
+        }
+    };
+
+    const createGroup = async (payload) => {
+        try {
+            const response = await createGroupHandler(payload);
+            showAlert(Constant.ALERT_MESSAGES.GROUP_CREATED, Constant.SUCCESS);
+            return response;
+        } catch (error) {
+            setErrorPopUp({ message: error || Constant.POPUP_ERROR_MESSAGE, show: true });
         }
     };
 

@@ -29,6 +29,63 @@ const createGroup = async (userId, groupName) => {
   }
 };
 
+const joinGroup = async (userId, groupCode) => {
+  if(!userId || !groupCode) {
+    return commonService.createResponse(httpResponse.BAD_REQUEST, messages.INVALID_CREDENTIALS);
+  }
+
+  try {
+    const result = await groupDao.joinGroup(userId, groupCode);
+    return result
+          ? commonService.createResponse(httpResponse.SUCCESS, result)
+          : commonService.createResponse(httpResponse.BAD_REQUEST, messages.INVALID_GROUP_CODE);
+  } catch (error) {
+    return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, messages.INVALID_GROUP_CODE);
+  }
+};
+
+const getGroupMembersInfo = async (groupId) => {
+  try {
+    const [result] = await groupDao.getGroupMembersInfo(groupId);
+    return commonService.createResponse(httpResponse.SUCCESS, result);
+  } catch (error) {
+    return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
+  }
+};
+
+const announceGame = async (userId, gameAnnouncementInfo) => {
+  try {
+    const validationError = validateGameAnnouncementPayload(gameAnnouncementInfo);
+    if(validationError) {
+      return commonService.createResponse(httpResponse.BAD_REQUEST, validationError);
+    }
+  
+    const user = await userDao.getUserDetailsById(Number(userId));
+  
+    for(const recipient of gameAnnouncementInfo.emailData.recipients) {
+      const recipientUser = await userDao.getUserDetailsById(Number(recipient));
+      await emailService.sendEmail(recipientUser.email, gameAnnouncementInfo.emailData.subject, gameAnnouncementInfo.emailData.body);
+    }
+
+    return commonService.createResponse(httpResponse.SUCCESS, messages.CREATED_GAME_SUCCESSFULLY);
+  } catch (error) {
+    return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
+  }
+};
+
+const validateGameAnnouncementPayload = (payload) => {
+  const { body, subject, recipients } = payload.emailData;
+
+  if(!body || !subject || !recipients || !recipients.length) {
+    return messages.GAME_ANNOUNCEMENT_PAYLOAD_FIELD_VALIDATION_ERROR;
+  }
+
+  return null;
+};
+
 module.exports = {
   createGroup,
+  joinGroup,
+  getGroupMembersInfo,
+  announceGame
 };

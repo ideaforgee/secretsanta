@@ -19,7 +19,7 @@ module.exports = {
     SENT_MESSAGE_STORED_SUCCESSFULLY: 'Sent message stored successfully',
     EMAIL_MARKED_NOT_SENT: 'Email marked as not sent',
     EXIT_GAME_SUCCESSFULLY: 'Exit game successfully',
-    INVALID_GAME_CODE: 'Invalid code code',
+    INVALID_GAME_CODE: 'Invalid Game code',
     SUCCESS: 'Success',
     GAME_ALREADY_STARTED: 'Game has been already started',
     GAME_ENDED_SUCCESSFULLY: 'Game has been end successfully',
@@ -28,5 +28,8 @@ module.exports = {
     UNABLE_TO_RESET_PASSWORD: 'Unable to reset password',
     SUCCESSFULLY_COMPLETED: 'Master mind game has successfully completed',
     SUCCESSFULLY_STARTED: 'Tambola game has successfully started',
-    USERS_COUNT_INVALID: 'Users should be greater than 1'
+    USERS_COUNT_INVALID: 'Users should be greater than 1',
+    GROUP_CREATED_SUCCESSFULLY: 'Group created successfully',
+    INVALID_GROUP_CODE: 'Invalid Group code',
+    GAME_ANNOUNCEMENT_PAYLOAD_FIELD_VALIDATION_ERROR: 'All fields are required.'
 };
