@@ -207,8 +207,9 @@ const verifyTambolaGameClaim = async (claimType, userId, tambolaGameId, connecti
         if (!isValidClaim) {
             const webSocket = connections.get(userId?.toString());
             if (webSocket && webSocket.readyState === WebSocket.OPEN) {
-                messageData.message = `Your claimed for ${claimType} is false. Your current score is reduce by 5.`
+                messageData.message = `Your claimed for ${claimType} is false. Your current score has been reduce by 5.`
                 webSocket.send(JSON.stringify(messageData));
+                await tambolaDao.updateUserTambolaScore(userId, tambolaGameId, -5);
             }
         } else {
             const users = await tambolaDao.getUsersForTambolaGame(tambolaGameId);
@@ -216,6 +217,7 @@ const verifyTambolaGameClaim = async (claimType, userId, tambolaGameId, connecti
             const markedClaims = getAllMarkedClaims(claims);
 
             messageData.markedClaims = [...markedClaims, claimType];
+            messageData.isComplete = messageData.markedClaims.length === 5 ? true : false;
 
             for (let user of users) {
                 const webSocket = connections.get(user.userId?.toString());
@@ -226,8 +228,13 @@ const verifyTambolaGameClaim = async (claimType, userId, tambolaGameId, connecti
                 }
             }
             await tambolaDao.updateTambolaGameClaims(tambolaGameId, userId, claimType.replaceAll(' ', ''));
-            if (claimType === 'Full House') {
+            if (messageData.isComplete) {
                 await tambolaDao.updateTambolaGameStatus(tambolaGameId, 'Complete');
+            }
+            if (claimType === 'Full House') {
+                tambolaDao.updateUserTambolaScore(userId, tambolaGameId, 15);
+            } else {
+                tambolaDao.updateUserTambolaScore(userId, tambolaGameId, 50);
             }
         }
 
@@ -237,11 +244,21 @@ const verifyTambolaGameClaim = async (claimType, userId, tambolaGameId, connecti
     }
 };
 
+const gatGameUsersWithScore = async (tambolaGameId) => {
+    try {
+        const result = await tambolaDao.gatGameUsersWithScore(Number(tambolaGameId));
+        return commonService.createResponse(httpResponse.SUCCESS, result);
+    } catch (error) {
+        return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
+    }
+};
+
 module.exports = {
     createNewTambolaGame,
     joinUserToTambolaGame,
     generateTicketsForTambolaGame,
     getTambolaGameDetails,
     sendCurrentNumberToAllUser,
-    verifyTambolaGameClaim
+    verifyTambolaGameClaim,
+    gatGameUsersWithScore
 }

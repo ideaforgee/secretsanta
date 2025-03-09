@@ -1,7 +1,7 @@
 import React from "react";
 import "./TambolaClaims.css"; // Optional styling
 
-const TambolaClaims = ({ onClaimClick, isGameStarted, markedClaims = [] }) => {
+const TambolaClaims = ({ isGameStarted, markedClaims = [], onClaimClick }) => {
   const claimTypes = ["Top Line", "Early Five", "Middle Line", "Bottom Line", "Full House"];
 
   return (

@@ -179,6 +179,30 @@ const getAllClaimsForTambolaGame = async (tambolaGameId) => {
   }
 };
 
+const gatGameUsersWithScore = async (tambolaGameId) => {
+  const query = `
+      SELECT u.name, utg.currentScore FROM UserTambolaGame utg INNER JOIN users u ON utg.userId = u.id WHERE tambolaGameId = ?;
+  `;
+
+  try {
+    const [result] = await db.query(query, [tambolaGameId]);
+    return result ?? [];
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+const updateUserTambolaScore = async (userId, tambolaGameId, scoreChange) => {
+  try {
+    const query = `UPDATE UserTambolaGame SET currentScore = currentScore + ? WHERE userId = ? AND tambolaGameId = ?`;
+    await db.query(query, [scoreChange, Number(userId), Number(tambolaGameId)]);
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+
+
 module.exports = {
   saveNewTambolaGame,
   joinUserToTambolaGame,
@@ -191,5 +215,7 @@ module.exports = {
   gatTambolaGameData,
   updateTambolaGameClaims,
   updateTambolaGameStatus,
-  getAllClaimsForTambolaGame
+  getAllClaimsForTambolaGame,
+  gatGameUsersWithScore,
+  updateUserTambolaScore
 };

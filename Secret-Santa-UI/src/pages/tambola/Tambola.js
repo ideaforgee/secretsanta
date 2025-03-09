@@ -4,6 +4,10 @@ import TambolaTicket from "../../components/TambolaTicket/TambolaTicket";
 import TambolaClaims from "../../components/TambolaClaims/TambolaClaims";
 import { generateTicketsForTambolaGame, getTambolaGameDetails } from "../../services/gameService";
 import { connectWebSocket } from '../../websocket';
+import { useNavigate } from 'react-router-dom';
+import { ImExit } from 'react-icons/im';
+import { BsCapslockFill } from "react-icons/bs";
+import GameUserScoreBoard from '../../components/GameUserScoreBoard/GameUserScoreBoard';
 import { USER_KEY, TAMBOLA_GAME_KEY } from '../../constants/appConstant';
 import * as Constant from '../../constants/secretSantaConstants';
 import "./Tambola.css";
@@ -23,6 +27,8 @@ const Tambola = () => {
   const [status, setStatus] = useState('');
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState(null);
+  const [isCompletePopup, setIsCompletePopup] = useState(false);
+  const navigate = useNavigate();
 
   const userId = localStorage.getItem(USER_KEY);
   const tambolaGameId = localStorage.getItem(TAMBOLA_GAME_KEY);
@@ -31,6 +37,9 @@ const Tambola = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!tambolaGameId) {
+        navigate('/game-zone');
+      }
       const tambolaGameDetails = await getTambolaGameDetails(userId, tambolaGameId);
       setMarkedNumbers(tambolaGameDetails.markedNumbers);
       setMarkedClaims(tambolaGameDetails.markedClaims);
@@ -38,6 +47,12 @@ const Tambola = () => {
       setStatus(tambolaGameDetails.status);
       setAllWithDrawnNumbers(tambolaGameDetails.withdrawnNumbers);
       setTicketNumbers(tambolaGameDetails.ticketNumbers);
+
+      if(tambolaGameDetails.status === 'Complete') {
+        window.alert('This game has already completed');
+        localStorage.removeItem(TAMBOLA_GAME_KEY);
+        navigate('/game-zone');
+      }
 
       if (userId) {
         initializeWebSocket();
@@ -80,6 +95,9 @@ const Tambola = () => {
   const handleWebSocketMessage = (messageData) => {
     if (messageData.type === 'claim' && messageData.claimType) {
       setMarkedClaims(messageData.markedClaims);
+      if (messageData.isComplete) {
+        setIsCompletePopup(true);
+      }
     }
     if (messageData.type === 'claim') {
       setPopupMessage(messageData.message);
@@ -87,6 +105,10 @@ const Tambola = () => {
     }
 
     if (messageData.type === 'withDrawnNumbers') {
+      if ("speechSynthesis" in window) {
+        const msg = new SpeechSynthesisUtterance(messageData.message?.toString());
+        window.speechSynthesis.speak(msg);
+      }
       const tambolaGameAllWithDrawnNumbers = [messageData.withDrawnNumbers, Number(messageData.message)];
       setAllWithDrawnNumbers(tambolaGameAllWithDrawnNumbers[0]);
       setPopupMessage(Number(messageData.message));
@@ -127,6 +149,16 @@ const Tambola = () => {
     console.log("Claimed:", claimType);
   };
 
+  const handleQuit = () => {
+    localStorage.removeItem(TAMBOLA_GAME_KEY);
+    navigate('/game-zone');
+  };
+
+  const handleCloseContinuePopup = async () => {
+    setIsCompletePopup(false);
+    navigate('/game-zone');
+  };
+
   return (
     <div className="tambola-parent-container">
       <div className="tambola-container">
@@ -135,10 +167,11 @@ const Tambola = () => {
         <TambolaBoard drawnNumbers={allWithDrawnNumbers} />
 
         {status === TambolaGameStatus.Active && allWithDrawnNumbers.length <= 90 && hostId === Number(userId) && (
-            <button className="start-game-button" onClick={handleDrawNumberClick}>
-              Draw Number
-            </button>
-          )}
+          <button className="withDrawn-button " onClick={handleDrawNumberClick}>
+            <BsCapslockFill />
+            With Draw
+          </button>
+        )}
 
         {/* Right Section */}
         <div className="right-section">
@@ -146,13 +179,25 @@ const Tambola = () => {
           <TambolaTicket ticketData={ticketNumbers} markedNumbers={markedNumbers} onNumberClick={handleTicketNumberClick} />
 
           {/* Claim Buttons */}
-          <TambolaClaims onClaimClick={handleClaimClick} isGameStarted={status === TambolaGameStatus.Active} disabledClaims={markedClaims} />
+          <TambolaClaims onClaimClick={handleClaimClick} isGameStarted={status === TambolaGameStatus.Active} markedClaims={markedClaims} />
 
           {status === TambolaGameStatus.InActive && hostId === Number(userId) && (
             <button className="start-game-button" onClick={handleStartGameClick}>
               Start Game
             </button>
           )}
+
+          {isCompletePopup && (
+            <GameUserScoreBoard
+              onClose={() => {
+                handleCloseContinuePopup();
+              }}
+            />
+          )}
+          <button className='tambola-exit-game-button' onClick={handleQuit}>
+            {<ImExit />}
+            Exit Game
+          </button>
         </div>
       </div>
     </div>

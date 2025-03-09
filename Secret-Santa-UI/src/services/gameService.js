@@ -132,3 +132,11 @@ export const setIsCompleteTrue = (userId, masterMindGameId) => {
         data: { userId, masterMindGameId },
     });
 };
+
+export const gatGameUsersWithScore = (tambolaGameId) => {
+    return handleRequest({
+        method: 'post',
+        url: '/api/game/gatGameUsersWithScore',
+        data: { tambolaGameId },
+    });
+};

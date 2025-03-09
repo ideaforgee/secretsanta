@@ -26,9 +26,16 @@ const getTambolaGameDetails = async (req, res) => {
     return response(res, result.status, message.SUCCESS, result.response);
 };
 
+const gatGameUsersWithScore = async (req, res) => {
+    const { tambolaGameId } = req.body;
+    const result = await tambolaService.gatGameUsersWithScore(tambolaGameId);
+    return response(res, result.status, message.SUCCESS, result.response);
+};
+
 module.exports = {
     createNewTambolaGame,
     joinUserToTambolaGame,
     generateTicketsForTambolaGame,
-    getTambolaGameDetails
+    getTambolaGameDetails,
+    gatGameUsersWithScore
 };

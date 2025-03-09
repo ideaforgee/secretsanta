@@ -27,7 +27,7 @@
     font-weight: bold;
     background-color: var(--tambola-buttons-color);
     border: 2px solid;
-    border-radius: 8px ;
+    border-radius: 8px;
     color: var(--tambola-marked-element);
     cursor: pointer;
     transition: 0.2s;
@@ -36,4 +36,61 @@
 
 .start-game-button:hover {
     background-color: var(--tambola-buttons-hover);
+}
+
+.withDrawn-button {
+    padding: 10px;
+    position: fixed;
+    align-items: center;
+    justify-content: center;
+    background-color: #f6e9a2;
+    color: var(--primary-text-color);
+    border: none;
+    padding: 15px 14px;
+    font-size: 1.5rem;
+    border-radius: 40px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.withDrawn-button:hover {
+    background-color: var(--tambola-buttons-hover);
+}
+
+.tambola-exit-game-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: #f6e9a2;
+    color: var(--primary-text-color);
+    border: none;
+    padding: 15px 14px;
+    font-size: 1.5rem;
+    border-radius: 40px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.tambola-exit-game-button:hover {
+    background-color: #dacc83 !important;
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+.tambola-exit-game-button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
