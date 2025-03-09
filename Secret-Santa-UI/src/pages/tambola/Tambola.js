@@ -154,7 +154,8 @@ const Tambola = () => {
     navigate('/game-zone');
   };
 
-  const handleCloseContinuePopup = async () => {
+  const handleCloseContinuePopup = () => {
+    localStorage.removeItem(TAMBOLA_GAME_KEY);
     setIsCompletePopup(false);
     navigate('/game-zone');
   };

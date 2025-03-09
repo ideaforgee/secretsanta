@@ -1,4 +1,5 @@
 import React from "react";
+import { ImCross } from "react-icons/im";
 import "./TambolaDashboard.css";
 
 const TambolaDashboardPopup = ({ visible, onClose, onHostGame, onJoinGame }) => {
@@ -15,7 +16,7 @@ const TambolaDashboardPopup = ({ visible, onClose, onHostGame, onJoinGame }) => 
           <button className="join-btn" onClick={onJoinGame}>Join Game</button>
         </div>
 
-        <button className="close-btn" onClick={onClose}>X</button>
+        <div className="close-icon" onClick={onClose}><ImCross /></div>
       </div>
     </div>
   );
