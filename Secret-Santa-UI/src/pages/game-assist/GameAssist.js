@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { Box, Card, Typography } from '@mui/material';
 import GameAnnouncement from '../game-announcement/GameAnnouncement.js';
+import TeamSplitter from '../team-splitter/TeamSplitter.js';
 
 function GameAssist() {
     const [resetPrompt, setResetPrompt] = useState(false);
     const [openAnnouncementPrompt, setOpenAnnouncementPrompt] = useState(false);
+    const [openTeamSplitterPrompt, setOpenTeamSplitterPrompt] = useState(false);
 
     const onGameAnnouncementClick = () => {
         setResetPrompt(true);
@@ -16,9 +18,19 @@ function GameAssist() {
         setOpenAnnouncementPrompt(false);
     };
 
+    const onTeamSplitterClick = () => {
+        setResetPrompt(true);
+        setOpenTeamSplitterPrompt(true);
+    }
+
+    const handleCloseTeamSplitterPrompt = () => {
+        setResetPrompt(false);
+        setOpenTeamSplitterPrompt(false);
+    }
+
     const cards = [
         { text: 'Game Announcement', onClick: onGameAnnouncementClick },
-        { text: 'Team Splitter', onClick: () => {} },
+        { text: 'Team Splitter', onClick: onTeamSplitterClick },
         { text: 'Buzzer Timer', onClick: () => {} },
         { text: 'Team Discussion', onClick: () => {} },
     ];
@@ -67,6 +79,7 @@ function GameAssist() {
                 ))}
             </Box>
           {openAnnouncementPrompt && <GameAnnouncement open={openAnnouncementPrompt} onClose={handleCloseGameAnnouncementPrompt} resetPrompt={resetPrompt} />}
+          {openTeamSplitterPrompt && <TeamSplitter open={openTeamSplitterPrompt} onClose={handleCloseTeamSplitterPrompt} resetPrompt={resetPrompt} />}
         </div>
   )
 }

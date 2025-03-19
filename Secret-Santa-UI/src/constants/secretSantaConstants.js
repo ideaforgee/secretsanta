@@ -79,7 +79,8 @@ export const ROUTE_PATH = {
   GAME_ZONE: '/game-zone',
   GAME_ASSIST: '/game-assist',
   MASTER_MIND: '/master-mind',
-  TAMBOLA: '/tambola'
+  TAMBOLA: '/tambola',
+  TEAMS: '/teams'
 }
 
 export const ALERT_MESSAGES = {

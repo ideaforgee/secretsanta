@@ -1,0 +1,29 @@
+.team-splitter-dialog-title-container {
+    background-color: var(--primary-color);
+}
+
+.team-splitter-dialog-title {
+    font-weight: 600 !important;
+    font-size: 1.5rem;
+    color: var(--primary-text-color);
+    font-family: 'Montserrat', sans-serif;
+}
+
+.team-splitter-select-recipients-button {
+    position: relative;
+    top: 10px;
+    left: 10px;
+    color: var(--primary-button-color);
+    background-color: var(--primary-button-color);
+    color: var(--primary-text-color);
+    padding: 8px 16px;
+    margin-top: 16px !important;
+}
+
+.team-splitter-dialog-subtitle {
+    padding-top: 10px;
+    text-align: left;
+    color: #252525;
+    font-weight: 500 !important;
+    font-family: 'Montserrat', sans-serif !important;
+}

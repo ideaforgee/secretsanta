@@ -25,6 +25,7 @@ import GameZone from './pages/game-zone/GameZone';
 import GameAssist from './pages/game-assist/GameAssist';
 import MasterMind from './pages/master-mind/MasterMind';
 import Tambola from './pages/tambola/Tambola';
+import Teams from './pages/teams/Teams';
 
 
 const App = () => {
@@ -86,6 +87,9 @@ const App = () => {
               <Route
                 path={ROUTE_PATH.TAMBOLA}
                 element={<ProtectedRoute element={<Tambola />} />}
+              />
+              <Route path={ROUTE_PATH.TEAMS}
+                element={<ProtectedRoute element={<Teams />} />}
               />
             </Routes>
           </AuthProvider>

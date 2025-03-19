@@ -60,9 +60,7 @@ function GameAnnouncement({ open, onClose, resetPrompt }) {
     const recipientIds = emailData.recipients.filter(recipient => recipient.checked).map(recipient => recipient.userId);
     const payload = { userId, emailData: { ...emailData, recipients: recipientIds } };
     
-    console.log('Sending email:', payload);
     const response = await groupService.announceGameHandler(payload);
-    console.log('Sending email:', response);
     onClose();
   };
 
