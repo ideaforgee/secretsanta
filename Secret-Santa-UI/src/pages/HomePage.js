@@ -13,9 +13,9 @@ const HomePage = () => {
         <div className="home-container">
             <div className="content">
                 <div className="content-heading">
-                    Welcome to the Secret Santa Game!
+                    Welcome to the Fun Zone!
                 </div>
-                <p className="content-sub-heading">Plan a fun and exciting gift exchange with your friends.</p>
+                <p className="content-sub-heading">Plan a fun and exciting games with your friends.</p>
                 <button className="game-home-actions" onClick={handlePlayClick}>Play Now</button>
             </div>
         </div>

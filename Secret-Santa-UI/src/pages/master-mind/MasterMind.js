@@ -159,7 +159,7 @@ const MasterMind = () => {
 
   return (
     <div className={`game-container ${gameComplete ? "game-over" : ""}`} onDragOver={(e) => e.preventDefault()} onDrop={handleRemoveDrop}>
-      <div><Navbar /></div>
+      <div><Navbar title={'MASTER MIND'} /></div>
       <h1>🎯 Master Mind Game</h1>
       <p className="instructions">Drag & Drop colors, then verify!</p>
 

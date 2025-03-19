@@ -11,8 +11,8 @@ import masterMindImg from '../../assets/MasterMindBg.jpg';
 import tambolaImg from '../../assets/housieBg.jpg';
 import CodeDialog from '../../components/CodeDialog/CodeDialog.js';
 import TambolaDashboardPopup from '../../components/TambolaDashboard/TambolaDashboard.js';
+import Navbar from "../../components/navbar/Navbar";
 import { useAlert } from '../../context/AlertContext.js';
-import TambolaTicket from '../../components/TambolaTicket/TambolaTicket.js';
 
 function GameZone() {
 
@@ -97,6 +97,7 @@ function GameZone() {
 
     return (
         <div style={Constant.FUN_ZONE_STYLE} className='game-zone-container'>
+            <div><Navbar title={'FUN ZONE'}/></div>
             <Box
                 sx={{
                     display: 'flex',

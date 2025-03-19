@@ -7,6 +7,12 @@ const messages = require('../constant/SecretSantaMessages.js');
 const emailService = require('./EmailService.js');
 const WebSocket = require('ws');
 
+/**
+ * Creates a new Tambola game and saves it to the database.
+ *
+ * @param {number} userId - The ID of the user creating the game.
+ * @returns {Object} The response indicating the result of the game creation.
+ */
 const createNewTambolaGame = async (userId) => {
     try {
         const user = await userDao.getUserDetailsById(Number(userId));
@@ -15,7 +21,7 @@ const createNewTambolaGame = async (userId) => {
         const tambolaGameId = await tambolaDao.saveNewTambolaGame(userId, tambolaGameCode);
         //await emailService.sendCreatedSecretSantaGameEmail(user, gameCode);
 
-        return commonService.createResponse(httpResponse.SUCCESS, {tambolaGameId, gameCode: tambolaGameCode});
+        return commonService.createResponse(httpResponse.SUCCESS, { tambolaGameId, gameCode: tambolaGameCode });
     }
     catch (error) {
         return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
@@ -23,13 +29,11 @@ const createNewTambolaGame = async (userId) => {
 };
 
 /**
- * Adds a user to a Secret Santa game.
+ * Adds a user to an existing Tambola game.
  *
  * @param {number} userId - The ID of the user to be added to the game.
  * @param {string} gameCode - The unique code of the game.
  * @returns {Object} The response indicating the result of joining the game.
- *
- * @throws {Error} Throws an error if the user could not join the game.
  */
 const joinUserToTambolaGame = async (userId, gameCode) => {
     if (!userId || !gameCode) {
@@ -46,6 +50,12 @@ const joinUserToTambolaGame = async (userId, gameCode) => {
     }
 };
 
+/**
+ * Generates tickets for all users in the given Tambola game.
+ *
+ * @param {number} tambolaGameId - The ID of the Tambola game.
+ * @returns {Object} The response indicating the result of generating tickets.
+ */
 const generateTicketsForTambolaGame = async (tambolaGameId) => {
     if (!tambolaGameId) {
         return commonService.createResponse(httpResponse.BAD_REQUEST, messages.INVALID_CREDENTIALS);
@@ -53,25 +63,34 @@ const generateTicketsForTambolaGame = async (tambolaGameId) => {
     try {
         const users = await tambolaDao.getUsersForTambolaGame(tambolaGameId);
 
-        if (users?.length) {
-            commonService.createResponse(httpResponse.BAD_REQUEST, messages.USERS_COUNT_INVALID);
+        if (!users?.length) {
+            return commonService.createResponse(httpResponse.BAD_REQUEST, messages.USERS_COUNT_INVALID);
         }
 
-        for (let user of users) {
-            const ticket = generateTambolaTicket();
-            await tambolaDao.saveUserTicketForTambolaGame(ticket, user.userId, tambolaGameId);
+        const chunkSize = 15; // Process in batches of 15
+        for (let i = 0; i < users.length; i += chunkSize) {
+            const batch = users.slice(i, i + chunkSize);
+
+            await Promise.allSettled(batch.map(user => {
+                const ticket = generateTambolaTicket();
+                return tambolaDao.saveUserTicketForTambolaGame(ticket, user.userId, tambolaGameId);
+            }));
         }
 
         await tambolaDao.updateTambolaGameStatus(tambolaGameId, 'Active');
 
-        return commonService.createResponse(httpResponse.SUCCESS, messages.SUCCESSFULLY_STARTED)
+        return commonService.createResponse(httpResponse.SUCCESS, messages.SUCCESSFULLY_STARTED);
 
     } catch (error) {
         return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
     }
 };
 
-
+/**
+ * Generates a Tambola ticket for a user.
+ *
+ * @returns {Array} A 2D array representing the generated ticket.
+ */
 function generateTambolaTicket() {
     const ticket = Array.from({ length: 3 }, () => Array(9).fill(null));
 
@@ -79,6 +98,8 @@ function generateTambolaTicket() {
         let start = col * 10 + 1;
         let end = col === 8 ? 90 : (col + 1) * 10;
         let numbers = shuffle([...Array(end - start + 1).keys()].map(n => n + start)).slice(0, 3);
+
+        numbers.sort((a, b) => a - b);
 
         for (let row = 0; row < 3; row++) {
             ticket[row][col] = numbers[row];
@@ -99,25 +120,44 @@ function generateTambolaTicket() {
     return ticket;
 }
 
+/**
+ * Helper function to shuffle an array.
+ *
+ * @param {Array} array - The array to be shuffled.
+ * @returns {Array} The shuffled array.
+ */
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
+        let j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
     return array;
 }
 
+/**
+ * Retrieves all the marked claims in the Tambola game.
+ *
+ * @param {Object} tambolaGameDetails - The details of the Tambola game.
+ * @returns {Array} An array of marked claims.
+ */
 const getAllMarkedClaims = (tambolaGameDetails) => {
     const { topLine, middleLine, bottomLine, earlyFive, fullHouse } = tambolaGameDetails;
     return Object.entries({ topLine, middleLine, bottomLine, earlyFive, fullHouse })
-    .filter(([_, value]) => value !== null)
-    .map(([key]) =>
-        key.replace(/([A-Z])/g, ' $1')
-            .trim()
-            .replace(/\b\w/g, (char) => char.toUpperCase())
-    );
+        .filter(([_, value]) => value !== null)
+        .map(([key]) =>
+            key.replace(/([A-Z])/g, ' $1')
+                .trim()
+                .replace(/\b\w/g, (char) => char.toUpperCase())
+        );
 };
 
+/**
+ * Retrieves the details of a Tambola game for a specific user.
+ *
+ * @param {number} userId - The ID of the user.
+ * @param {number} tambolaGameId - The ID of the Tambola game.
+ * @returns {Object} The response containing the game details.
+ */
 const getTambolaGameDetails = async (userId, tambolaGameId) => {
     try {
         const result = await tambolaDao.getTambolaGameDetails(userId, tambolaGameId);
@@ -139,6 +179,16 @@ const getTambolaGameDetails = async (userId, tambolaGameId) => {
     }
 };
 
+/**
+ * Sends the current number to all users in a Tambola game.
+ *
+ * @param {number} userId - The ID of the user who triggered the action.
+ * @param {number} tambolaGameId - The ID of the Tambola game.
+ * @param {number} currentNumber - The current number being called.
+ * @param {Array} withDrawnNumbers - The list of withdrawn numbers.
+ * @param {Map} connections - A map of active WebSocket connections.
+ * @returns {Object} The response indicating the result of sending the current number.
+ */
 const sendCurrentNumberToAllUser = async (userId, tambolaGameId, currentNumber, withDrawnNumbers, connections) => {
     try {
         const users = await tambolaDao.getUsersForTambolaGame(tambolaGameId);
@@ -162,88 +212,200 @@ const sendCurrentNumberToAllUser = async (userId, tambolaGameId, currentNumber, 
     }
 };
 
+/**
+ * Verifies a claim made by a user in a Tambola game.
+ *
+ * @param {string} claimType - The type of claim (e.g., 'Top Line', 'Full House').
+ * @param {number} userId - The ID of the user making the claim.
+ * @param {number} tambolaGameId - The ID of the Tambola game.
+ * @param {Map} connections - A map of active WebSocket connections.
+ */
 const verifyTambolaGameClaim = async (claimType, userId, tambolaGameId, connections) => {
-
     try {
-        const userData = await tambolaDao.gatUserDataForTambolaGame(userId, tambolaGameId)
-
-        let { ticketNumbers, markedNumbers } = userData[0];
-        ticketNumbers = JSON.parse(ticketNumbers) ?? [];
-        markedNumbers = JSON.parse(markedNumbers) ?? [];
-
+        const userData = await getUserData(userId, tambolaGameId);
         const [gameData] = await tambolaDao.gatTambolaGameData(tambolaGameId);
 
-        const withdrawnNumbers = JSON.parse(gameData.withdrawnNumbers) ?? [];
+        let { ticketNumbers, markedNumbers } = userData;
+        let withdrawnNumbers = JSON.parse(gameData.withdrawnNumbers) ?? [];
 
-        const isLineMarked = (line) => line.every(num => num === null || withdrawnNumbers.includes(num));
-
-        let isValidClaim = false;
-
-        switch (claimType) {
-            case 'Top Line':
-                isValidClaim = isLineMarked(ticketNumbers[0]);
-                break;
-            case 'Middle Line':
-                isValidClaim = isLineMarked(ticketNumbers[1]);
-                break;
-            case 'Bottom Line':
-                isValidClaim = isLineMarked(ticketNumbers[2]);
-                break;
-            case 'Early Five':
-                const markedCount = markedNumbers?.filter(num => withdrawnNumbers.includes(num)).length;
-                isValidClaim = markedCount >= 5;
-                break;
-            case 'Full House':
-                isValidClaim = ticketNumbers.flat().every(num => num === null || withdrawnNumbers.includes(num));
-                break;
-            default:
-                returns;
-        }
+        let isValidClaim = await validateClaim(claimType, ticketNumbers, markedNumbers, withdrawnNumbers);
 
         const messageData = {
             type: 'claim'
-        }
+        };
 
         if (!isValidClaim) {
-            const webSocket = connections.get(userId?.toString());
-            if (webSocket && webSocket.readyState === WebSocket.OPEN) {
-                messageData.message = `Your claimed for ${claimType} is false. Your current score has been reduce by 5.`
-                webSocket.send(JSON.stringify(messageData));
-                await tambolaDao.updateUserTambolaScore(userId, tambolaGameId, -5);
-            }
+            await handleInvalidClaim(userId, claimType, messageData, connections, tambolaGameId);
         } else {
-            const users = await tambolaDao.getUsersForTambolaGame(tambolaGameId);
-            const claims = await tambolaDao.getAllClaimsForTambolaGame(tambolaGameId);
-            const markedClaims = getAllMarkedClaims(claims);
-
-            messageData.markedClaims = [...markedClaims, claimType];
-            messageData.isComplete = messageData.markedClaims.length === 5 ? true : false;
-
-            for (let user of users) {
-                const webSocket = connections.get(user.userId?.toString());
-                if (webSocket && webSocket.readyState === WebSocket.OPEN) {
-                    messageData.message = `Someone has successfully claimed${claimType}.`
-                    messageData.claimType = claimType;
-                    webSocket.send(JSON.stringify(messageData));
-                }
-            }
-            await tambolaDao.updateTambolaGameClaims(tambolaGameId, userId, claimType.replaceAll(' ', ''));
-            if (messageData.isComplete) {
-                await tambolaDao.updateTambolaGameStatus(tambolaGameId, 'Complete');
-            }
-            if (claimType === 'Full House') {
-                tambolaDao.updateUserTambolaScore(userId, tambolaGameId, 15);
-            } else {
-                tambolaDao.updateUserTambolaScore(userId, tambolaGameId, 50);
-            }
+            await handleValidClaim(claimType, messageData, connections, tambolaGameId, userId);
         }
 
     } catch (err) {
         console.error(err);
-        return res.status(500).json({ error: "Internal server error" });
     }
 };
 
+/**
+ * Helper function to validate a claim based on its type.
+ *
+ * @param {string} claimType - The type of claim (e.g., 'Top Line', 'Full House').
+ * @param {Array} ticketNumbers - The ticket numbers of the user.
+ * @param {Array} markedNumbers - The marked numbers of the user.
+ * @param {Array} withdrawnNumbers - The withdrawn numbers in the game.
+ * @returns {boolean} Whether the claim is valid.
+ */
+const validateClaim = async (claimType, ticketNumbers, markedNumbers, withdrawnNumbers) => {
+    const isLineMarked = (line) => line.every(num => num === null || (withdrawnNumbers.includes(num) && markedNumbers.includes(num)));
+    let isValidClaim = false;
+
+    switch (claimType) {
+        case 'Top Line':
+            isValidClaim = isLineMarked(ticketNumbers[0]);
+            break;
+        case 'Middle Line':
+            isValidClaim = isLineMarked(ticketNumbers[1]);
+            break;
+        case 'Bottom Line':
+            isValidClaim = isLineMarked(ticketNumbers[2]);
+            break;
+        case 'Early Five':
+            const markedCount = markedNumbers?.filter(num => withdrawnNumbers.includes(num)).length;
+            isValidClaim = markedCount >= 5;
+            break;
+        case 'Full House':
+            isValidClaim = ticketNumbers.flat().every(num => num === null || withdrawnNumbers.includes(num));
+            break;
+        default:
+            break;
+    }
+    return isValidClaim;
+};
+
+/**
+ * Fetches user data for a specific Tambola game.
+ *
+ * @param {number} userId - The ID of the user.
+ * @param {number} tambolaGameId - The ID of the Tambola game.
+ * @returns {Object} The ticket numbers and marked numbers of the user.
+ */
+const getUserData = async (userId, tambolaGameId) => {
+    const userData = await tambolaDao.gatUserDataForTambolaGame(userId, tambolaGameId);
+    let { ticketNumbers, markedNumbers } = userData[0];
+    ticketNumbers = JSON.parse(ticketNumbers) ?? [];
+    markedNumbers = JSON.parse(markedNumbers) ?? [];
+    return { ticketNumbers, markedNumbers };
+};
+
+/**
+ * Handles the case when a claim is invalid by notifying the user and updating their score.
+ *
+ * @param {number} userId - The ID of the user making the claim.
+ * @param {string} claimType - The type of claim being made.
+ * @param {Object} messageData - The data to be sent in the notification message.
+ * @param {Map} connections - A map of active WebSocket connections indexed by user IDs.
+ * @param {number} tambolaGameId - The ID of the Tambola game.
+ */
+const handleInvalidClaim = async (userId, claimType, messageData, connections, tambolaGameId) => {
+    const webSocket = connections.get(userId?.toString());
+    if (webSocket && webSocket.readyState === WebSocket.OPEN) {
+        messageData.message = `Your claim for ${claimType} is false. Your current score has been reduced by 5.`;
+        webSocket.send(JSON.stringify(messageData));
+        await tambolaDao.updateUserTambolaScore(userId, tambolaGameId, -5);
+    }
+};
+
+/**
+ * Handles the case when a claim is valid by notifying users, updating the game status, 
+ * and adjusting the user's score based on the claim type.
+ *
+ * @param {string} claimType - The type of claim being made.
+ * @param {Object} messageData - The data to be sent in the notification message.
+ * @param {Map} connections - A map of active WebSocket connections indexed by user IDs.
+ * @param {number} tambolaGameId - The ID of the Tambola game.
+ * @param {number} userId - The ID of the user making the claim.
+ */
+const handleValidClaim = async (claimType, messageData, connections, tambolaGameId, userId) => {
+    const users = await tambolaDao.getUsersForTambolaGame(tambolaGameId);
+    const claims = await tambolaDao.getAllClaimsForTambolaGame(tambolaGameId);
+    const markedClaims = claims?.id ? getAllMarkedClaims(claims) : [];
+
+    messageData.markedClaims = [...markedClaims, claimType];
+    messageData.isComplete = messageData.markedClaims?.length === 5;
+
+    await sendClaimNotificationsInChunks(users, claimType, messageData, connections);
+
+    await tambolaDao.updateTambolaGameClaims(tambolaGameId, userId, claimType.replaceAll(' ', ''));
+    if (messageData.isComplete) {
+        await tambolaDao.updateTambolaGameStatus(tambolaGameId, 'Complete');
+    }
+
+    const scoreChange = claimType === 'Full House' ? 15 : 50;
+    await tambolaDao.updateUserTambolaScore(userId, tambolaGameId, scoreChange);
+};
+
+/**
+ * Sends claim notifications in chunks to users to avoid overloading the WebSocket connection.
+ *
+ * @param {Array} users - The list of users to send notifications to.
+ * @param {string} claimType - The type of claim being made.
+ * @param {Object} messageData - The data to be sent in the notification message.
+ * @param {Map} connections - A map of active WebSocket connections indexed by user IDs.
+ * @param {number} [chunkSize=20] - The size of each chunk of users to be processed.
+ */
+const sendClaimNotificationsInChunks = async (users, claimType, messageData, connections, chunkSize = 20) => {
+    const chunkedUsers = chunkArray(users, chunkSize);
+
+    for (let chunk of chunkedUsers) {
+        await Promise.all(chunk.map(user => sendClaimNotification(user, claimType, messageData, connections)));
+    }
+};
+
+/**
+ * Splits an array into smaller chunks of a specified size.
+ *
+ * @param {Array} array - The array to be chunked.
+ * @param {number} chunkSize - The size of each chunk.
+ * @returns {Array} An array of chunks.
+ */
+const chunkArray = (array, chunkSize) => {
+    const chunks = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+        chunks.push(array.slice(i, i + chunkSize));
+    }
+    return chunks;
+};
+
+/**
+ * Sends a claim notification to a single user.
+ *
+ * @param {Object} user - The user object containing user details.
+ * @param {string} claimType - The type of claim being made.
+ * @param {Object} messageData - The data to be sent in the notification message.
+ * @param {Map} connections - A map of active WebSocket connections indexed by user IDs.
+ * @returns {Promise} A promise that resolves when the message has been sent.
+ */
+const sendClaimNotification = (user, claimType, messageData, connections) => {
+    return new Promise((resolve, reject) => {
+        const webSocket = connections.get(user.userId?.toString());
+        if (webSocket && webSocket.readyState === WebSocket.OPEN) {
+            messageData.message = `${user.name} has successfully claimed ${claimType}.`;
+            messageData.claimType = claimType;
+            webSocket.send(JSON.stringify(messageData), (err) => {
+                if (err) reject(err);
+                else resolve();
+            });
+        } else {
+            resolve();
+        }
+    });
+};
+
+/**
+ * Retrieves users with their scores for a specific Tambola game.
+ *
+ * @param {number} tambolaGameId - The ID of the Tambola game.
+ * @returns {Object} A response containing the list of users and their scores.
+ */
 const gatGameUsersWithScore = async (tambolaGameId) => {
     try {
         const result = await tambolaDao.gatGameUsersWithScore(Number(tambolaGameId));

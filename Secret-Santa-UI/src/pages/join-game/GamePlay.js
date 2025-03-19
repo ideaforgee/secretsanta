@@ -56,7 +56,7 @@ function GamePlay() {
 
   return (
     <div style={Constant.BACKGROUND_STYLE} className='dashboard'>
-      <div><Navbar /></div>
+      <div><Navbar title={'SECRET SANTA'} /></div>
       <div className="dashboard-container">
         <button className="game-actions" style={{ width: '252px' }} onClick={onClickGoToWishlist}><FaCartShopping />Go To Wishlist</button>
         <button className="game-actions" style={{ width: '252px', filter: !isGameActive ? 'blur(2px)' : 'none', }} onClick={onClickChatRoom} disabled={!isGameActive}>

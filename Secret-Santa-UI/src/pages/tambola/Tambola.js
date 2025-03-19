@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import TambolaBoard from "../../components/TambolaBoard/TambolaBoard";
 import TambolaTicket from "../../components/TambolaTicket/TambolaTicket";
 import TambolaClaims from "../../components/TambolaClaims/TambolaClaims";
+import Navbar from "../../components/navbar/Navbar";
 import { generateTicketsForTambolaGame, getTambolaGameDetails } from "../../services/gameService";
 import { connectWebSocket } from '../../websocket';
 import { useNavigate } from 'react-router-dom';
@@ -96,10 +97,15 @@ const Tambola = () => {
     if (messageData.type === 'claim' && messageData.claimType) {
       setMarkedClaims(messageData.markedClaims);
       if (messageData.isComplete) {
+        
         setIsCompletePopup(true);
       }
     }
     if (messageData.type === 'claim') {
+      if ("speechSynthesis" in window) {
+        const msg = new SpeechSynthesisUtterance(messageData.message?.toString());
+        window.speechSynthesis.speak(msg);
+      }
       setPopupMessage(messageData.message);
       setShowPopup(true);
     }
@@ -154,7 +160,8 @@ const Tambola = () => {
     navigate('/game-zone');
   };
 
-  const handleCloseContinuePopup = async () => {
+  const handleCloseContinuePopup = () => {
+    localStorage.removeItem(TAMBOLA_GAME_KEY);
     setIsCompletePopup(false);
     navigate('/game-zone');
   };
@@ -162,11 +169,12 @@ const Tambola = () => {
   return (
     <div className="tambola-parent-container">
       <div className="tambola-container">
+      <div><Navbar title={'TAMBOLA'}/></div>
         <Popup message={popupMessage} visible={showPopup} onClose={() => setShowPopup(false)} />
         {/* Tambola Board */}
         <TambolaBoard drawnNumbers={allWithDrawnNumbers} />
 
-        {status === TambolaGameStatus.Active && allWithDrawnNumbers.length <= 90 && hostId === Number(userId) && (
+        {status === TambolaGameStatus.Active && allWithDrawnNumbers.length < 90 && hostId === Number(userId) && (
           <button className="withDrawn-button " onClick={handleDrawNumberClick}>
             <BsCapslockFill />
             With Draw

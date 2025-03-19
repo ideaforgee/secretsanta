@@ -111,7 +111,7 @@ function Dashboard() {
 
   return (
     <div style={Constant.BACKGROUND_STYLE} className='dashboard'>
-      <div><Navbar /></div>
+      <div><Navbar title={'SECRET SANTA'}/></div>
       <div className="dashboard-container">
         <button className="game-home-actions" onClick={onClickCreateGame}><IoIosCreate />Host Game</button>
         <button className="game-home-actions" onClick={onClickJoinGame}><MdFollowTheSigns />Enter Game</button>
