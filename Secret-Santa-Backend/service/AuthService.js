@@ -41,7 +41,7 @@ const loginUser = async (email, password) => {
     }
 
     const token = commonService.generateToken(user.id);
-    return commonService.createResponse(httpResponse.SUCCESS, { userId: user.id, token });
+    return commonService.createResponse(httpResponse.SUCCESS, { userId: user.id, token, userName: user.name });
   } catch (error) {
     return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, messages.SERVER_ERROR);
   }

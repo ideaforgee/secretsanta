@@ -18,8 +18,6 @@ const getMessagesByUserAndGame = async (userId, gameId) => {
     }
 };
 
-
-
 /**
  * Save a new message to the database.
  * @param {string} content - The content of the message.
@@ -157,6 +155,64 @@ const getUserById = async (userId) => {
     }
 };
 
+const getGroupDiscussionMessages = async (userId, groupId) => {
+    try {
+        const result = await db.query('CALL GetGroupDiscussionMessages(?, ?)', [Number(userId), Number(groupId)]);
+        return result[0] ?? null;
+    } catch (error) {
+        console.error('Error fetching messages:', error);
+        return null;
+    }
+};
+
+const fetchGroupDiscussionPendingMessages = async (userId, groupId) => {
+    const query = `
+      SELECT
+        MAX(CASE
+            WHEN chatBoxType = 'publicChat' AND emailStatus = 'sent' THEN TRUE
+            ELSE FALSE
+        END) AS publicChatPendingMessages,
+        MAX(CASE
+            WHEN chatBoxType = 'anonymousChat' AND emailStatus = 'sent' THEN TRUE
+            ELSE FALSE
+        END) AS anonymousChatPendingMessages
+      FROM userEmailStatus
+      WHERE userId = ? AND groupId = ?
+    `;
+    try {
+        const [rows] = await db.query(query, [userId, groupId]);
+        return rows[0];
+    } catch (err) {
+        console.log('Error executing query:', err);
+        throw err;
+    }
+};
+
+const getReceiversIdsForGroupDiscussion = async (groupId) => {
+    try {
+        const query = 'SELECT id AS receiverId FROM users WHERE groupId = ?;';
+
+        const result = await db.query(query, [Number(groupId)]);
+
+        return result[0];
+    } catch (error) {
+        console.error('Error fetching receiverId:', error);
+        return null;
+    }
+};
+
+const storeGroupDiscussionMessage = async (senderId, content, groupId, sendAnonymously) => {
+    try {
+        const query = 'INSERT INTO groupDiscussion (senderId, content, groupId, sendAnonymously) VALUES (?, ?, ?, ?)';
+
+        await db.query(query, [senderId, content, groupId, sendAnonymously]);
+    } catch (error) {
+        console.error('Error fetching receiverId:', error);
+        return null;
+    }
+};
+
+
 
 module.exports = {
     getMessagesByUserAndGame,
@@ -166,5 +222,9 @@ module.exports = {
     isEmailAlreadySent,
     upsertUserEmailStatusForGame,
     markEmailAsNotSent,
-    getUserById
+    getUserById,
+    getGroupDiscussionMessages,
+    fetchGroupDiscussionPendingMessages,
+    getReceiversIdsForGroupDiscussion,
+    storeGroupDiscussionMessage
 };

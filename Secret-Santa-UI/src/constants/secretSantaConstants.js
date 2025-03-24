@@ -1,10 +1,13 @@
 import bgg from '../assets/bgg.jpg';
 import fzg from '../assets/fzg.jpg';
 import tbg from '../assets/tbg.jpg';
+import buzzerbg from '../assets/buzzerbg.jpg';
 
 export const CHAT_BOX_TYPE = {
     SECRET_SANTA: 'secretSanta',
-    GIFT_NINJA: 'giftNinja'
+    GIFT_NINJA: 'giftNinja',
+    PUBLIC_CHAT: 'publicChat',
+    ANONYMOUS_CHAT: 'anonymousChat'
   };
 
 export const NOTIFICATION_TYPE = {
@@ -12,7 +15,10 @@ export const NOTIFICATION_TYPE = {
     START_TAMBOLA_GAME: 'startTambolaGame',
     WITH_DRAWN_NUMBERS: 'withDrawnNumbers',
     MARKED_NUMBERS: 'markedNumbers',
-    CLAIM: 'claim'
+    CLAIM: 'claim',
+    PRESS_BUZZER: 'pressBuzzer',
+    REACTIVE_BUZZER: 'reactiveBuzzer',
+    GROUP_DISCUSSION_MESSAGE: 'groupDiscussionMessage'
 };
 
 export const BACKGROUND_STYLE = {
@@ -26,6 +32,15 @@ export const BACKGROUND_STYLE = {
 
 export const TAMBOLA_BACKGROUND_STYLE = {
   backgroundImage: `url(${tbg})`,
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+  height: '100vh',
+  width: '100%',
+};
+
+export const BUZZER_BACKGROUND_STYLE = {
+  backgroundImage: `url(${buzzerbg})`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
   backgroundRepeat: 'no-repeat',
@@ -55,7 +70,9 @@ export const GAME_ASSIST_PLACEHOLDER_TEXT = 'Enter Group Code';
 
 export const TALK_TO_USER = {
   SECRET_SANTA: 'Talk to My Secret Santa',
-  GIFT_NINJA: 'Talk to My Gift Ninja'
+  GIFT_NINJA: 'Talk to My Gift Ninja',
+  PUBLIC_CHAT: 'Public Chat',
+  ANONYMOUS_CHAT: 'Anonymous Chat'
 }
 
 export const REQUEST_ERROR_MESSAGE = 'An error occurred while processing the request';
@@ -80,7 +97,9 @@ export const ROUTE_PATH = {
   GAME_ASSIST: '/game-assist',
   MASTER_MIND: '/master-mind',
   TAMBOLA: '/tambola',
-  TEAMS: '/teams'
+  TEAMS: '/teams',
+  BUZZER_TIMER: '/buzzer-timer',
+  GROUP_DISCUSSION: '/group-discussion'
 }
 
 export const ALERT_MESSAGES = {

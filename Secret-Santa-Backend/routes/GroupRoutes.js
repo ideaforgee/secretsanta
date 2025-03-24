@@ -7,5 +7,6 @@ router.post('/api/group/createGroup', protect, groupController.createGroup);
 router.post('/api/group/gameAssist', protect, groupController.joinGroup);
 router.get('/api/group/getGroupMembersInfo/:groupId', protect, groupController.getGroupMembersInfo);
 router.post('/api/group/announceGame', protect, groupController.announceGame);
+router.post('/api/group/getGroupBuzzerTimerDetail', protect, groupController.getGroupBuzzerTimerDetail);
 
 module.exports = router;

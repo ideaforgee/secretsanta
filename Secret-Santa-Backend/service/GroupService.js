@@ -5,6 +5,7 @@ const userDao = require('../dao/UserDao.js');
 const groupDao = require('../dao/GroupDao.js');
 const commonService = require('./CommonService.js');
 const messages = require('../constant/SecretSantaMessages.js');
+const WebSocket = require('ws');
 
 const createGroup = async (userId, groupName) => {
   if (!userId || !groupName) {
@@ -30,15 +31,15 @@ const createGroup = async (userId, groupName) => {
 };
 
 const joinGroup = async (userId, groupCode) => {
-  if(!userId || !groupCode) {
+  if (!userId || !groupCode) {
     return commonService.createResponse(httpResponse.BAD_REQUEST, messages.INVALID_CREDENTIALS);
   }
 
   try {
     const result = await groupDao.joinGroup(userId, groupCode);
     return result
-          ? commonService.createResponse(httpResponse.SUCCESS, result)
-          : commonService.createResponse(httpResponse.BAD_REQUEST, messages.INVALID_GROUP_CODE);
+      ? commonService.createResponse(httpResponse.SUCCESS, result)
+      : commonService.createResponse(httpResponse.BAD_REQUEST, messages.INVALID_GROUP_CODE);
   } catch (error) {
     return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, messages.INVALID_GROUP_CODE);
   }
@@ -56,13 +57,13 @@ const getGroupMembersInfo = async (groupId) => {
 const announceGame = async (userId, gameAnnouncementInfo) => {
   try {
     const validationError = validateGameAnnouncementPayload(gameAnnouncementInfo);
-    if(validationError) {
+    if (validationError) {
       return commonService.createResponse(httpResponse.BAD_REQUEST, validationError);
     }
-  
+
     const user = await userDao.getUserDetailsById(Number(userId));
-  
-    for(const recipient of gameAnnouncementInfo.emailData.recipients) {
+
+    for (const recipient of gameAnnouncementInfo.emailData.recipients) {
       const recipientUser = await userDao.getUserDetailsById(Number(recipient));
       await emailService.sendEmail(recipientUser.email, gameAnnouncementInfo.emailData.subject, gameAnnouncementInfo.emailData.body);
     }
@@ -76,16 +77,46 @@ const announceGame = async (userId, gameAnnouncementInfo) => {
 const validateGameAnnouncementPayload = (payload) => {
   const { body, subject, recipients } = payload.emailData;
 
-  if(!body || !subject || !recipients || !recipients.length) {
+  if (!body || !subject || !recipients || !recipients.length) {
     return messages.GAME_ANNOUNCEMENT_PAYLOAD_FIELD_VALIDATION_ERROR;
   }
 
   return null;
 };
 
+const getGroupBuzzerTimerDetail = async (userId, funZoneGroupId) => {
+  try {
+    const result = await groupDao.getGroupBuzzerTimerDetail(userId, funZoneGroupId);
+    const response = {
+      userList: result[0],
+      isBuzzerActive: result[1][0]?.isBuzzerActive,
+      hostId: result[1][0]?.hostId
+    }
+    return commonService.createResponse(httpResponse.SUCCESS, response);
+  } catch (error) {
+    return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
+  }
+};
+
+const reactiveBuzzerRoom = async (groupId, connections) => {
+  const groupUsers = await groupDao.getAllGroupUsers(groupId);
+  const messageData = {
+    type: 'reactiveBuzzer'
+  }
+
+  for (let user of groupUsers) {
+    const webSocket = connections.get(user.id?.toString());
+    if (webSocket && webSocket.readyState === WebSocket.OPEN) {
+      webSocket.send(JSON.stringify(messageData));
+    }
+  }
+};
+
 module.exports = {
   createGroup,
   joinGroup,
   getGroupMembersInfo,
-  announceGame
+  announceGame,
+  getGroupBuzzerTimerDetail,
+  reactiveBuzzerRoom
 };

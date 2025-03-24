@@ -28,9 +28,16 @@ const announceGame = async (req, res) => {
   return response(res, result.status, message.SUCCESS, result.response);
 };
 
+const getGroupBuzzerTimerDetail = async (req, res) => {
+  const { userId, funZoneGroupId } = req.body;
+  const result = await groupService.getGroupBuzzerTimerDetail(userId, funZoneGroupId);
+  return response(res, result.status, message.SUCCESS, result.response);
+};
+
 module.exports = {
   createGroup,
   joinGroup,
   getGroupMembersInfo,
-  announceGame
+  announceGame,
+  getGroupBuzzerTimerDetail
 };

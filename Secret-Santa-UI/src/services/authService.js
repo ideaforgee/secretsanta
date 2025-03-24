@@ -1,11 +1,11 @@
 
 import axiosInstance from '../services/axionsInstance';
 import { GAME_ID_KEY } from '../constants/appConstant';
-import { cardActionAreaClasses } from '@mui/material';
 import { jwtDecode } from 'jwt-decode';
 
 const TOKEN_KEY = 'token';
 const USER_KEY = 'userId';
+const USER_NAME = 'userName';
 
 export const registerHandler = async (name, email, password) => {
   try {
@@ -18,7 +18,8 @@ export const registerHandler = async (name, email, password) => {
 
     localStorage.setItem(TOKEN_KEY, token);
     localStorage.setItem(USER_KEY, JSON.stringify(userId));
-    
+    localStorage.setItem(USER_NAME, name);
+
     return { token, userId };
   } catch (error) {
     throw error.response ? error.response.data : 'Registration failed';
@@ -28,10 +29,11 @@ export const registerHandler = async (name, email, password) => {
 export const loginHandler = async (email, password) => {
   try {
     const response = await axiosInstance.post('api/auth/login', { email, password });
-    const { token, userId } = response.data.data;
+    const { token, userId, userName } = response.data.data;
 
     localStorage.setItem(TOKEN_KEY, token);
     localStorage.setItem(USER_KEY, JSON.stringify(userId));
+    localStorage.setItem(USER_NAME, userName);
 
     return { token, userId };
   } catch (error) {

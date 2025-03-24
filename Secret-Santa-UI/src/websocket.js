@@ -12,21 +12,6 @@ export const connectWebSocket = (userId, onMessage, onwithDrawnNumbers, onmarked
         onMessage(message);
     };
 
-    ws.onwithDrawnNumbers = (event) => {
-        const withDrawnNumbers = JSON.parse(event.data);
-        onwithDrawnNumbers(withDrawnNumbers);
-    };
-
-    ws.onmarkedNumbers = (event) => {
-        const markedNumbers = JSON.parse(event.data);
-        onmarkedNumbers(markedNumbers);
-    };
-
-    ws.onclaim = (event) => {
-        const claim = JSON.parse(event.data);
-        onclaim(claim);
-    };
-
     ws.onerror = (error) => console.error('WebSocket error:', error);
 
     return ws;

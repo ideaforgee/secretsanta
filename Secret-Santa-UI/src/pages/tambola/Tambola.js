@@ -97,7 +97,6 @@ const Tambola = () => {
     if (messageData.type === 'claim' && messageData.claimType) {
       setMarkedClaims(messageData.markedClaims);
       if (messageData.isComplete) {
-        
         setIsCompletePopup(true);
       }
     }

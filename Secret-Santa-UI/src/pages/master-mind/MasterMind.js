@@ -15,7 +15,6 @@ const MasterMind = () => {
 
   const userId = localStorage.getItem(USER_KEY);
   const masterMindGameId = localStorage.getItem(MASTER_MIND_GAME_KEY);
-  const masterMindGameSeverityLevel = localStorage.getItem(MASTER_MIND_GAME_SEVERITY_KEY);
 
   const [selectedColor, setSelectedColor] = useState(null);
   const [levels, setLevels] = useState(Array(8).fill().map(() => Array(4).fill(null)));
@@ -159,8 +158,7 @@ const MasterMind = () => {
 
   return (
     <div className={`game-container ${gameComplete ? "game-over" : ""}`} onDragOver={(e) => e.preventDefault()} onDrop={handleRemoveDrop}>
-      <div><Navbar title={'MASTER MIND'} /></div>
-      <h1>🎯 Master Mind Game</h1>
+      <div><Navbar title={'🎯 MASTER MIND'} /></div>
       <p className="instructions">Drag & Drop colors, then verify!</p>
 
       <div className="game-board">

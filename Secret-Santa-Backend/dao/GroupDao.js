@@ -1,8 +1,9 @@
 const db = require("../config/db.js");
+const moment = require("moment"); 
 
 const createGroup = async (name, code, hostId) => {
   const query = `
-      INSERT INTO groups (name, code, hostId)
+      INSERT INTO funZoneGroups (name, code, hostId)
         VALUES (?, ?, ?)
     `;
 
@@ -20,7 +21,7 @@ const joinGroup = async (userId, groupCode) => {
       FROM users
       WHERE id = ? AND groupId = (
         SELECT g.id
-        FROM groups g
+        FROM funZoneGroups g
         WHERE g.code = ?
       );
     `;
@@ -35,7 +36,7 @@ const joinGroup = async (userId, groupCode) => {
       UPDATE users
       SET groupId = (
         SELECT g.id
-        FROM groups g
+        FROM funZoneGroups g
         WHERE g.code = ?
       )
       WHERE id = ?
@@ -46,7 +47,7 @@ const joinGroup = async (userId, groupCode) => {
     const [groupId] = await db.query(getGroupIdQuery, [userId, groupCode]);
     return groupId[0]?.groupId ?? null
   } catch (error) {
-    throw new Error(err.message);
+    throw new Error(error.message);
   }
 };
 
@@ -65,8 +66,57 @@ const getGroupMembersInfo = async (groupId) => {
   }
 };
 
+const addUserToBuzzerRoom = async (userId, groupId, time) => {
+  try {
+    const formattedTime = moment(time, 'DD/MM/YYYY, HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
+
+    const query = 'INSERT INTO buzzerRoom (userId, funZoneGroupId, time) VALUES (?, ?, ?)';
+
+    await db.query(query, [Number(userId), Number(groupId), formattedTime]);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const reactiveBuzzerRoom = async (groupId) => {
+  try {
+    const query = 'DELETE FROM buzzerRoom where funZoneGroupId = ?';
+
+    await db.query(query, [Number(groupId)]);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const getGroupBuzzerTimerDetail = async (userId, funZoneGroupId) => {
+  try {
+    const query = 'CALL getGroupBuzzerTimerDetail(?, ?);';
+
+    const [response] = await db.query(query, [Number(funZoneGroupId), Number(userId)]);
+    return response ?? [];
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const getAllGroupUsers = async (funZoneGroupId) => {
+  try {
+    const query = 'SELECT id from users WHERE groupId = ?;';
+
+    const [response] = await db.query(query, [Number(funZoneGroupId)]);
+    return response ?? [];
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+
 module.exports = {
   createGroup,
   joinGroup,
-  getGroupMembersInfo
+  getGroupMembersInfo,
+  addUserToBuzzerRoom,
+  reactiveBuzzerRoom,
+  getGroupBuzzerTimerDetail,
+  getAllGroupUsers
 };

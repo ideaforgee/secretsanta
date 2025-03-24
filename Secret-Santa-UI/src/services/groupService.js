@@ -30,3 +30,11 @@ export const announceGameHandler = (payload) => {
     data: { payload },
   });
 };
+
+export const getGroupBuzzerTimerDetail = (userId, funZoneGroupId) => {
+  return handleRequest({
+      method: 'post',
+      url: '/api/group/getGroupBuzzerTimerDetail',
+      data: { userId, funZoneGroupId },
+  });
+};

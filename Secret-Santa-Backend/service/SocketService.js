@@ -2,8 +2,10 @@ const WebSocket = require('ws');
 const url = require('url');
 const messageService = require('./MessageService');
 const tambolaService = require('./TambolaService');
+const groupService = require('./GroupService');
 const tambolaDao = require('../dao/TambolaDao');
 const messageDao = require('../dao/messageDao');
+const groupDao = require('../dao/groupDao');
 const encryptDecryptService = require('../service/EncryptionAndDecryptionService');
 const connections = new Map();
 
@@ -48,6 +50,18 @@ const initializeSocketServer = (server) => {
 
                 if (parsedMessage.type == 'claim') {
                     handleTambolaClaim(parsedMessage, userId);
+                }
+
+                if (parsedMessage.type == 'pressBuzzer') {
+                    handlePressBuzzer(parsedMessage, userId);
+                }
+
+                if (parsedMessage.type == 'reactiveBuzzer') {
+                    handleReactiveBuzzer(parsedMessage);
+                }
+
+                if (parsedMessage.type == 'groupDiscussionMessage') {
+                    handleGroupDiscussionMessage(parsedMessage, userId);
                 }
             });
 
@@ -100,6 +114,24 @@ async function handleSecretSantaChat(parsedMessage, userId) {
     const receiverId = encryptDecryptService.decrypt(encryptedReceiverId);
     messageService.dispatchMessageToUser(receiverId, parsedMessage, connections);
     await messageService.processIncomingMessage(userId, parsedMessage);
+}
+
+async function handlePressBuzzer(parsedMessage, userId) {
+    await groupDao.addUserToBuzzerRoom(userId, parsedMessage.newUser?.groupId, parsedMessage.newUser?.time);
+}
+
+async function handleReactiveBuzzer(parsedMessage) {
+    groupService.reactiveBuzzerRoom(parsedMessage.groupId, connections);
+    await groupDao.reactiveBuzzerRoom(parsedMessage.groupId);
+}
+
+async function handleGroupDiscussionMessage(parsedMessage, userId) {
+    const receivers = await messageDao.getReceiversIdsForGroupDiscussion(parsedMessage.groupId);
+
+    for (let receiver of receivers) {
+        messageService.dispatchGroupDiscussionMessageToUser(userId, receiver.receiverId, parsedMessage, connections);
+    }
+    messageService.processIncomingGroupDiscussionMessage(userId, parsedMessage);
 }
 
 module.exports = {

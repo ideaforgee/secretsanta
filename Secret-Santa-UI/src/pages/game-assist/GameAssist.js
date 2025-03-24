@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
+import { ROUTE_PATH } from '../../constants/secretSantaConstants';
 import { Box, Card, Typography } from '@mui/material';
 import GameAnnouncement from '../game-announcement/GameAnnouncement.js';
 import TeamSplitter from '../team-splitter/TeamSplitter.js';
@@ -7,6 +9,7 @@ function GameAssist() {
     const [resetPrompt, setResetPrompt] = useState(false);
     const [openAnnouncementPrompt, setOpenAnnouncementPrompt] = useState(false);
     const [openTeamSplitterPrompt, setOpenTeamSplitterPrompt] = useState(false);
+    const navigate = useNavigate();
 
     const onGameAnnouncementClick = () => {
         setResetPrompt(true);
@@ -28,11 +31,19 @@ function GameAssist() {
         setOpenTeamSplitterPrompt(false);
     }
 
+    const onBuzzerTimerClick = () => {
+        navigate(ROUTE_PATH.BUZZER_TIMER);
+    }
+
+    const onTeamDiscussionClick = () => {
+        navigate(ROUTE_PATH.GROUP_DISCUSSION);
+    }
+
     const cards = [
         { text: 'Game Announcement', onClick: onGameAnnouncementClick },
         { text: 'Team Splitter', onClick: onTeamSplitterClick },
-        { text: 'Buzzer Timer', onClick: () => {} },
-        { text: 'Team Discussion', onClick: () => {} },
+        { text: 'Buzzer Timer', onClick: onBuzzerTimerClick },
+        { text: 'Team Discussion', onClick: onTeamDiscussionClick },
     ];
   return (
     <div className='game-zone-container'>

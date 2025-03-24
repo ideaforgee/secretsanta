@@ -31,3 +31,19 @@ export const markEmailAsNotSent = (userId, gameId, chatBoxType) => {
         data: { userId, gameId, chatBoxType },
     });
 };
+
+export const fetchGroupDiscussionMessages = (userId, groupId) => {
+    return handleRequest({
+        method: 'post',
+        url: '/api/chat/fetchGroupDiscussionMessages',
+        data: { userId, groupId },
+    });
+};
+
+export const fetchGroupDiscussionPendingMessages = (userId, groupId) => {
+    return handleRequest({
+        method: 'post',
+        url: '/api/chat/fetchGroupDiscussionPendingMessages',
+        data: { userId, groupId },
+    });
+};

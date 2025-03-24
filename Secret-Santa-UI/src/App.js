@@ -26,6 +26,8 @@ import GameAssist from './pages/game-assist/GameAssist';
 import MasterMind from './pages/master-mind/MasterMind';
 import Tambola from './pages/tambola/Tambola';
 import Teams from './pages/teams/Teams';
+import BuzzerTImer from './pages/buzzer-timer/buzzerTimer';
+import GroupDiscussion from './pages/GroupDiscussion'
 
 
 const App = () => {
@@ -90,6 +92,12 @@ const App = () => {
               />
               <Route path={ROUTE_PATH.TEAMS}
                 element={<ProtectedRoute element={<Teams />} />}
+              />
+              <Route path={ROUTE_PATH.BUZZER_TIMER}
+                element={<ProtectedRoute element={<BuzzerTImer />} />}
+              />
+              <Route path={ROUTE_PATH.GROUP_DISCUSSION}
+                element={<ProtectedRoute element={<GroupDiscussion />} />}
               />
             </Routes>
           </AuthProvider>

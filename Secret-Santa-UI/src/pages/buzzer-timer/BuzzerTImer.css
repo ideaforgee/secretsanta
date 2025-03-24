@@ -1,0 +1,46 @@
+.buzzer-time-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f7f7f7;
+}
+
+.buzzer-time-title {
+    color: #ff4081;
+    font-size: 36px;
+    margin-bottom: 40px;
+    font-family: 'Arial', sans-serif;
+}
+
+.components-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+/* Re-Active Buzzer Button Styling */
+.re-active-buzzer-btn {
+    background-color: #ff5733; /* Bright Color */
+    color: white;
+    font-size: 20px;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.re-active-buzzer-btn:hover {
+    background-color: #d94f2b; /* Darker Shade on Hover */
+    transform: scale(1.1); /* Slightly enlarge the button */
+}
+
+.re-active-buzzer-btn:focus {
+    outline: none;
+    box-shadow: 0 0 5px 2px rgba(255, 87, 51, 0.7);
+}
+

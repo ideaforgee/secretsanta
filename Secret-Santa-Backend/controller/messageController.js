@@ -84,8 +84,22 @@ const markEmailAsNotSent = async (req, res) => {
     return response(res, result.status, message.SUCCESS, result.response);
 };
 
+const fetchGroupDiscussionMessages = async (req, res) => {
+    const { userId, groupId } = req.body;
+    const result = await messageService.fetchGroupDiscussionMessages(userId, groupId);
+    response(res, result.status, message.SUCCESS, result.response);
+};
+
+const fetchGroupDiscussionPendingMessages = async (req, res) => {
+    const { userId, groupId } = req.body;
+    const result = await messageService.fetchGroupDiscussionPendingMessages(userId, groupId);
+    response(res, result.status, message.SUCCESS, result.response);
+};
+
 module.exports = {
     getMessagesForUserInGame,
     getPendingMessagesForUserInGame,
-    markEmailAsNotSent
+    markEmailAsNotSent,
+    fetchGroupDiscussionMessages,
+    fetchGroupDiscussionPendingMessages
 };

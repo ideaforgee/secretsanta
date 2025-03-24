@@ -4,6 +4,8 @@ const commonService = require('../service/CommonService.js')
 const httpResponse = require('../HttpResponse.js');
 const message = require('../constant/SecretSantaMessages.js');
 const WebSocket = require('ws');
+const db = require('../config/db');
+const encryptDecryptService = require('../service/EncryptionAndDecryptionService');
 
 /**
  * Retrieves messages for a specific user in a given game.
@@ -132,7 +134,7 @@ const sendEmailNotificationToUser = async (receiverId, messageData) => {
     const emailAlreadySent = await hasEmailAlreadyBeenSent(receiverId, messageData, reverserChatBoxType);
     if (!emailAlreadySent) {
         const targetUser = await messageDao.getUserById(receiverId);
-        await emailService.sendSecretSantaSentMessageEmail(targetUser, reverserChatBoxType);
+        //await emailService.sendSecretSantaSentMessageEmail(targetUser, reverserChatBoxType);
         messageDao.upsertUserEmailStatusForGame(receiverId, messageData.gameId, reverserChatBoxType);
     }
 };
@@ -166,11 +168,79 @@ const markEmailAsNotSent = async (userId, gameId, chatBoxType) => {
     return commonService.createResponse(httpResponse.SUCCESS, message.EMAIL_MARKED_NOT_SENT);
 };
 
+const fetchGroupDiscussionMessages = async (userId, groupId) => {
+    if (!userId || !groupId) {
+        return commonService.createResponse(httpResponse.BAD_REQUEST, message.INVALID_CREDENTIALS);
+    }
+
+    try {
+        const [publicChatMessages, anonymousChatMessages] = await messageDao.getGroupDiscussionMessages(Number(userId), Number(groupId));
+
+        const formatMessages = (messages) => messages.map((msg) => ({
+            from: msg.from,
+            content: msg.content,
+        }));
+
+        const result = {
+            publicChatMessages: formatMessages(publicChatMessages),
+            anonymousChatMessages: formatMessages(anonymousChatMessages),
+        };
+
+        return commonService.createResponse(httpResponse.SUCCESS, result);
+
+    } catch (error) {
+        return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
+    }
+};
+
+const fetchGroupDiscussionPendingMessages = async (userId, groupId) => {
+    if (!userId || !groupId) {
+        return commonService.createResponse(httpResponse.BAD_REQUEST, message.INVALID_CREDENTIALS);
+    }
+
+    try {
+        const pendingMessages = await messageDao.fetchGroupDiscussionPendingMessages(Number(userId), Number(groupId));
+
+        const result = {
+            publicChatPendingMessages: Boolean(pendingMessages?.publicChatPendingMessages),
+            anonymousChatPendingMessages: Boolean(pendingMessages?.anonymousChatPendingMessages),
+        };
+        return commonService.createResponse(httpResponse.SUCCESS, result);
+    } catch (error) {
+        return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
+    }
+};
+
+const processIncomingGroupDiscussionMessage = async (userId, messageData) => {
+    try {
+        const senderId = messageData.chatBoxType === 'anonymousChat' ? null : Number(userId);
+        const isSendAnonymously =  messageData.chatBoxType === 'anonymousChat';
+        messageDao.storeGroupDiscussionMessage(senderId, messageData.content, messageData.groupId, isSendAnonymously);
+        console.log(`Message processed from user ${senderId}:`, messageData);
+    } catch (error) {
+        console.error("Error processing incoming message:", error);
+    }
+};
+
+const dispatchGroupDiscussionMessageToUser = async (senderId, receiverId, messageData, connections) => {
+    const webSocket = connections.get(receiverId?.toString());
+    if (senderId !== receiverId && webSocket && webSocket.readyState === WebSocket.OPEN) {
+        webSocket.send(JSON.stringify(messageData));
+    } else {
+        //sendEmailNotificationToUser(receiverId, messageData);
+        console.error(`Cannot send message. User ${receiverId} is not connected.`);
+    }
+};
+
 
 module.exports = {
     fetchMessagesForUserInGame,
     dispatchMessageToUser,
     processIncomingMessage,
     getPendingMessagesForUserInGame,
-    markEmailAsNotSent
+    markEmailAsNotSent,
+    fetchGroupDiscussionMessages,
+    fetchGroupDiscussionPendingMessages,
+    processIncomingGroupDiscussionMessage,
+    dispatchGroupDiscussionMessageToUser
 };
