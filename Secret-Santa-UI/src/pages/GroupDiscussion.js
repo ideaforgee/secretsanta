@@ -14,6 +14,7 @@ import '../pages/GroupDiscussion.css';
 
 const GroupDiscussion = () => {
     const userId = localStorage.getItem('userId');
+    const userName = localStorage.getItem('userName');
     const groupId = localStorage.getItem('groupId');
 
     const [messagesPublic, setMessagesPublic] = useState([]);
@@ -71,20 +72,17 @@ const GroupDiscussion = () => {
     };
 
     const handleWebSocketMessage = (message) => {
-        if (message.type !== Constant.NOTIFICATION_TYPE.MESSAGE) return;
+        if (message.type !== Constant.NOTIFICATION_TYPE.GROUP_DISCUSSION_MESSAGE) return;
 
-        const reverseChatBoxType =
-            message.chatBoxType === Constant.CHAT_BOX_TYPE.SECRET_SANTA ? Constant.CHAT_BOX_TYPE.GIFT_NINJA : Constant.CHAT_BOX_TYPE.SECRET_SANTA;
+        const newMessage = { from: message.senderName, content: message.content };
 
-        const newMessage = { from: reverseChatBoxType, content: message.content };
-
-        if (reverseChatBoxType === Constant.CHAT_BOX_TYPE.SECRET_SANTA) {
-            if (chatModeRef?.current !== Constant.CHAT_BOX_TYPE.SECRET_SANTA) {
+        if (message.chatBoxType === 'publicChat') {
+            if (chatModeRef?.current !== Constant.CHAT_BOX_TYPE.PUBLIC_CHAT) {
                 toggleBadgeVisibility(setPublicChatMessagesHidden, false);
             }
             setMessagesPublic((prev) => [...prev, newMessage]);
-        } else if (reverseChatBoxType === Constant.CHAT_BOX_TYPE.GIFT_NINJA) {
-            if (chatModeRef?.current !== Constant.CHAT_BOX_TYPE.GIFT_NINJA) {
+        } else if (message.chatBoxType === 'anonymousChat') {
+            if (chatModeRef?.current !== Constant.CHAT_BOX_TYPE.ANONYMOUS_CHAT) {
                 toggleBadgeVisibility(setAnonymousChatMessagesHidden, false);
             }
             setMessagesAnonymous((prev) => [...prev, newMessage]);
@@ -121,7 +119,13 @@ const GroupDiscussion = () => {
         const messageContent =
             chatMode === Constant.CHAT_BOX_TYPE.PUBLIC_CHAT ? publicChatInputMessage : anonymousChatInputMessage;
 
-        ws.send(JSON.stringify({ type: Constant.NOTIFICATION_TYPE.GROUP_DISCUSSION_MESSAGE, userId, chatBoxType: chatMode, content: messageContent, groupId: groupId }));
+        ws.send(JSON.stringify({
+            type: Constant.NOTIFICATION_TYPE.GROUP_DISCUSSION_MESSAGE,
+            userId,
+            chatBoxType: chatMode,
+            content: messageContent,
+            senderName: userName,
+            groupId: groupId }));
 
         const newMessage = { from: chatMode === Constant.CHAT_BOX_TYPE.PUBLIC_CHAT ? 'Me' : 'Anonymous', content: messageContent };
 
@@ -166,10 +170,17 @@ const GroupDiscussion = () => {
     const renderChatWindow = (messages, inputValue, setInputValue, ref, header) => (
         <div className='chat-window'>
             <header className='chat-header'>{header}</header>
-            <button className='close-chat-button' onClick={() => setChatMode(null)}><CloseIcon/></button>
+            <button className='close-chat-button' onClick={() => setChatMode(null)}><CloseIcon /></button>
             <div className='chat-messages' ref={ref}>
                 {messages.map((msg, idx) => (
-                    <Message key={idx} message={msg} />
+                    header === 'Public Chat' ?
+                        <div className={`message ${msg.from === "Me" ? "sent" : "received"}`}>
+                            <div className="message-content">
+                                {msg.from !== "Me" ? <span className="message-from">{msg.from}</span> : null}
+                                <span className="message-text">{msg.content}</span>
+                            </div>
+                        </div>
+                        : <Message key={idx} message={msg} />
                 ))}
             </div>
             <footer className='chat-footer'>

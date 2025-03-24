@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { ROUTE_PATH } from '../../constants/secretSantaConstants';
 import { Box, Card, Typography } from '@mui/material';
+import Navbar from "../../components/navbar/Navbar";
+import * as Constant from '../../constants/secretSantaConstants.js';
 import GameAnnouncement from '../game-announcement/GameAnnouncement.js';
 import TeamSplitter from '../team-splitter/TeamSplitter.js';
 
@@ -46,7 +48,8 @@ function GameAssist() {
         { text: 'Team Discussion', onClick: onTeamDiscussionClick },
     ];
   return (
-    <div className='game-zone-container'>
+    <div style={Constant.FUN_ZONE_STYLE}className='game-zone-container'>
+        <div><Navbar title={'Game Assist'}/></div>
             <Box
                 sx={{
                     display: 'flex',

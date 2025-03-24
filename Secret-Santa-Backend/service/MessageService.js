@@ -224,7 +224,7 @@ const processIncomingGroupDiscussionMessage = async (userId, messageData) => {
 
 const dispatchGroupDiscussionMessageToUser = async (senderId, receiverId, messageData, connections) => {
     const webSocket = connections.get(receiverId?.toString());
-    if (senderId !== receiverId && webSocket && webSocket.readyState === WebSocket.OPEN) {
+    if (Number(senderId) !== receiverId && webSocket && webSocket.readyState === WebSocket.OPEN) {
         webSocket.send(JSON.stringify(messageData));
     } else {
         //sendEmailNotificationToUser(receiverId, messageData);
