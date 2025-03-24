@@ -29,6 +29,18 @@
     color: #fcfeff;
 }
 
+@media (max-width: 768px) {
+    .navbar-heading {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 320px) {
+    .navbar-heading {
+        font-size: 1rem;
+    }
+}
+
 .navbar-left {
     cursor: pointer;
 }
