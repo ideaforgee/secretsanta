@@ -28,14 +28,19 @@ import Tambola from './pages/tambola/Tambola';
 import Teams from './pages/teams/Teams';
 import BuzzerTImer from './pages/buzzer-timer/buzzerTimer';
 import GroupDiscussion from './pages/GroupDiscussion'
+import { registerServiceWorker, requestNotificationPermission } from './services/notificationService';
+import * as Constant from './constants/appConstant';
 
 
 const App = () => {
   const { startLoading, stopLoading } = useLoading();
+  const userId = localStorage.getItem(Constant.USER_KEY);
 
   useEffect(() => {
     setupInterceptors(startLoading, stopLoading);
-  }, [startLoading, stopLoading]);
+    registerServiceWorker(userId);
+    requestNotificationPermission();
+  }, [startLoading, stopLoading, userId]);
 
   return (
     <LoadingProvider>

@@ -11,6 +11,7 @@ const messageRoutes = require('./routes/messageRoutes');
 const masterMindRoutes = require('./routes/MasterMindRoute.js');
 const tambolaRoutes = require('./routes/TambolaRoute.js');
 const groupRoutes = require('./routes/GroupRoutes.js');
+const notificationRoutes = require('./routes/NotificationRoutes');
 
 const { initializeSocketServer } = require('./service/SocketService');
 const { Server } = require('socket.io');
@@ -43,6 +44,7 @@ app.use(wishlistRoutes);
 app.use(masterMindRoutes);
 app.use(tambolaRoutes);
 app.use(groupRoutes);
+app.use(notificationRoutes);
 
 // Initialize the WebSocket server (passing the same HTTP server for WebSocket functionality)
 initializeSocketServer(server); // Use the same server instance here

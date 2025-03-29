@@ -16,7 +16,6 @@ import { useAlert } from '../../context/AlertContext.js';
 import { addWishToMineWishList } from '../../services/wishlistService.js';
 import ErrorComponent from '../Error/ErrorComponent.js';
 
-
 function AddWishlist({ open, onClose, resetForm, refreshWishlist }) {
     const [wishlistData, setWishlistData] = useState(new Wishlist());
     const [submitted, setSubmitted] = useState(false);

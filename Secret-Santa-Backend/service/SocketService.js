@@ -5,7 +5,7 @@ const tambolaService = require('./TambolaService');
 const groupService = require('./GroupService');
 const tambolaDao = require('../dao/TambolaDao');
 const messageDao = require('../dao/messageDao');
-const groupDao = require('../dao/groupDao');
+const groupDao = require('../dao/GroupDao.js');
 const encryptDecryptService = require('../service/EncryptionAndDecryptionService');
 const connections = new Map();
 
