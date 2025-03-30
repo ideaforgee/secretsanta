@@ -5,6 +5,7 @@ const userDao = require('../dao/UserDao.js');
 const groupDao = require('../dao/GroupDao.js');
 const commonService = require('./CommonService.js');
 const messages = require('../constant/SecretSantaMessages.js');
+const notificationPushService = require('./NotificationPushService.js');
 const WebSocket = require('ws');
 
 const createGroup = async (userId, groupName) => {
@@ -68,6 +69,22 @@ const announceGame = async (userId, gameAnnouncementInfo) => {
       await emailService.sendEmail(recipientUser.email, gameAnnouncementInfo.emailData.subject, gameAnnouncementInfo.emailData.body);
     }
 
+    /*
+    // To send notification example
+    const subscription = await notificationDao.getSubscription(recipientUser.id);
+    
+    if (subscription) {
+      const payload = {
+        title: 'Game Announcement',
+        body: `A new game has been announced: ${gameAnnouncementInfo.gameDetails}`,
+        icon: '/logo192.png',
+        badge: '/badge.png',
+        vibrate: [200, 100, 200]
+      };
+
+      await notificationPushService.sendNotification(subscription.subscription, payload);
+    }
+    */
     return commonService.createResponse(httpResponse.SUCCESS, messages.CREATED_GAME_SUCCESSFULLY);
   } catch (error) {
     return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);
