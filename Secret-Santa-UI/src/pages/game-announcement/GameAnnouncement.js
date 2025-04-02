@@ -7,6 +7,7 @@ import TeamMembers from '../../components/TeamMembers/TeamMembers';
 import { GROUP_ID_KEY, USER_KEY } from '../../constants/appConstant';
 import * as groupService from '../../services/groupService.js';
 import { useAlert } from '../../context/AlertContext.js';
+import CampaignTwoToneIcon from '@mui/icons-material/CampaignTwoTone';
 
 function GameAnnouncement({ open, onClose, resetPrompt }) {
 
@@ -60,7 +61,7 @@ function GameAnnouncement({ open, onClose, resetPrompt }) {
     const recipientIds = emailData.recipients.filter(recipient => recipient.checked).map(recipient => recipient.userId);
     const payload = { userId, emailData: { ...emailData, recipients: recipientIds } };
     
-    const response = await groupService.announceGameHandler(payload);
+    await groupService.announceGameHandler(payload);
     onClose();
   };
 
@@ -121,7 +122,7 @@ function GameAnnouncement({ open, onClose, resetPrompt }) {
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose} color='secondary'>Cancel</Button>
-          <Button onClick={handleSendEmail} color='primary'>Send</Button>
+          <Button onClick={handleSendEmail} color='primary'><CampaignTwoToneIcon/> Announce</Button>
         </DialogActions>
       </Dialog>
       <TeamMembers

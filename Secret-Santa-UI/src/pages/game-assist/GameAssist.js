@@ -42,7 +42,7 @@ function GameAssist() {
     }
 
     const cards = [
-        { text: 'Game Announcement', onClick: onGameAnnouncementClick },
+        { text: 'Announcement', onClick: onGameAnnouncementClick },
         { text: 'Team Splitter', onClick: onTeamSplitterClick },
         { text: 'Buzzer Timer', onClick: onBuzzerTimerClick },
         { text: 'Team Discussion', onClick: onTeamDiscussionClick },
