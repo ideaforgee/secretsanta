@@ -16,7 +16,6 @@ function TeamSplitter({ open, onClose, resetPrompt }) {
   const groupId = localStorage.getItem(GROUP_ID_KEY);
   const { showAlert } = useAlert();
   const [canCreateTeams, setCanCreateTeams] = useState(false);
-  const [teams, setTeams] = useState([]);
   const navigate = useNavigate();
 
   const handleTeamChange = (field, value) => {
@@ -74,15 +73,11 @@ function TeamSplitter({ open, onClose, resetPrompt }) {
         startIndex += teamSize;
       }
 
-      setTeams(teams);
+      onClose();
+      navigate(Constant.ROUTE_PATH.TEAMS, { state: { teams: teams } });
     } catch (error) {
       showAlert(error || 'An error occurred while creating teams.', Constant.ERROR);
     }
-  };
-
-  const viewTeams = () => {
-    onClose();
-    navigate(Constant.ROUTE_PATH.TEAMS, { state: { teams: teams } });
   };
 
   useEffect(() => {
@@ -90,7 +85,6 @@ function TeamSplitter({ open, onClose, resetPrompt }) {
       setTeamData(new Team());
       setSubmitted(false);
       getTeamMembers();
-      setTeams([]);
     }
   }, [resetPrompt]);
 
@@ -121,13 +115,13 @@ function TeamSplitter({ open, onClose, resetPrompt }) {
       >
         <DialogTitle className='team-splitter-dialog-title-container'>
           <Typography variant="h6" className='team-splitter-dialog-title'>
-            Divide Teams
+            Split Teams
           </Typography>
         </DialogTitle>
         <DialogContent>
           <TextField
             style={{ marginTop: '10px' }}
-            label='Number of Teams'
+            label='Split Teams into'
             variant='outlined'
             value={teamData.numberOfTeams}
             onChange={(e) => handleTeamChange('numberOfTeams', e.target.value)}
@@ -149,10 +143,7 @@ function TeamSplitter({ open, onClose, resetPrompt }) {
             Cancel
           </Button>
           <Button onClick={createTeams} color='primary' disabled={canCreateTeams}>
-            Create
-          </Button>
-          <Button onClick={viewTeams} color='primary' disabled={canCreateTeams || !teams.length}>
-            View Teams
+            Split
           </Button>
         </DialogActions>
       </Dialog>
