@@ -163,7 +163,7 @@ const GroupDiscussion = () => {
     }, [userId]);
 
     useEffect(() => {
-        const scrollRef = chatMode === Constant.CHAT_BOX_TYPE.SECRET_SANTA ? publicMessagesEndRef : anonymousMessagesEndRef;
+        const scrollRef = chatMode === Constant.CHAT_BOX_TYPE.PUBLIC_CHAT ? publicMessagesEndRef : anonymousMessagesEndRef;
         if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }, [messagesPublic, messagesAnonymous, chatMode]);
 
@@ -203,7 +203,7 @@ const GroupDiscussion = () => {
     );
 
     return (
-        <div style={Constant.BACKGROUND_STYLE} className='chat-container'>
+        <div style={Constant.FUN_ZONE_STYLE} className='chat-container'>
             <div className='go-to-game-icon' onClick={() => navigate(Constant.ROUTE_PATH.GAME_ASSIST)}>
                 <IoGameController />
             </div>

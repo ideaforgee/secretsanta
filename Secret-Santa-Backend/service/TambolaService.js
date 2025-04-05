@@ -5,6 +5,7 @@ const secretSantaService = require('../service/SecretSantaService');
 const commonService = require('../service/CommonService');
 const messages = require('../constant/SecretSantaMessages.js');
 const emailService = require('./EmailService.js');
+const notificationPushService = require('./NotificationPushService.js');
 const WebSocket = require('ws');
 
 /**
@@ -19,7 +20,10 @@ const createNewTambolaGame = async (userId) => {
         const tambolaGameCode = secretSantaService.generateUniqueGameCode(user.name);
 
         const tambolaGameId = await tambolaDao.saveNewTambolaGame(userId, tambolaGameCode);
-        //await emailService.sendCreatedSecretSantaGameEmail(user, gameCode);
+
+        notificationPushService.sendPushNotifications(Number(userId), messages.CREATED_GAME_SUCCESSFULLY, `Here is your tambola game Code ${tambolaGameCode}`);
+
+        await emailService.sendCreatedSecretSantaGameEmail(user, gameCode);
 
         return commonService.createResponse(httpResponse.SUCCESS, { tambolaGameId, gameCode: tambolaGameCode });
     }

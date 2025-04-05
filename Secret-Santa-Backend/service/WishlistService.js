@@ -4,6 +4,7 @@ const secretSantaDao = require('../dao/SecretSantaDao.js');
 const emailService = require('./EmailService.js');
 const httpResponse = require('../HttpResponse.js');
 const message = require('../constant/SecretSantaMessages.js');
+const notificationPushService = require('./NotificationPushService.js');
 
 /**
  * Retrieves the Secret Santa wishlist for a given user and game.
@@ -44,7 +45,10 @@ async function addWishToUserWishlist(userId, gameId, wish) {
 
   try {
     await wishListDao.addWishToUserWishlist(userId, gameId, wish);
-    const receiver = await secretSantaDao.getReceiverEmailForGameByUserId(userId, gameId);
+    const receiver = await secretSantaDao.getReceiverInfoForGameByUserId(userId, gameId);
+
+    notificationPushService.sendPushNotifications(Number(receiver.id), `${receiver.name} just modify wishlist`, `You can now check ${receiver.name} wishlist`);
+
     if (receiver?.email) {
       await emailService.sendAddWishSecretSantaEmail(receiver.email);
     }

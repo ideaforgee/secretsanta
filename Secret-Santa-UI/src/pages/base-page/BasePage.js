@@ -4,11 +4,14 @@ import CreateGroup from '../create-group/CreateGroup';
 import * as Constant from '../../constants/secretSantaConstants.js';
 import ErrorComponent from '../../components/Error/ErrorComponent.js';
 import { useNavigate } from 'react-router-dom';
-import { Box, Card, Typography } from '@mui/material';
+import { Box, Card, Typography, Grid, useMediaQuery, useTheme } from '@mui/material';
 import Navbar from "../../components/navbar/Navbar";
 import CodeDialog from '../../components/CodeDialog/CodeDialog';
 import { GROUP_ID_KEY, USER_KEY } from '../../constants/appConstant.js';
 import { gameAssistHandler } from '../../services/groupService.js';
+import funZoneGroup from '../../assets/funZoneGroup.jpeg';
+import gameZone from '../../assets/gameZone.jpeg';
+import gameAssist from '../../assets/gameAssist.jpeg';
 
 const BasePage = () => {
     const [openCreateGroup, setOpenCreateGroup] = useState(false);
@@ -19,6 +22,9 @@ const BasePage = () => {
     const [dialogTitle, setDialogTitle] = useState(Constant.EMPTY);
     const [placeholderText, setPlaceholderText] = useState(Constant.EMPTY);
     const [openGroupCode, setOpenGroupCode] = useState(false);
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
     const navigate = useNavigate();
     const userId = localStorage.getItem(USER_KEY);
 
@@ -35,7 +41,7 @@ const BasePage = () => {
 
     const onClickGameAssist = () => {
         setResetForm(true);
-        if(localStorage.getItem(GROUP_ID_KEY)){
+        if (localStorage.getItem(GROUP_ID_KEY)) {
             navigate(Constant.ROUTE_PATH.GAME_ASSIST);
             return;
         } else {
@@ -45,14 +51,14 @@ const BasePage = () => {
             setDialogTitle(Constant.GAME_ASSIST_TITLE);
             setOpenGroupCode(true);
         }
-        
+
 
     };
 
     const handleGroupCodeSubmit = async (groupCode) => {
         try {
-            const response = await gameAssistHandler({userId, groupCode});
-            if(response) {
+            const response = await gameAssistHandler({ userId, groupCode });
+            if (response) {
                 return { groupId: response, path: Constant.ROUTE_PATH.GAME_ASSIST };
             }
         } catch (error) {
@@ -76,56 +82,67 @@ const BasePage = () => {
     };
 
     const cards = [
-        { text: 'Create Group', onClick: onClickCreateGroup },
-        { text: 'Game Zone', onClick: onClickGameZone },
-        { text: 'Game Assist', onClick: onClickGameAssist }
+        { text: 'Create Group', onClick: onClickCreateGroup, bgImage: funZoneGroup },
+        { text: 'Game Zone', onClick: onClickGameZone, bgImage: gameZone },
+        { text: 'Game Assist', onClick: onClickGameAssist, bgImage: gameAssist }
     ];
 
     return (
         <div style={Constant.FUN_ZONE_STYLE} className='base-page-container'>
-            <div><Navbar title={'FUN ZONE'}/></div>
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    gap: 4,
-                }}
-            >
-                {cards.map((card, index) => (
-                    <Card
-                        key={index}
-                        variant="outlined"
-                        sx={{
-                            width: 250,
-                            height: 250,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderRadius: '16px',
-                            backgroundColor: 'rgb(245, 245, 245)',
-                            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-                            border: '1px solid #ddd',
-                            transition: 'transform 0.3s, box-shadow 0.3s',
-                            '&:hover': {
-                                transform: 'translateY(-8px)',
-                                boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.2)',
-                            },
-                        }}
-                        onClick={card.onClick}
-                    >
-                        <Typography
-                            variant="h5"
-                            sx={{
-                                textAlign: 'center',
-                                fontWeight: 'bold',
-                                color: '#333',
-                            }}
-                        >
-                            {card.text}
-                        </Typography>
-                    </Card>
-                ))}
+            <div><Navbar title={'FUN ZONE'} /></div>
+            <Box sx={{ px: 2, width: '100%', display: 'flex', justifyContent: 'center' }}>
+                <Box sx={{ width: '100%', maxWidth: '1200px' }}>
+                    <Grid container spacing={3} justifyContent="center">
+                        {cards.map((card, index) => (
+                            <Grid
+                                key={index}
+                                item
+                                xs={12}
+                                sm={6}
+                                md={4}
+                                lg={3}
+                                sx={{ display: 'flex', justifyContent: 'center' }}
+                            >
+                                <Card
+                                    onClick={card.onClick}
+                                    sx={{
+                                        width: isSmallScreen ? '90%' : '100%',
+                                        height: isSmallScreen ? 180 : 250,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        borderRadius: '16px',
+                                        backgroundImage: `url(${card.bgImage})`,
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center',
+                                        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                                        transition: 'transform 0.3s, box-shadow 0.3s',
+                                        '&:hover': {
+                                            transform: 'translateY(-8px)',
+                                            boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.2)',
+                                            cursor: 'pointer',
+                                        },
+                                    }}
+                                >
+                                    <Typography
+                                        variant="h6"
+                                        sx={{
+                                            textAlign: 'center',
+                                            fontWeight: 'bold',
+                                            color: '#ffffff',
+                                            textShadow: '1px 1px 4px rgba(0,0,0,0.7)',
+                                            px: 1,
+                                        }}
+                                    >
+                                        {card.text}
+                                    </Typography>
+                                </Card>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Box>
             </Box>
+
             {openCreateGroup && (
                 <CreateGroup
                     open={openCreateGroup}

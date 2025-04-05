@@ -6,6 +6,7 @@ const message = require('../constant/SecretSantaMessages.js');
 const WebSocket = require('ws');
 const db = require('../config/db');
 const encryptDecryptService = require('../service/EncryptionAndDecryptionService');
+const notificationPushService = require('../service/NotificationPushService');
 
 /**
  * Retrieves messages for a specific user in a given game.
@@ -73,6 +74,8 @@ const storeSentMessage = async (userId, gameId, chatBoxType, messageContent) => 
  */
 const dispatchMessageToUser = async (receiverId, messageData, connections) => {
     const webSocket = connections.get(receiverId?.toString());
+    const reverserChatBoxType = messageData.chatBoxType === 'secretSanta' ? 'giftNinja' : 'secretSanta'
+    notificationPushService.sendPushNotifications(receiverId, `${reverserChatBoxType} message`, messageData.content);
     if (webSocket && webSocket.readyState === WebSocket.OPEN) {
         webSocket.send(JSON.stringify(messageData));
     } else {
@@ -224,14 +227,16 @@ const processIncomingGroupDiscussionMessage = async (userId, messageData) => {
 
 const dispatchGroupDiscussionMessageToUser = async (senderId, receiverId, messageData, connections) => {
     const webSocket = connections.get(receiverId?.toString());
-    if (Number(senderId) !== receiverId && webSocket && webSocket.readyState === WebSocket.OPEN) {
-        webSocket.send(JSON.stringify(messageData));
+    if (Number(senderId) !== Number(receiverId)) {
+        await notificationPushService.sendPushNotifications(receiverId, `${messageData.chatBoxType} message`, messageData.content);
+        if (webSocket && webSocket.readyState === WebSocket.OPEN) {
+            webSocket.send(JSON.stringify(messageData))
+        };
     } else {
         //sendEmailNotificationToUser(receiverId, messageData);
         console.error(`Cannot send message. User ${receiverId} is not connected.`);
     }
 };
-
 
 module.exports = {
     fetchMessagesForUserInGame,

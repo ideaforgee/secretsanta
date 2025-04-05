@@ -5,6 +5,7 @@ const messages = require('../constant/SecretSantaMessages.js');
 const emailService = require('./EmailService.js');
 const httpResponse = require('../HttpResponse.js');
 const encryptDecryptService = require('./EncryptionAndDecryptionService.js');
+const notificationPushService = require('./NotificationPushService.js');
 const commonService = require('./CommonService.js');
 
 /**
@@ -27,7 +28,10 @@ const createSecretSantaNewGame = async (userId, gameInfo) => {
     const newGame = generateNewGame(user, gameInfo);
 
     await secretSantaDao.saveNewSecretSantaGame(newGame);
-    await emailService.sendCreatedSecretSantaGameEmail(user, newGame.gameCode);
+
+    notificationPushService.sendPushNotifications(Number(userId), messages.CREATED_GAME_SUCCESSFULLY, `Here is your secret santa game Code ${newGame.gameCode}`);
+
+    emailService.sendCreatedSecretSantaGameEmail(user, newGame.gameCode);
 
     return commonService.createResponse(httpResponse.SUCCESS, messages.CREATED_GAME_SUCCESSFULLY);
   }

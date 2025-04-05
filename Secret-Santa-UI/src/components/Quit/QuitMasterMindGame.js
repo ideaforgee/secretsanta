@@ -23,7 +23,7 @@ const QuitPopup = ({ onClose, colorMap }) => {
   return (
     <div className="popup-overlay">
       <div className="popup-container">
-      <h2>❌ You Failed to Break the Code!</h2>
+      <h2>🤕 You Failed to Break the Code!</h2>
         <p>Better luck next time. Try again! Here is the actual pattern:</p>
         <div className="pattern-display">
           {pattern.map((color, index) => (

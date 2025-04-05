@@ -20,7 +20,7 @@ webpush.setVapidDetails(
  */
 const sendNotification = async (subscription, payload) => {
   return webpush.sendNotification(subscription, JSON.stringify(payload))
-  .catch(error => console.error('Push notification error:', error));
+    .catch(error => console.error('Push notification error:', error));
 };
 
 /**
@@ -42,31 +42,27 @@ const saveSubscription = async (userId, subscription) => {
 
 /**
  * Sends push notifications to multiple users
- * @param {Array} recipientIds - List of recipient user IDs
+ * @param {Array} recipientId - List of recipient user IDs
  * @param {String} title - Notification title
  * @param {String} body - Notification body
  */
-const sendPushNotifications = async (recipientIds, title, body) => {
+const sendPushNotifications = async (recipientId, title, body) => {
   try {
-    for (const recipientId of recipientIds) {
-      const subscriptions = await notificationDao.getSubscription(recipientId);
-      if (!subscriptions || subscriptions.length === 0) {
-        continue;
-      }
+    const subscription = await notificationDao.getSubscription(recipientId);
+    if (subscription) {
 
       const notificationPayload = {
         title: title,
         body: body,
         icon: '/logo192.png',
         badge: '/badge.png',
+        vibrate: [200, 100, 200]
       };
 
-      await Promise.all(
-        subscriptions.map(sub => sendNotification(sub.subscription, notificationPayload))
-      );
-    }
+      sendNotification(subscription, notificationPayload);
 
-    console.log(`Notifications sent to ${recipientIds.length} recipients`);
+      console.log(`Notifications sent to ${recipientId}`);
+    }
   } catch (error) {
     console.error('Error sending push notifications:', error);
     throw new Error('Error sending push notifications');

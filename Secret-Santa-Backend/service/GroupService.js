@@ -3,6 +3,7 @@ const emailService = require('./EmailService.js');
 const secretSantaService = require('./SecretSantaService.js');
 const userDao = require('../dao/UserDao.js');
 const groupDao = require('../dao/GroupDao.js');
+const notificationDao = require('../dao/NotificationDao.js');
 const commonService = require('./CommonService.js');
 const messages = require('../constant/SecretSantaMessages.js');
 const notificationPushService = require('./NotificationPushService.js');
@@ -17,6 +18,9 @@ const createGroup = async (userId, groupName) => {
     const groupCode = secretSantaService.generateUniqueGameCode(groupName);
 
     await groupDao.createGroup(groupName, groupCode, user.id);
+
+    notificationPushService.sendPushNotifications(Number(userId), messages.GROUP_CREATED_SUCCESSFULLY, `Here is your group Code ${groupCode}`);
+
     await emailService.sendCreatedGroupEmail(user, groupCode, groupName);
 
     return commonService.createResponse(
@@ -67,24 +71,25 @@ const announceGame = async (userId, gameAnnouncementInfo) => {
     for (const recipient of gameAnnouncementInfo.emailData.recipients) {
       const recipientUser = await userDao.getUserDetailsById(Number(recipient));
       await emailService.sendEmail(recipientUser.email, gameAnnouncementInfo.emailData.subject, gameAnnouncementInfo.emailData.body);
+
+      // To send notification example
+      // const subscription = await notificationDao.getSubscription(Number(userId));
+
+      // if (subscription) {
+      //   const payload = {
+      //     title: 'Game Announcement',
+      //     body: `A new game has been announced: ${gameAnnouncementInfo.gameDetails}`,
+      //     icon: '/logo192.png',
+      //     badge: '/badge.png',
+      //     vibrate: [200, 100, 200]
+      //   };
+
+      //   await notificationPushService.sendNotification(subscription, payload);
+      // }
+
+      notificationPushService.sendPushNotifications(Number(userId), 'Game Announcement', gameAnnouncementInfo.gameDetails);
     }
 
-    /*
-    // To send notification example
-    const subscription = await notificationDao.getSubscription(recipientUser.id);
-    
-    if (subscription) {
-      const payload = {
-        title: 'Game Announcement',
-        body: `A new game has been announced: ${gameAnnouncementInfo.gameDetails}`,
-        icon: '/logo192.png',
-        badge: '/badge.png',
-        vibrate: [200, 100, 200]
-      };
-
-      await notificationPushService.sendNotification(subscription.subscription, payload);
-    }
-    */
     return commonService.createResponse(httpResponse.SUCCESS, messages.CREATED_GAME_SUCCESSFULLY);
   } catch (error) {
     return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, error.message);

@@ -94,7 +94,7 @@ const BuzzerTImer = () => {
     };
 
     return (
-        <div style={Constant.BUZZER_BACKGROUND_STYLE}className="buzzer-time-container">
+        <div style={Constant.FUN_ZONE_STYLE}className="buzzer-time-container">
             <div><Navbar title={'BUZZER TIME'} /></div>
 
             <div className="components-container">

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Card, Typography } from '@mui/material';
+import { Box, Card, Typography, Grid, useMediaQuery, useTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import "./GameZone.css"
 import { MASTER_MIND_GAME_KEY, MASTER_MIND_GAME_SEVERITY_KEY, TAMBOLA_GAME_KEY, USER_KEY } from '../../constants/appConstant'
@@ -26,6 +26,8 @@ function GameZone() {
     const userId = localStorage.getItem(USER_KEY);
     const [isPopupVisible, setPopupVisible] = useState(false);
     const [isTambolaDashboardVisible, setIsTambolaDashboardVisible] = useState(false);
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     const onClickSecretSantaGame = () => {
         navigate(Constant.ROUTE_PATH.DASHBOARD);
@@ -75,14 +77,14 @@ function GameZone() {
 
     const handleJoinGameSubmit = async (gameCode) => {
         try {
-          const response = await joinUserToTambolaGame(userId, gameCode);
-          if (response) {
-            return { gameId: response,key: TAMBOLA_GAME_KEY , path: Constant.ROUTE_PATH.TAMBOLA };
-          }
+            const response = await joinUserToTambolaGame(userId, gameCode);
+            if (response) {
+                return { gameId: response, key: TAMBOLA_GAME_KEY, path: Constant.ROUTE_PATH.TAMBOLA };
+            }
         } catch (error) {
-          throw error;
+            throw error;
         }
-      };
+    };
 
     const handleCloseJoinGame = async () => {
         setResetForm(false);
@@ -97,89 +99,83 @@ function GameZone() {
 
     return (
         <div style={Constant.FUN_ZONE_STYLE} className='game-zone-container'>
-            <div><Navbar title={'FUN ZONE'}/></div>
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    gap: 4,
-                }}
-            >
-                {cards.map((card, index) => (
-                    <Card
-                        key={index}
-                        variant="outlined"
-                        sx={{
-                            width: 250,
-                            height: 250,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderRadius: '16px',
-                            backgroundColor: 'rgb(245, 245, 245)',
-                            backgroundImage: `url(${card.bgImage})`,
-                            backdropFilter: 'blur(10000px)',
-                            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-                            border: '1px solid #ddd',
-                            transition: 'transform 0.3s, box-shadow 0.3s',
-                            '&:hover': {
-                                transform: 'translateY(-8px)',
-                                boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.2)',
-                            },
-                            overflow: 'hidden',
-                            '&::before': {
-                                content: '""',
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                width: '100%',
-                                height: '100%',
-                                backgroundImage: `url(${card.bgImage})`,
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center',
-                                filter: 'blur(3px)',
-                                zIndex: -1,
-                            },
-                        }}
-                        onClick={card.onClick}
-                    >
-                        <Typography
-                            variant="h5"
-                            sx={{
-                                textAlign: 'center',
-                                fontWeight: 'bold',
-                                color: '#ffffff',
-                            }}
-                        >
-                            {card.text}
-                        </Typography>
-                    </Card>
-                ))}
-
-                {isPopupVisible && (
-                    <LevelPopUp
-                        onClose={() => setPopupVisible(false)}
-                        onLevelSelect={handleLevelSelect}
-                    />
-                )}
-                {isTambolaDashboardVisible && (
-                    <TambolaDashboardPopup
-                        visible={isTambolaDashboardVisible}
-                        onClose={() => setIsTambolaDashboardVisible(false)}
-                        onJoinGame={onClickTambolaJoinGame}
-                        onHostGame={onClickTambolaHostGame}
-                    />
-                )}
-
-                <CodeDialog
-                    open={openJoinGame}
-                    onClose={handleCloseJoinGame}
-                    buttonText={buttonText}
-                    dialogTitle={dialogTitle}
-                    onSubmit={onSubmitHandler}
-                    resetForm={resetForm}
-                ></CodeDialog>
+            <div><Navbar title={'FUN ZONE'} /></div>
+            <Box sx={{ px: 2, width: '100%', display: 'flex', justifyContent: 'center' }}>
+                <Box sx={{ width: '100%', maxWidth: '1200px' }}>
+                    <Grid container spacing={3} justifyContent="center">
+                        {cards.map((card, index) => (
+                            <Grid
+                                key={index}
+                                item
+                                xs={12}
+                                sm={6}
+                                md={4}
+                                lg={3}
+                                sx={{ display: 'flex', justifyContent: 'center' }}
+                            >
+                                <Card
+                                    onClick={card.onClick}
+                                    sx={{
+                                        width: isSmallScreen ? '90%' : '100%',
+                                        height: isSmallScreen ? 180 : 250,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        borderRadius: '16px',
+                                        backgroundImage: `url(${card.bgImage})`,
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center',
+                                        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                                        transition: 'transform 0.3s, box-shadow 0.3s',
+                                        '&:hover': {
+                                            transform: 'translateY(-8px)',
+                                            boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.2)',
+                                            cursor: 'pointer',
+                                        },
+                                    }}
+                                >
+                                    <Typography
+                                        variant="h6"
+                                        sx={{
+                                            textAlign: 'center',
+                                            fontWeight: 'bold',
+                                            color: '#ffffff',
+                                            textShadow: '1px 1px 4px rgba(0,0,0,0.7)',
+                                            px: 1,
+                                        }}
+                                    >
+                                        {card.text}
+                                    </Typography>
+                                </Card>
+                            </Grid>
+                        ))}
+                    </Grid>
+                </Box>
             </Box>
+
+            {isPopupVisible && (
+                <LevelPopUp
+                    onClose={() => setPopupVisible(false)}
+                    onLevelSelect={handleLevelSelect}
+                />
+            )}
+            {isTambolaDashboardVisible && (
+                <TambolaDashboardPopup
+                    visible={isTambolaDashboardVisible}
+                    onClose={() => setIsTambolaDashboardVisible(false)}
+                    onJoinGame={onClickTambolaJoinGame}
+                    onHostGame={onClickTambolaHostGame}
+                />
+            )}
+
+            <CodeDialog
+                open={openJoinGame}
+                onClose={handleCloseJoinGame}
+                buttonText={buttonText}
+                dialogTitle={dialogTitle}
+                onSubmit={onSubmitHandler}
+                resetForm={resetForm}
+            ></CodeDialog>
         </div>
     )
 }

@@ -246,12 +246,12 @@ const setGameAsInActive = async (gameId) => {
   }
 };
 
-const getReceiverEmailForGameByUserId = async (userId, gameId) => {
+const getReceiverInfoForGameByUserId = async (userId, gameId) => {
   try {
     const secretSanta = 'SELECT secretSantaId FROM userGame WHERE userId = ? AND gameId = ?';
     const [response] = await db.query(secretSanta, [userId, gameId])
     const decryptedSecretSantaId = encryptDecryptService.decrypt(response[0]?.secretSantaId);
-    const query = 'SELECT email FROM users WHERE id = ?'
+    const query = 'SELECT id, name, email FROM users WHERE id = ?'
     const [result] = await db.query(query, [decryptedSecretSantaId]);
     return result[0] ?? null;
   } catch (error) {
@@ -273,6 +273,6 @@ module.exports = {
   exitSecretSantaGame,
   validateIfGameExist,
   getGameIdsForEndByScheduler,
-  getReceiverEmailForGameByUserId,
+  getReceiverInfoForGameByUserId,
   setGameAsInActive
 };

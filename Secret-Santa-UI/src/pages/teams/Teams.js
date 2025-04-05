@@ -1,13 +1,13 @@
 import React from 'react';
-import { Card, CardContent, Typography, Grid2 } from '@mui/material';
+import { Card, CardContent, Typography, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useLocation } from 'react-router-dom';
 
-const lemonYellow = '#FFECB3';
+const lemonYellow = '#ACD2F2';
 
-const StyledCard = styled(Card)(({ theme, backgroundColor }) => ({
-  height: '300px',
-  width: '300px',
+const StyledCard = styled(Card)(({ backgroundColor }) => ({
+  minHeight: '300px',
+  minWidth: '250px',
   backgroundColor: backgroundColor,
   transition: 'transform 0.3s ease-in-out',
   '&:hover': {
@@ -43,29 +43,47 @@ function Teams() {
   }
 
   return (
-    <Grid2 container spacing={4} justifyContent="center" alignItems="center" style={{ minHeight: '80vh', padding: '40px' }}>
-      {teams.map((team, index) => (
-        <Grid2 item key={index}>
-          <StyledCard backgroundColor={lemonYellow}>
-            <CardContentStyled>
-              <Typography variant="h5" component="div">
-                Team {index + 1}
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                Members:
-              </Typography>
-              <MemberList>
-                {team.map((member) => (
-                  <MemberListItem key={member.userId}>
-                    {member.userName}
-                  </MemberListItem>
-                ))}
-              </MemberList>
-            </CardContentStyled>
-          </StyledCard>
-        </Grid2>
-      ))}
-    </Grid2>
+    <>
+      <div
+        style={{
+          height: '100vh',
+          overflowY: 'auto',
+          paddingTop: '16px',
+          paddingLeft: '16px',
+          paddingRight: '16px',
+          paddingBottom: '16px',
+        }}
+      >
+        <Grid
+          container
+          spacing={4}
+          justifyContent="center"
+          alignItems="flex-start"
+        >
+          {teams.map((team, index) => (
+            <Grid item key={index}>
+              <StyledCard backgroundColor={lemonYellow}>
+                <CardContentStyled>
+                  <Typography variant="h5" component="div">
+                    Team {index + 1}
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary">
+                    Members:
+                  </Typography>
+                  <MemberList>
+                    {team.map((member) => (
+                      <MemberListItem key={member.userId}>
+                        {member.userName}
+                      </MemberListItem>
+                    ))}
+                  </MemberList>
+                </CardContentStyled>
+              </StyledCard>
+            </Grid>
+          ))}
+        </Grid>
+      </div>
+    </>
   );
 }
 
