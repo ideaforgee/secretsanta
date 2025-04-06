@@ -70,7 +70,7 @@ const announceGame = async (userId, gameAnnouncementInfo) => {
 
     for (const recipient of gameAnnouncementInfo.emailData.recipients) {
       const recipientUser = await userDao.getUserDetailsById(Number(recipient));
-      await emailService.sendEmail(recipientUser.email, gameAnnouncementInfo.emailData.subject, gameAnnouncementInfo.emailData.body);
+      // await emailService.sendEmail(recipientUser.email, gameAnnouncementInfo.emailData.subject, gameAnnouncementInfo.emailData.body);
 
       // To send notification example
       // const subscription = await notificationDao.getSubscription(Number(userId));
@@ -87,7 +87,7 @@ const announceGame = async (userId, gameAnnouncementInfo) => {
       //   await notificationPushService.sendNotification(subscription, payload);
       // }
 
-      notificationPushService.sendPushNotifications(Number(userId), 'Game Announcement', gameAnnouncementInfo.gameDetails);
+      notificationPushService.sendPushNotifications(Number(userId), 'Game Announcement', 'gameAnnouncementInfo.gameDetails' + recipientUser.name);
     }
 
     return commonService.createResponse(httpResponse.SUCCESS, messages.CREATED_GAME_SUCCESSFULLY);
