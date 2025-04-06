@@ -6,6 +6,7 @@ import { loginHandler } from '../../../services/authService.js';
 import { useAlert } from './../../../context/AlertContext.js';
 import { useAuth } from './../../../context/AuthContext';
 import * as Constant from '../../../constants/secretSantaConstants.js';
+import { registerServiceWorker, requestNotificationPermission } from '../../../services/notificationService.js';
 import "./LoginPage.css";
 
 const Login = () => {
@@ -36,6 +37,8 @@ const Login = () => {
         login(response);
 
         navigate('/fun-zone');
+        registerServiceWorker(response.userId);
+        requestNotificationPermission();
       } catch (error) {
         showAlert(error.data ?? error.message ?? 'Login failed', 'error');
       }

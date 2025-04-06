@@ -28,7 +28,7 @@ export const registerServiceWorker = async (userId) => {
 
 export const addUserSubscriptions = async (userId) => {
   if ('serviceWorker' in navigator && 'PushManager' in window) {
-    const registration = await navigator.serviceWorker.register('/sw.js');
+    const registration = await navigator.serviceWorker.ready;
     
     const permission = await Notification.requestPermission();
     if (permission !== 'granted') {
@@ -37,18 +37,27 @@ export const addUserSubscriptions = async (userId) => {
 
     let existingSubscription = await registration.pushManager.getSubscription();
     if (existingSubscription) {
-      console.log('Already subscribed:', existingSubscription);
-      return;
+      const isValidSubscription = await validateSubscription(existingSubscription);
+
+      if (!isValidSubscription) {
+        await existingSubscription.unsubscribe();
+        existingSubscription = null;
+      } else {
+        return;
+      }
+      // return;
     }
 
-    const subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(Constant.VAPID_PUBLIC_KEY)
-    });
-
-    console.log('Push Subscription:', subscription);
-
-    await saveSubscriptionHandler(userId, subscription);
+    if (!existingSubscription) {
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(Constant.VAPID_PUBLIC_KEY)
+      });
+  
+      console.log('Push Subscription:', subscription);
+  
+      await saveSubscriptionHandler(userId, subscription);
+    } 
   }
 };
 
@@ -96,5 +105,19 @@ const saveSubscriptionHandler = async (userId, subscription) => {
     return response;
   } catch (error) {
     throw new Error('Error saving subscription');
+  }
+};
+
+const validateSubscription = async (subscription) => {
+  try {
+    const response = await handleRequest({
+      method: 'post',
+      url: '/api/validateSubscription',
+      data: { subscription }
+    });
+
+    return response;
+  } catch (error) {
+    throw new Error('Error validating subscription');
   }
 };

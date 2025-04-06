@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { registerHandler } from '../../../services/authService.js';
 import { useAlert } from './../../../context/AlertContext.js';
 import { useAuth } from './../../../context/AuthContext';
+import { registerServiceWorker, requestNotificationPermission } from '../../../services/notificationService.js';
 import "./RegisterPage.css";
 
 const Register = () => {
@@ -36,6 +37,8 @@ const Register = () => {
 
                 login(response);
                 navigate('/secret-santa');
+                registerServiceWorker(response.userId);
+                requestNotificationPermission();
             } catch (error) {
                 showAlert(error, 'error');
             }

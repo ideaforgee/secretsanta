@@ -34,6 +34,8 @@ const saveSubscription = async (userId, subscription) => {
     let result;
     if (!existingSubscription) {
       result = await notificationDao.addSubscription(userId, subscription);
+    } else {
+      result = await notificationDao.updateSubscription(userId, subscription);
     }
   } catch (error) {
     throw new Error;
@@ -59,7 +61,7 @@ const sendPushNotifications = async (recipientId, title, body) => {
         vibrate: [200, 100, 200]
       };
 
-      sendNotification(subscription, notificationPayload);
+      sendNotification(subscription[0]?.subscription, notificationPayload);
 
       console.log(`Notifications sent to ${recipientId}`);
     }
@@ -69,8 +71,21 @@ const sendPushNotifications = async (recipientId, title, body) => {
   }
 };
 
+const validateNotificationSubscription = async (subscription) => {
+  try {
+    await webpush.sendNotification(subscription, null);
+    return true;
+  } catch (error) {
+    if (error.statusCode === 410 || error.statusCode === 404) {
+      return false;
+    }
+    throw new Error(error);
+  }
+};
+
 module.exports = {
   sendNotification,
   saveSubscription,
-  sendPushNotifications
+  sendPushNotifications,
+  validateNotificationSubscription
 };

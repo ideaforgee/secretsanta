@@ -1,4 +1,4 @@
-const { sendNotification, saveSubscription } = require('../service/NotificationPushService');
+const { sendNotification, saveSubscription, validateNotificationSubscription } = require('../service/NotificationPushService');
 
 const sendNotificationHandler = async (req, res) => {
   const { subscription, payload } = req.body;
@@ -9,7 +9,7 @@ const sendNotificationHandler = async (req, res) => {
 
   sendNotification(subscription, payload)
     .then(() => res.status(200).send('Notification sent'))
-    .catch(error => res.status(500).send('Error sending notification:', error.message));
+    .catch(error => res.status(500).send('Error sending notification:', error.message))
 };
 
 const subscribe = async (req, res) => {
@@ -27,7 +27,20 @@ const subscribe = async (req, res) => {
   }
 };
 
+const validateSubscription = async (req, res) => {
+  const subscription = req.body.subscription;
+
+  try {
+    const isValid = await validateNotificationSubscription(subscription);
+    return res.status(200).json({data: isValid});
+  } catch (error) {
+    console.error('Error validating subscription:', error);
+    return res.status(500).json({data: false});
+  }
+};
+
 module.exports = {
   sendNotificationHandler,
-  subscribe
+  subscribe,
+  validateSubscription
 };
