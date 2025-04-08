@@ -37,8 +37,8 @@ const Login = () => {
         login(response);
 
         navigate('/fun-zone');
-        registerServiceWorker(response.userId);
-        requestNotificationPermission();
+        await requestNotificationPermission();
+        await registerServiceWorker(response.userId);
       } catch (error) {
         showAlert(error.data ?? error.message ?? 'Login failed', 'error');
       }

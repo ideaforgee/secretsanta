@@ -87,7 +87,7 @@ const announceGame = async (userId, gameAnnouncementInfo) => {
       //   await notificationPushService.sendNotification(subscription, payload);
       // }
 
-      notificationPushService.sendPushNotifications(Number(userId), 'Game Announcement', 'gameAnnouncementInfo.gameDetails' + recipientUser.name);
+      notificationPushService.sendPushNotifications(Number(recipientUser.id), 'Game Announcement', 'gameAnnouncementInfo.gameDetails' + recipientUser.name);
     }
 
     return commonService.createResponse(httpResponse.SUCCESS, messages.CREATED_GAME_SUCCESSFULLY);

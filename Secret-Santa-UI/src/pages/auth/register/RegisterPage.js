@@ -36,9 +36,9 @@ const Register = () => {
                 showAlert('User Registered successfully', 'success');
 
                 login(response);
-                navigate('/secret-santa');
-                registerServiceWorker(response.userId);
-                requestNotificationPermission();
+                navigate('/fun-zone');
+                await requestNotificationPermission();
+                await registerServiceWorker(response.userId);
             } catch (error) {
                 showAlert(error, 'error');
             }
