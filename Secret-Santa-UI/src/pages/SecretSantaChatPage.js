@@ -1,8 +1,8 @@
-import React from "react";
-import SecretSantaChat from "../features/SecretSantaChat";
+// import React from "react";
+// import SecretSantaChat from "../features/SecretSantaChat";
 
-const SecretSantaChatPage = () => {
-    return <SecretSantaChat />;
-};
+// const SecretSantaChatPage = () => {
+//     return <SecretSantaChat />;
+// };
 
-export default SecretSantaChatPage;
+// export default SecretSantaChatPage;

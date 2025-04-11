@@ -3,8 +3,8 @@ const webpush = require('web-push');
 const notificationDao = require('../dao/NotificationDao');
 
 const vapidKeys = {
-    publicKey: process.env.VAPID_PUBLIC_KEY,
-    privateKey: process.env.VAPID_PRIVATE_KEY
+    publicKey: 'BOMHceHpr7O4Ruz_ZJbEPJMNfzfhci8pEuUi8CW1BODgzIehDVmeFu7KuZSVikEPJcIduCb1X0ltDRkLS6nmhhU',
+    privateKey: 'T3vN-r9g3PnVMYiScx3kG2F0UfDNJxK5UNCls803Gi0'
 };
 
 webpush.setVapidDetails(
@@ -61,7 +61,7 @@ const sendPushNotifications = async (recipientId, title, body) => {
         vibrate: [200, 100, 200]
       };
 
-      sendNotification(subscription[0]?.subscription, notificationPayload);
+      sendNotification(subscription, notificationPayload);
 
       console.log(`Notifications sent to ${recipientId}`);
     }
