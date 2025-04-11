@@ -13,9 +13,9 @@ export const registerServiceWorker = async (userId) => {
       if (!registration.pushManager) {
         throw new Error('PushManager is not available in this browser.');
       }
-    
+
       await addUserSubscriptions(userId);
-      
+
       return registration;
     } catch (error) {
       console.error('Service Worker registration failed:', error);
@@ -29,7 +29,7 @@ export const registerServiceWorker = async (userId) => {
 export const addUserSubscriptions = async (userId) => {
   if ('serviceWorker' in navigator && 'PushManager' in window) {
     const registration = await navigator.serviceWorker.ready;
-    
+
     const permission = await Notification.requestPermission();
     if (permission !== 'granted') {
       throw new Error('Permission denied for push notifications');
@@ -53,11 +53,11 @@ export const addUserSubscriptions = async (userId) => {
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(Constant.VAPID_PUBLIC_KEY)
       });
-  
+
       console.log('Push Subscription:', subscription);
-  
+
       await saveSubscriptionHandler(userId, subscription);
-    } 
+    }
   }
 };
 

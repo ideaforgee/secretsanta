@@ -104,7 +104,7 @@ async function handleTambolaMarkedNumbers(parsedMessage, userId) {
 
 async function handleTambolaClaim(parsedMessage, userId) {
     console.log(`${parsedMessage.claimType} claimed by ${userId}`);
-    tambolaService.verifyTambolaGameClaim(parsedMessage.claimType, userId, parsedMessage.tambolaGameId, connections);
+    tambolaService.verifyTambolaGameClaim(parsedMessage, userId, connections);
 }
 
 async function handleSecretSantaChat(parsedMessage, userId) {

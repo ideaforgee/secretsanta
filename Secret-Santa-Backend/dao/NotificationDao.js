@@ -8,9 +8,9 @@ const db = require("../config/db.js");
 const getSubscription = async (userId) => {
   try {
     const query = 'SELECT subscription FROM notificationSubscriptions WHERE userId = ?';
-    const subscription = await db.query(query, [userId]);
+    const [subscription] = await db.query(query, [userId]);
 
-    return subscription[0].length > 0 ? subscription[0] : null;
+    return subscription[0]?.subscription;
   } catch (error) {
     throw new Error(error.message);
   }
@@ -24,7 +24,7 @@ const getSubscription = async (userId) => {
 const addSubscription = async (userId, subscription) => {
   try {
     const query = 'INSERT INTO notificationSubscriptions (userId, subscription) VALUES (?, ?)';
-    
+
     const parsedUserId = parseInt(userId);
     if (isNaN(parsedUserId)) {
       throw new Error("Invalid userId: Must be a number.");

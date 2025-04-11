@@ -66,28 +66,12 @@ const announceGame = async (userId, gameAnnouncementInfo) => {
       return commonService.createResponse(httpResponse.BAD_REQUEST, validationError);
     }
 
-    const user = await userDao.getUserDetailsById(Number(userId));
+    //const user = await userDao.getUserDetailsById(Number(userId));
 
     for (const recipient of gameAnnouncementInfo.emailData.recipients) {
       const recipientUser = await userDao.getUserDetailsById(Number(recipient));
       // await emailService.sendEmail(recipientUser.email, gameAnnouncementInfo.emailData.subject, gameAnnouncementInfo.emailData.body);
-
-      // To send notification example
-      // const subscription = await notificationDao.getSubscription(Number(userId));
-
-      // if (subscription) {
-      //   const payload = {
-      //     title: 'Game Announcement',
-      //     body: `A new game has been announced: ${gameAnnouncementInfo.gameDetails}`,
-      //     icon: '/logo192.png',
-      //     badge: '/badge.png',
-      //     vibrate: [200, 100, 200]
-      //   };
-
-      //   await notificationPushService.sendNotification(subscription, payload);
-      // }
-
-      notificationPushService.sendPushNotifications(Number(recipientUser.id), 'Game Announcement', 'gameAnnouncementInfo.gameDetails' + recipientUser.name);
+      notificationPushService.sendPushNotifications(Number(recipientUser.id), 'Game Announcement',  gameAnnouncementInfo.emailData?.body);
     }
 
     return commonService.createResponse(httpResponse.SUCCESS, messages.CREATED_GAME_SUCCESSFULLY);

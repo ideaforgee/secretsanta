@@ -23,7 +23,7 @@ const createNewTambolaGame = async (userId) => {
 
         notificationPushService.sendPushNotifications(Number(userId), messages.CREATED_GAME_SUCCESSFULLY, `Here is your tambola game Code ${tambolaGameCode}`);
 
-        await emailService.sendCreatedSecretSantaGameEmail(user, gameCode);
+        await emailService.sendCreatedSecretSantaGameEmail(user, tambolaGameCode);
 
         return commonService.createResponse(httpResponse.SUCCESS, { tambolaGameId, gameCode: tambolaGameCode });
     }
@@ -219,29 +219,26 @@ const sendCurrentNumberToAllUser = async (userId, tambolaGameId, currentNumber, 
 /**
  * Verifies a claim made by a user in a Tambola game.
  *
- * @param {string} claimType - The type of claim (e.g., 'Top Line', 'Full House').
+ * @param {Object} messageData - The data to be sent in the notification message.
  * @param {number} userId - The ID of the user making the claim.
- * @param {number} tambolaGameId - The ID of the Tambola game.
  * @param {Map} connections - A map of active WebSocket connections.
  */
-const verifyTambolaGameClaim = async (claimType, userId, tambolaGameId, connections) => {
+const verifyTambolaGameClaim = async (messageData, userId, connections) => {
     try {
-        const userData = await getUserData(userId, tambolaGameId);
-        const [gameData] = await tambolaDao.gatTambolaGameData(tambolaGameId);
+        const userData = await getUserData(userId, messageData.tambolaGameId);
+        const [gameData] = await tambolaDao.gatTambolaGameData(messageData.tambolaGameId);
 
         let { ticketNumbers, markedNumbers } = userData;
         let withdrawnNumbers = JSON.parse(gameData.withdrawnNumbers) ?? [];
 
-        let isValidClaim = await validateClaim(claimType, ticketNumbers, markedNumbers, withdrawnNumbers);
+        let isValidClaim = await validateClaim(messageData.claimType, ticketNumbers, markedNumbers, withdrawnNumbers);
 
-        const messageData = {
-            type: 'claim'
-        };
+        messageData.isValidClaim = isValidClaim;
 
         if (!isValidClaim) {
-            await handleInvalidClaim(userId, claimType, messageData, connections, tambolaGameId);
+            await handleInvalidClaim(userId, messageData, connections);
         } else {
-            await handleValidClaim(claimType, messageData, connections, tambolaGameId, userId);
+            await handleValidClaim(messageData, connections, userId);
         }
 
     } catch (err) {
@@ -304,17 +301,15 @@ const getUserData = async (userId, tambolaGameId) => {
  * Handles the case when a claim is invalid by notifying the user and updating their score.
  *
  * @param {number} userId - The ID of the user making the claim.
- * @param {string} claimType - The type of claim being made.
  * @param {Object} messageData - The data to be sent in the notification message.
  * @param {Map} connections - A map of active WebSocket connections indexed by user IDs.
- * @param {number} tambolaGameId - The ID of the Tambola game.
  */
-const handleInvalidClaim = async (userId, claimType, messageData, connections, tambolaGameId) => {
+const handleInvalidClaim = async (userId, messageData, connections) => {
     const webSocket = connections.get(userId?.toString());
     if (webSocket && webSocket.readyState === WebSocket.OPEN) {
-        messageData.message = `Your claim for ${claimType} is false. Your current score has been reduced by 5.`;
+        messageData.message = `Your claim for ${messageData.claimType} is false. Your current score has been reduced by 5.`;
         webSocket.send(JSON.stringify(messageData));
-        await tambolaDao.updateUserTambolaScore(userId, tambolaGameId, -5);
+        await tambolaDao.updateUserTambolaScore(userId, messageData.tambolaGameId, -5);
     }
 };
 
@@ -322,13 +317,13 @@ const handleInvalidClaim = async (userId, claimType, messageData, connections, t
  * Handles the case when a claim is valid by notifying users, updating the game status, 
  * and adjusting the user's score based on the claim type.
  *
- * @param {string} claimType - The type of claim being made.
  * @param {Object} messageData - The data to be sent in the notification message.
  * @param {Map} connections - A map of active WebSocket connections indexed by user IDs.
- * @param {number} tambolaGameId - The ID of the Tambola game.
  * @param {number} userId - The ID of the user making the claim.
  */
-const handleValidClaim = async (claimType, messageData, connections, tambolaGameId, userId) => {
+const handleValidClaim = async (messageData, connections, userId) => {
+    const claimType = messageData.claimType;
+    const tambolaGameId = messageData.tambolaGameId;
     const users = await tambolaDao.getUsersForTambolaGame(tambolaGameId);
     const claims = await tambolaDao.getAllClaimsForTambolaGame(tambolaGameId);
     const markedClaims = claims?.id ? getAllMarkedClaims(claims) : [];
@@ -392,7 +387,7 @@ const sendClaimNotification = (user, claimType, messageData, connections) => {
     return new Promise((resolve, reject) => {
         const webSocket = connections.get(user.userId?.toString());
         if (webSocket && webSocket.readyState === WebSocket.OPEN) {
-            messageData.message = `${user.name} has successfully claimed ${claimType}.`;
+            messageData.message = `${messageData.claimedBy} has successfully claimed ${claimType}.`;
             messageData.claimType = claimType;
             webSocket.send(JSON.stringify(messageData), (err) => {
                 if (err) reject(err);

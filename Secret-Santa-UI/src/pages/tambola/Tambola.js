@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { ImExit } from 'react-icons/im';
 import { BsCapslockFill } from "react-icons/bs";
 import GameUserScoreBoard from '../../components/GameUserScoreBoard/GameUserScoreBoard';
-import { USER_KEY, TAMBOLA_GAME_KEY } from '../../constants/appConstant';
+import { USER_KEY, USER_NAME_KEY, TAMBOLA_GAME_KEY } from '../../constants/appConstant';
 import * as Constant from '../../constants/secretSantaConstants';
 import "./Tambola.css";
 import { TambolaGameStatus } from "../../constants/TambolaConstants";
@@ -32,6 +32,7 @@ const Tambola = () => {
   const navigate = useNavigate();
 
   const userId = localStorage.getItem(USER_KEY);
+  const userName = localStorage.getItem(USER_NAME_KEY);
   const tambolaGameId = localStorage.getItem(TAMBOLA_GAME_KEY);
   const MAX_RETRIES = 10;
   const RETRY_INTERVAL = 5000;
@@ -95,7 +96,9 @@ const Tambola = () => {
 
   const handleWebSocketMessage = (messageData) => {
     if (messageData.type === 'claim' && messageData.claimType) {
-      setMarkedClaims(messageData.markedClaims);
+      if (messageData.isValidClaim) {
+        setMarkedClaims(messageData.markedClaims);
+      }
       if (messageData.isComplete) {
         setIsCompletePopup(true);
       }
@@ -150,7 +153,7 @@ const Tambola = () => {
   };
 
   const handleClaimClick = (claimType) => {
-    ws.send(JSON.stringify({ type: Constant.NOTIFICATION_TYPE.CLAIM, claimType: claimType, tambolaGameId: tambolaGameId }));
+    ws.send(JSON.stringify({ type: Constant.NOTIFICATION_TYPE.CLAIM, claimType: claimType, tambolaGameId: tambolaGameId, claimedBy: userName }));
     console.log("Claimed:", claimType);
   };
 

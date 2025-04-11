@@ -74,8 +74,8 @@ const storeSentMessage = async (userId, gameId, chatBoxType, messageContent) => 
  */
 const dispatchMessageToUser = async (receiverId, messageData, connections) => {
     const webSocket = connections.get(receiverId?.toString());
-    const reverserChatBoxType = messageData.chatBoxType === 'secretSanta' ? 'giftNinja' : 'secretSanta'
-    notificationPushService.sendPushNotifications(receiverId, `${reverserChatBoxType} message`, messageData.content);
+    const reverserChatBoxType = messageData.chatBoxType === 'secretSanta' ? 'Gift Ninja' : 'Secret Santa'
+    notificationPushService.sendPushNotifications(receiverId, `${reverserChatBoxType} sent you a message`, messageData.content);
     if (webSocket && webSocket.readyState === WebSocket.OPEN) {
         webSocket.send(JSON.stringify(messageData));
     } else {
@@ -228,7 +228,10 @@ const processIncomingGroupDiscussionMessage = async (userId, messageData) => {
 const dispatchGroupDiscussionMessageToUser = async (senderId, receiverId, messageData, connections) => {
     const webSocket = connections.get(receiverId?.toString());
     if (Number(senderId) !== Number(receiverId)) {
-        await notificationPushService.sendPushNotifications(receiverId, `${messageData.chatBoxType} message`, messageData.content);
+        const title = messageData.chatBoxType === 'publicChat'
+            ? `${messageData.senderName} (Public Chat)`
+            : `Anonymous (Anonymous Chat)`
+        await notificationPushService.sendPushNotifications(receiverId, title, messageData.content);
         if (webSocket && webSocket.readyState === WebSocket.OPEN) {
             webSocket.send(JSON.stringify(messageData))
         };
