@@ -25,7 +25,7 @@ services:
       context: ./Secret-Santa-Backend
       dockerfile: Dockerfile
     ports:
-      - "5002:80"
+      - "5002:5002"
     env_file:
       - ./deployment/.env
     networks:
