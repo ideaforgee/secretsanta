@@ -19,11 +19,11 @@ pipeline {
             steps {
                 script {
                     if(params.TARGET_ENVIRONMENT == "UAT") {
-                        SSH_HOST = "192.168.20.41"
-                        SSH_KEY = "SSH_PASS_CREDENTIALS_BB-1-LXC-2"
+                        SSH_HOST = "10.2.21.51"
+                        SSH_KEY = "SSH_KEY_CT-22251"
                     } else if (params.TARGET_ENVIRONMENT == "PRODUCTION") {
-                        SSH_HOST = "192.168.20.42"
-                        SSH_KEY = "SSH_PASS_CREDENTIALS_BB-1-LXC-3"
+                        SSH_HOST = "10.2.22.51"
+                        SSH_KEY = "SSH_KEY_CT-23251"
                     }
                 }
                 echo "Backend Build Number: ${params.BACKEND_BUILD_NUMBER}"
