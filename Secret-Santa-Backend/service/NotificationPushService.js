@@ -37,6 +37,7 @@ const saveSubscription = async (userId, subscription) => {
     } else {
       result = await notificationDao.updateSubscription(userId, subscription);
     }
+    return result;
   } catch (error) {
     throw new Error;
   }

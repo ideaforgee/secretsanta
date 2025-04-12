@@ -20,10 +20,10 @@ const subscribe = async (req, res) => {
   }
 
   try {
-    await saveSubscription(userId, subscription);
-    res.status(201).json({ message: 'Subscription saved successfully' });
+    const result = await saveSubscription(userId, subscription);
+    return res.status(201).json({ result });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to save subscription' });
+    return res.status(500).json({ error: 'Failed to save subscription' });
   }
 };
 

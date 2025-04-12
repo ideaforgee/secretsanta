@@ -24,6 +24,9 @@ const getSubscription = async (userId) => {
 const addSubscription = async (userId, subscription) => {
   try {
     const query = 'INSERT INTO notificationSubscriptions (userId, subscription) VALUES (?, ?)';
+    const selectQuery = `
+      SELECT * FROM notificationSubscriptions 
+      WHERE id = LAST_INSERT_ID()`;
 
     const parsedUserId = parseInt(userId);
     if (isNaN(parsedUserId)) {
@@ -32,8 +35,8 @@ const addSubscription = async (userId, subscription) => {
 
     // Convert subscription to JSON string
     const subscriptionString = JSON.stringify(subscription);
-
-    const [result] = await db.query(query, [parsedUserId, subscriptionString]);
+    await db.query(query, [parsedUserId, subscriptionString]);
+    const [result] = await db.query(selectQuery)
     return result;
   } catch (error) {
     throw new Error(error);
@@ -48,7 +51,11 @@ const addSubscription = async (userId, subscription) => {
 const updateSubscription = async (userId, subscription) => {
   try {
     const query = 'UPDATE notificationSubscriptions SET subscription = ? WHERE userId = ?';
-    const [result] = await db.query(query, [JSON.stringify(subscription), userId]);
+    const selectQuery = `
+      SELECT * FROM notificationSubscriptions 
+      WHERE userId = ?`;
+    await db.query(query, [JSON.stringify(subscription), userId]);
+    const [result] = await db.query(selectQuery, [userId]);
     return result;
   } catch (error) {
     throw new Error(error);
