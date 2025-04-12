@@ -11,7 +11,7 @@ BEGIN
     ORDER BY br.time ASC;
 
     SELECT
-        IF(EXISTS(SELECT 1 FROM buzzerRoom WHERE funZoneGroupId = funZoneGroupId AND userId = userId), false, true) AS isBuzzerActive,
+        IF(EXISTS(SELECT 1 FROM buzzerRoom WHERE buzzerRoom.funZoneGroupId = funZoneGroupId AND buzzerRoom.userId = userId), false, true) AS isBuzzerActive,
         fg.hostId
     FROM funZoneGroups fg
     WHERE fg.id = funZoneGroupId;

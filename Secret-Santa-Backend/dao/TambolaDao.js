@@ -301,7 +301,7 @@ const gatGameUsersWithScore = async (tambolaGameId) => {
  */
 const updateUserTambolaScore = async (userId, tambolaGameId, scoreChange) => {
   try {
-    const query = `UPDATE UserTambolaGame SET currentScore = currentScore + ? WHERE userId = ? AND tambolaGameId = ?`;
+    const query = `UPDATE UserTambolaGame SET currentScore = IFNULL(currentScore, 0) + ? WHERE userId = ? AND tambolaGameId = ?`;
     await db.query(query, [scoreChange, Number(userId), Number(tambolaGameId)]);
   } catch (err) {
     throw new Error(err.message);

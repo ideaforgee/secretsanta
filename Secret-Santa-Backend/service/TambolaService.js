@@ -274,7 +274,7 @@ const validateClaim = async (claimType, ticketNumbers, markedNumbers, withdrawnN
             isValidClaim = markedCount >= 5;
             break;
         case 'Full House':
-            isValidClaim = ticketNumbers.flat().every(num => num === null || withdrawnNumbers.includes(num));
+            isValidClaim = ticketNumbers.flat().every(num => num === null || (withdrawnNumbers.includes(num) && markedNumbers.includes(num)));
             break;
         default:
             break;
@@ -314,7 +314,7 @@ const handleInvalidClaim = async (userId, messageData, connections) => {
 };
 
 /**
- * Handles the case when a claim is valid by notifying users, updating the game status, 
+ * Handles the case when a claim is valid by notifying users, updating the game status,
  * and adjusting the user's score based on the claim type.
  *
  * @param {Object} messageData - The data to be sent in the notification message.
@@ -338,7 +338,7 @@ const handleValidClaim = async (messageData, connections, userId) => {
         await tambolaDao.updateTambolaGameStatus(tambolaGameId, 'Complete');
     }
 
-    const scoreChange = claimType === 'Full House' ? 15 : 50;
+    const scoreChange = claimType === 'Full House' ? 30 : 50;
     await tambolaDao.updateUserTambolaScore(userId, tambolaGameId, scoreChange);
 };
 

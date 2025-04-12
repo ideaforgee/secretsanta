@@ -118,6 +118,7 @@ async function handleSecretSantaChat(parsedMessage, userId) {
 
 async function handlePressBuzzer(parsedMessage, userId) {
     await groupDao.addUserToBuzzerRoom(userId, parsedMessage.newUser?.groupId, parsedMessage.newUser?.time);
+    groupService.handlePressBuzzer(userId, parsedMessage, connections);
 }
 
 async function handleReactiveBuzzer(parsedMessage) {

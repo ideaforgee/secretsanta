@@ -110,6 +110,21 @@ const getAllGroupUsers = async (funZoneGroupId) => {
   }
 };
 
+const usersWhoPressedBuzzer = async (funZoneGroupId) => {
+  try {
+    const query = `SELECT name, time, funZoneGroupId as groupId
+    from buzzerRoom
+    INNER JOIN users ON users.id = buzzerRoom.userId
+    WHERE buzzerRoom.funZoneGroupId = ?
+    ORDER by time asc;`;
+
+    const [response] = await db.query(query, [Number(funZoneGroupId)]);
+    return response ?? [];
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 
 module.exports = {
   createGroup,
@@ -118,5 +133,6 @@ module.exports = {
   addUserToBuzzerRoom,
   reactiveBuzzerRoom,
   getGroupBuzzerTimerDetail,
-  getAllGroupUsers
+  getAllGroupUsers,
+  usersWhoPressedBuzzer
 };

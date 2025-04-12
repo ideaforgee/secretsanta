@@ -90,7 +90,7 @@ const BasePage = () => {
     return (
         <div style={Constant.FUN_ZONE_STYLE} className='base-page-container'>
             <div><Navbar title={'FUN ZONE'} /></div>
-            <Box sx={{ px: 2, width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <Box sx={{ pr: 4, width: '100%', display: 'flex', justifyContent: 'center' }}>
                 <Box sx={{ width: '100%', maxWidth: '1200px' }}>
                     <Grid container spacing={3} justifyContent="center">
                         {cards.map((card, index) => (

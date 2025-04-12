@@ -6,16 +6,10 @@
     border-radius: 8px;
     padding: 10px;
     background: white;
+    width: fit-content;
+    margin: auto;
 }
 
-/* Blurred effect */
-.blurred {
-    filter: blur(5px);
-    opacity: 0.7;
-    position: relative;
-}
-
-/* Centered text inside blurred ticket */
 .ticket-overlay {
     background: rgba(0, 0, 0, 0.6);
     color: white;
@@ -25,6 +19,12 @@
     font-weight: bold;
     border-radius: 5px;
     text-align: center;
+}
+
+.blurred {
+    filter: blur(5px);
+    opacity: 0.7;
+    position: relative;
 }
 
 .ticket-row {
@@ -47,10 +47,6 @@
     background-color: var(--tambola-ticket-cell);
 }
 
-.ticket-cell.filled {
-    background-color: var(--tambola-ticket-cell);
-}
-
 .ticket-cell.empty {
     background-color: var(--tambola-ticket-cell);
 }
@@ -58,4 +54,41 @@
 .ticket-cell.marked {
     background-color: var(--tambola-marked-element);
     color: var(--tambola-marked-text-color);
+}
+
+
+/* 🔽 Tablet screen */
+@media (max-width: 768px) {
+    .ticket-cell {
+        width: 38px;
+        height: 38px;
+        font-size: 14px;
+    }
+
+    .ticket-row {
+        gap: 1.5vh;
+    }
+
+    .ticket-overlay {
+        font-size: 16px;
+        padding: 8px 16px;
+    }
+}
+
+/* 🔽 Mobile screen */
+@media (max-width: 480px) {
+    .ticket-cell {
+        width: 30px;
+        height: 30px;
+        font-size: 12px;
+    }
+
+    .ticket-row {
+        gap: 1vh;
+    }
+
+    .ticket-overlay {
+        font-size: 14px;
+        padding: 6px 12px;
+    }
 }

@@ -51,13 +51,25 @@ function GameAssist() {
         { text: 'Game Announcement', onClick: onGameAnnouncementClick, bgImage: announcement },
         { text: 'Team Splitter', onClick: onTeamSplitterClick, bgImage: splitter },
         { text: 'Buzzer Timer', onClick: onBuzzerTimerClick, bgImage: buzzer },
-        { text: 'Team Discussion', onClick: onTeamDiscussionClick, bgImage: discussion },
+        { text: 'Team Discussion', onClick: onTeamDiscussionClick, bgImage: discussion }
     ];
 
     return (
-        <div style={Constant.FUN_ZONE_STYLE} className="game-zone-container">
+        <div style={{
+            ...Constant.FUN_ZONE_STYLE,
+            overflowY: 'auto',
+            maxHeight: '100vh'
+        }} className="game-zone-container">
             <Navbar title={'Game Assist'} />
-            <Box sx={{ mt: 7, px: 2, width: '80%' }}>
+            <Box
+                sx={{
+                    mt: 7,
+                    pt: isSmallScreen ? 10 : 0,
+                    width: '80%',
+                    maxHeight: 'calc(100vh - 100px)',
+                    overflowY: 'auto'
+                }}
+            >
                 <Grid container spacing={3} justifyContent="center">
                     {cards.map((card, index) => (
                         <Grid

@@ -6,7 +6,6 @@ import Navbar from "../../components/navbar/Navbar";
 import { generateTicketsForTambolaGame, getTambolaGameDetails } from "../../services/gameService";
 import { connectWebSocket } from '../../websocket';
 import { useNavigate } from 'react-router-dom';
-import { ImExit } from 'react-icons/im';
 import { BsCapslockFill } from "react-icons/bs";
 import GameUserScoreBoard from '../../components/GameUserScoreBoard/GameUserScoreBoard';
 import { USER_KEY, USER_NAME_KEY, TAMBOLA_GAME_KEY } from '../../constants/appConstant';
@@ -50,7 +49,7 @@ const Tambola = () => {
       setAllWithDrawnNumbers(tambolaGameDetails.withdrawnNumbers);
       setTicketNumbers(tambolaGameDetails.ticketNumbers);
 
-      if(tambolaGameDetails.status === 'Complete') {
+      if (tambolaGameDetails.status === 'Complete') {
         window.alert('This game has already completed');
         localStorage.removeItem(TAMBOLA_GAME_KEY);
         navigate('/game-zone');
@@ -171,32 +170,40 @@ const Tambola = () => {
   return (
     <div className="tambola-parent-container">
       <div className="tambola-container">
-      <div><Navbar title={'TAMBOLA'}/></div>
+        <div><Navbar title={'TAMBOLA'} /></div>
+  
         <Popup message={popupMessage} visible={showPopup} onClose={() => setShowPopup(false)} />
+  
         {/* Tambola Board */}
         <TambolaBoard drawnNumbers={allWithDrawnNumbers} />
-
+  
+        {/* Withdraw Button - Now between board and ticket */}
         {status === TambolaGameStatus.Active && allWithDrawnNumbers.length < 90 && hostId === Number(userId) && (
-          <button className="withDrawn-button " onClick={handleDrawNumberClick}>
-            <BsCapslockFill />
-            With Draw
-          </button>
+          <div className="withdraw-wrapper">
+            <button className="withDrawn-button" onClick={handleDrawNumberClick}>
+              <BsCapslockFill />
+              With Draw
+            </button>
+          </div>
         )}
-
+  
         {/* Right Section */}
         <div className="right-section">
           {/* Tambola Ticket */}
           <TambolaTicket ticketData={ticketNumbers} markedNumbers={markedNumbers} onNumberClick={handleTicketNumberClick} />
-
+  
           {/* Claim Buttons */}
           <TambolaClaims onClaimClick={handleClaimClick} isGameStarted={status === TambolaGameStatus.Active} markedClaims={markedClaims} />
-
+  
           {status === TambolaGameStatus.InActive && hostId === Number(userId) && (
             <button className="start-game-button" onClick={handleStartGameClick}>
               Start Game
             </button>
           )}
-
+          <button className="start-game-button" onClick={handleQuit}>
+            Exit Game
+          </button>
+  
           {isCompletePopup && (
             <GameUserScoreBoard
               onClose={() => {
@@ -204,13 +211,10 @@ const Tambola = () => {
               }}
             />
           )}
-          <button className='tambola-exit-game-button' onClick={handleQuit}>
-            {<ImExit />}
-            Exit Game
-          </button>
         </div>
       </div>
     </div>
   );
+  
 };
 export default Tambola;

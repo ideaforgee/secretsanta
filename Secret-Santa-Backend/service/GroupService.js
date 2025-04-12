@@ -70,7 +70,7 @@ const announceGame = async (userId, gameAnnouncementInfo) => {
 
     for (const recipient of gameAnnouncementInfo.emailData.recipients) {
       const recipientUser = await userDao.getUserDetailsById(Number(recipient));
-      // await emailService.sendEmail(recipientUser.email, gameAnnouncementInfo.emailData.subject, gameAnnouncementInfo.emailData.body);
+      emailService.sendEmail(recipientUser.email, gameAnnouncementInfo.emailData.subject, gameAnnouncementInfo.emailData.body);
       notificationPushService.sendPushNotifications(Number(recipientUser.id), 'Game Announcement',  gameAnnouncementInfo.emailData?.body);
     }
 
@@ -118,11 +118,25 @@ const reactiveBuzzerRoom = async (groupId, connections) => {
   }
 };
 
+const handlePressBuzzer = async (userId, messageData, connections) => {
+  const groupUsers = await groupDao.getAllGroupUsers(messageData.groupId);
+  const usersWhoPressedBuzzer = await groupDao.usersWhoPressedBuzzer(messageData.groupId);
+  messageData.usersWhoPressedBuzzer = usersWhoPressedBuzzer;
+
+  for (let user of groupUsers) {
+    const webSocket = connections.get(user.id?.toString());
+    if (userId !== user.id && webSocket && webSocket.readyState === WebSocket.OPEN) {
+      webSocket.send(JSON.stringify(messageData));
+    }
+  }
+};
+
 module.exports = {
   createGroup,
   joinGroup,
   getGroupMembersInfo,
   announceGame,
   getGroupBuzzerTimerDetail,
-  reactiveBuzzerRoom
+  reactiveBuzzerRoom,
+  handlePressBuzzer
 };

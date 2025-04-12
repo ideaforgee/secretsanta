@@ -68,6 +68,9 @@ const BuzzerTImer = () => {
             setUserList([]);
             setIsBuzzerActive(true);
         }
+        if (messageData.type === 'pressBuzzer') {
+            setUserList(messageData.usersWhoPressedBuzzer);
+        }
     };
 
     const handleBuzzerPress = (userName) => {
@@ -84,7 +87,7 @@ const BuzzerTImer = () => {
         };
 
         setUserList((prevList) => [...prevList, newUser]);
-        ws.send(JSON.stringify({ type: Constant.NOTIFICATION_TYPE.PRESS_BUZZER, newUser: newUser }));
+        ws.send(JSON.stringify({ type: Constant.NOTIFICATION_TYPE.PRESS_BUZZER, newUser: newUser, groupId: groupId }));
     };
 
     const handleReActiveBuzzer = () => {
@@ -105,7 +108,7 @@ const BuzzerTImer = () => {
                 {/* Buzzer List Component */}
                 <BuzzerResultComponent userList={userList} />
 
-                {hostId == userId && (
+                {(
                     <button
                         className="re-active-buzzer-btn"
                         onClick={handleReActiveBuzzer}
