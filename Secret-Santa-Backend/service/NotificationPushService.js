@@ -57,9 +57,10 @@ const sendPushNotifications = async (recipientId, title, body) => {
       const notificationPayload = {
         title: title,
         body: body,
-        icon: '/logo192.png',
-        badge: '/badge.png',
-        vibrate: [200, 100, 200]
+        icon: '/assets/logo192.png',
+        badge: '/assets/logo192.png',
+        vibrate: [200, 100, 200],
+        url: 'https://funzone-uat.thecodeinsight.com/'
       };
 
       sendNotification(subscription, notificationPayload);
