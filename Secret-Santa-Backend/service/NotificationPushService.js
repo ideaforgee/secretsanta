@@ -63,6 +63,8 @@ const sendPushNotifications = async (recipientId, title, body) => {
         url: 'https://funzone-uat.thecodeinsight.com/'
       };
 
+      console.log('Notification Payload:', notificationPayload);
+      console.log('Notification subscription:', subscription);
       sendNotification(subscription, notificationPayload);
 
       console.log(`Notifications sent to ${recipientId}`);
