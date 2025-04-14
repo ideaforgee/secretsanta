@@ -5,18 +5,6 @@ export const registerServiceWorker = async (userId) => {
   if ('serviceWorker' in navigator) {
     try {
       const registration = await navigator.serviceWorker.register('/sw.js');
-      console.log('Service Worker registered:', registration);
-      console.log('Service Worker scope:', registration.scope);
-      console.log('Service Worker state:', registration.installing || registration.waiting || registration.active);
-      console.log('Service Worker script URL:', registration.active.scriptURL);
-      console.log('Push manager:', registration.pushManager);
-      const sub = await registration.pushManager.getSubscription();
-      console.log('Push subscription:', sub);
-      console.log('Push subscription options:', registration.pushManager.subscriptionOptions);
-      console.log('Push subscription endpoint:', registration.pushManager.getSubscription().endpoint);
-      console.log('Push subscription expiration time:', registration.pushManager.getSubscription().expirationTime);
-      console.log('Push subscription keys:', registration.pushManager.getSubscription().getKey('p256dh'));
-      console.log('Push subscription keys:', registration.pushManager.getSubscription().getKey('auth'));
       if (!registration) {
         const newRegistration = await navigator.serviceWorker.register('/sw.js');
         console.log('Service Worker registered:', newRegistration);
