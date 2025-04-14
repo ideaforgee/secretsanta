@@ -19,6 +19,10 @@ webpush.setVapidDetails(
  * @param {String} message - The message to send
  */
 const sendNotification = async (subscription, payload) => {
+  if (!subscription || !subscription.endpoint) {
+    console.error('Invalid subscription object:', subscription);
+    return;
+  }
   return webpush.sendNotification(subscription, JSON.stringify(payload))
     .catch(error => console.error('Push notification error:', error));
 };
@@ -63,9 +67,13 @@ const sendPushNotifications = async (recipientId, title, body) => {
         url: 'https://funzone-uat.thecodeinsight.com/'
       };
 
-      console.log('Notification Payload:', notificationPayload);
-      console.log('Notification subscription:', subscription);
-      sendNotification(subscription, notificationPayload);
+      // console.log('Notification Payload:', notificationPayload);
+      // console.log('Notification subscription:', subscription);
+      if (process.env.ENVIRONMENT === 'UAT') {
+        sendNotification(JSON.parse(subscription), notificationPayload);
+      } else {
+        sendNotification(subscription, notificationPayload);
+      }
 
       console.log(`Notifications sent to ${recipientId}`);
     }
