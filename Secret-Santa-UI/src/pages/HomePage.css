@@ -27,7 +27,6 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-left: 20%;
     transition: margin-top 0.5s ease;
     animation: enlargeShrink 1.5s infinite ease-in-out;
 }

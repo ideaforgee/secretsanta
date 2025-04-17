@@ -10,7 +10,7 @@ const getSubscription = async (userId) => {
     const query = 'SELECT subscription FROM notificationSubscriptions WHERE userId = ?';
     const [subscription] = await db.query(query, [userId]);
 
-    return subscription[0]?.subscription;
+    return subscription;
   } catch (error) {
     throw new Error(error.message);
   }
@@ -52,7 +52,7 @@ const updateSubscription = async (userId, subscription) => {
   try {
     const query = 'UPDATE notificationSubscriptions SET subscription = ? WHERE userId = ?';
     const selectQuery = `
-      SELECT * FROM notificationSubscriptions 
+      SELECT * FROM notificationSubscriptions
       WHERE userId = ?`;
     await db.query(query, [JSON.stringify(subscription), userId]);
     const [result] = await db.query(selectQuery, [userId]);

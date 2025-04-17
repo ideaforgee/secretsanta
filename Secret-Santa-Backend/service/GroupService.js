@@ -70,7 +70,7 @@ const announceGame = async (userId, gameAnnouncementInfo) => {
 
     for (const recipient of gameAnnouncementInfo.emailData.recipients) {
       const recipientUser = await userDao.getUserDetailsById(Number(recipient));
-      // emailService.sendEmail(recipientUser.email, gameAnnouncementInfo.emailData.subject, gameAnnouncementInfo.emailData.body);
+      emailService.sendEmail(recipientUser.email, gameAnnouncementInfo.emailData.subject, gameAnnouncementInfo.emailData.body);
       notificationPushService.sendPushNotifications(Number(recipientUser.id), 'Game Announcement',  gameAnnouncementInfo.emailData?.body);
     }
 

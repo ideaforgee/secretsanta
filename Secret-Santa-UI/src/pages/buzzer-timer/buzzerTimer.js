@@ -108,7 +108,7 @@ const BuzzerTImer = () => {
                 {/* Buzzer List Component */}
                 <BuzzerResultComponent userList={userList} />
 
-                {(
+                {hostId == userId && (
                     <button
                         className="re-active-buzzer-btn"
                         onClick={handleReActiveBuzzer}

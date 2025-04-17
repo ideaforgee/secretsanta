@@ -2,14 +2,15 @@
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     gap: 1.5vh;
-    padding: 12px;
-    width: fit-content;
-    height: fit-content;
+    padding: 2vw;
+    width: 90vw;
+    height: auto;
     background: var(--tambola-board-bg);
     border: 2px solid;
     border-radius: 10px;
     margin: auto;
-}
+    box-sizing: border-box;
+  }
 
 .number {
     width: 40px;

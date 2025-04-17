@@ -12,6 +12,8 @@ const GameUsersScoreboard = ({ onClose }) => {
     const fetchPattern = async () => {
       try {
         const response = await gatGameUsersWithScore(tambolaGameId);
+        const sortedUsers = response.sort((a, b) => b.currentScore - a.currentScore);
+        setUsers(sortedUsers);
         setUsers(response);
       } catch (error) {
         console.error("Error fetching game users:", error);

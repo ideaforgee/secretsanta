@@ -34,14 +34,15 @@ const sendNotification = async (subscription, payload) => {
  */
 const saveSubscription = async (userId, subscription) => {
   try {
-    const existingSubscription = await notificationDao.getSubscription(userId);
-    let result;
-    if (!existingSubscription) {
-      result = await notificationDao.addSubscription(userId, subscription);
-    } else {
-      result = await notificationDao.updateSubscription(userId, subscription);
-    }
-    return result;
+    // const existingSubscription = await notificationDao.getSubscription(userId);
+    // let result;
+    // if (!existingSubscription) {
+    //   result = await notificationDao.addSubscription(userId, subscription);
+    // } else {
+    //   result = await notificationDao.updateSubscription(userId, subscription);
+    // }
+    //return result;
+    return await notificationDao.addSubscription(userId, subscription);
   } catch (error) {
     throw new Error;
   }
@@ -55,28 +56,30 @@ const saveSubscription = async (userId, subscription) => {
  */
 const sendPushNotifications = async (recipientId, title, body) => {
   try {
-    const subscription = await notificationDao.getSubscription(recipientId);
-    if (subscription) {
+    const subscriptions = await notificationDao.getSubscription(recipientId);
 
-      const notificationPayload = {
-        title: title,
-        body: body,
-        icon: '/assets/logo192.png',
-        badge: '/assets/logo192.png',
-        vibrate: [200, 100, 200],
-        url: 'https://funzone-uat.thecodeinsight.com/'
-      };
+    const notificationPayload = {
+      title: title,
+      body: body,
+      icon: '/assets/favicon.png',
+      badge: '/assets/favicon.png',
+      vibrate: [200, 100, 200],
+      url: 'https://funzone-uat.thecodeinsight.com/'
+    };
 
-      // console.log('Notification Payload:', notificationPayload);
-      // console.log('Notification subscription:', subscription);
-      if (process.env.ENVIRONMENT === 'UAT') {
-        sendNotification(JSON.parse(subscription), notificationPayload);
-      } else {
-        sendNotification(subscription, notificationPayload);
-      }
+    const sendPromises = subscriptions
+      .filter(sub => sub.subscription)
+      .map(sub => {
+        const subscription = process.env.ENVIRONMENT === 'UAT'
+          ? JSON.parse(sub.subscription)
+          : sub.subscription;
 
-      console.log(`Notifications sent to ${recipientId}`);
-    }
+        return sendNotification(subscription, notificationPayload);
+      });
+
+    await Promise.all(sendPromises);
+
+    console.log(`Notifications sent to ${recipientId}`);
   } catch (error) {
     console.error('Error sending push notifications:', error);
     throw new Error('Error sending push notifications');

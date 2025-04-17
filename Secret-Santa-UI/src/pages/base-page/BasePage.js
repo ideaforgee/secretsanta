@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './BasePage.css';
 import CreateGroup from '../create-group/CreateGroup';
 import * as Constant from '../../constants/secretSantaConstants.js';
@@ -12,6 +12,7 @@ import { gameAssistHandler } from '../../services/groupService.js';
 import funZoneGroup from '../../assets/funZoneGroup.jpeg';
 import gameZone from '../../assets/gameZone.jpeg';
 import gameAssist from '../../assets/gameAssist.jpeg';
+import { registerServiceWorker, requestNotificationPermission } from '../../services/notificationService.js';
 
 const BasePage = () => {
     const [openCreateGroup, setOpenCreateGroup] = useState(false);
@@ -28,16 +29,22 @@ const BasePage = () => {
     const navigate = useNavigate();
     const userId = localStorage.getItem(USER_KEY);
 
+    useEffect(() => {
+        const requestPermission = async () => {
+            await requestNotificationPermission();
+            await registerServiceWorker(userId);
+        };
+        requestPermission();
+      }, [userId]);
+
     const onClickCreateGroup = () => {
         setResetForm(true);
         setOpenCreateGroup(true);
     };
 
-
     const onClickGameZone = () => {
         navigate(Constant.ROUTE_PATH.GAME_ZONE)
     };
-
 
     const onClickGameAssist = () => {
         setResetForm(true);
@@ -51,8 +58,6 @@ const BasePage = () => {
             setDialogTitle(Constant.GAME_ASSIST_TITLE);
             setOpenGroupCode(true);
         }
-
-
     };
 
     const handleGroupCodeSubmit = async (groupCode) => {

@@ -100,7 +100,7 @@ const sendCreatedGroupEmail = async (user, groupCode, groupName) => {
 
 
 const sendRestPasswordEmail = async (email, token) => {
-  const link = `https://secret-santa.thecodeinsight.com/reset-password?token=${token}`;
+  const link = `https://funzone-uat.thecodeinsight.com/reset-password?token=${token}`;
   const emailSubject = `Password Reset Request!`;
   const emailBody = await loadTemplate('resetPasswordEmail.html', {link: link});
   await sendEmail(email, emailSubject, emailBody);

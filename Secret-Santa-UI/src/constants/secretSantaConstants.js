@@ -1,7 +1,5 @@
 import bgg from '../assets/bgg.jpg';
 import fzg from '../assets/fzg.jpg';
-import tbg from '../assets/tbg.jpg';
-import buzzerbg from '../assets/buzzerbg.jpg';
 
 export const CHAT_BOX_TYPE = {
     SECRET_SANTA: 'secretSanta',
@@ -23,24 +21,6 @@ export const NOTIFICATION_TYPE = {
 
 export const BACKGROUND_STYLE = {
   backgroundImage: `url(${bgg})`,
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat',
-  height: '100vh',
-  width: '100%',
-};
-
-export const TAMBOLA_BACKGROUND_STYLE = {
-  backgroundImage: `url(${tbg})`,
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat',
-  height: '100vh',
-  width: '100%',
-};
-
-export const BUZZER_BACKGROUND_STYLE = {
-  backgroundImage: `url(${buzzerbg})`,
   backgroundSize: 'cover',
   backgroundPosition: 'center',
   backgroundRepeat: 'no-repeat',

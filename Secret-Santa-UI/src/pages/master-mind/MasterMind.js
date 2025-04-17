@@ -37,6 +37,9 @@ const MasterMind = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        if (!masterMindGameId || !userId) {
+          navigate('/game-zone');
+        }
         const response = await getUserMasterGameInfo(userId, masterMindGameId);
         setTotalLevels(response.totalLevels);
         setColorMap(response.allColors);
@@ -203,6 +206,7 @@ const MasterMind = () => {
             colorMap={colorMap}
             onClose={() => {
               setCongratsPopUpDisplay(false);
+              onConfirmReturnFunZone()
             }}
           />
         )}
@@ -212,6 +216,7 @@ const MasterMind = () => {
             colorMap={colorMap}
             onClose={() => {
               setQuitPopUpDisplay(false);
+              onConfirmReturnFunZone()
             }}
           />
         )}

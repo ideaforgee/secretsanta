@@ -38,7 +38,7 @@ const Tambola = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!tambolaGameId) {
+      if (!tambolaGameId || !userId) {
         navigate('/game-zone');
       }
       const tambolaGameDetails = await getTambolaGameDetails(userId, tambolaGameId);
@@ -171,12 +171,12 @@ const Tambola = () => {
     <div className="tambola-parent-container">
       <div className="tambola-container">
         <div><Navbar title={'TAMBOLA'} /></div>
-  
+
         <Popup message={popupMessage} visible={showPopup} onClose={() => setShowPopup(false)} />
-  
+
         {/* Tambola Board */}
         <TambolaBoard drawnNumbers={allWithDrawnNumbers} />
-  
+
         {/* Withdraw Button - Now between board and ticket */}
         {status === TambolaGameStatus.Active && allWithDrawnNumbers.length < 90 && hostId === Number(userId) && (
           <div className="withdraw-wrapper">
@@ -186,15 +186,15 @@ const Tambola = () => {
             </button>
           </div>
         )}
-  
+
         {/* Right Section */}
         <div className="right-section">
           {/* Tambola Ticket */}
           <TambolaTicket ticketData={ticketNumbers} markedNumbers={markedNumbers} onNumberClick={handleTicketNumberClick} />
-  
+
           {/* Claim Buttons */}
           <TambolaClaims onClaimClick={handleClaimClick} isGameStarted={status === TambolaGameStatus.Active} markedClaims={markedClaims} />
-  
+
           {status === TambolaGameStatus.InActive && hostId === Number(userId) && (
             <button className="start-game-button" onClick={handleStartGameClick}>
               Start Game
@@ -203,7 +203,7 @@ const Tambola = () => {
           <button className="start-game-button" onClick={handleQuit}>
             Exit Game
           </button>
-  
+
           {isCompletePopup && (
             <GameUserScoreBoard
               onClose={() => {
@@ -215,6 +215,6 @@ const Tambola = () => {
       </div>
     </div>
   );
-  
+
 };
 export default Tambola;

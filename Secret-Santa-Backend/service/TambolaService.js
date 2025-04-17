@@ -338,7 +338,7 @@ const handleValidClaim = async (messageData, connections, userId) => {
         await tambolaDao.updateTambolaGameStatus(tambolaGameId, 'Complete');
     }
 
-    const scoreChange = claimType === 'Full House' ? 30 : 50;
+    const scoreChange = claimType === 'Full House' ? 50 : 30;
     await tambolaDao.updateUserTambolaScore(userId, tambolaGameId, scoreChange);
 };
 
