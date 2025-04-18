@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { USER_KEY, GROUP_ID_KEY } from '../../constants/appConstant';
+import { USER_KEY, GROUP_ID_KEY, USER_NAME_KEY } from '../../constants/appConstant';
 import BuzzerComponent from '../../components/Buzzer/BuzzerComponent';
 import BuzzerResultComponent from '../../components/Buzzer/BuzzerResultComponent';
 import Navbar from '../../components/navbar/Navbar';
@@ -16,6 +16,7 @@ const BuzzerTImer = () => {
 
     const userId = localStorage.getItem(USER_KEY);
     const groupId = localStorage.getItem(GROUP_ID_KEY);
+    const name = localStorage.getItem(USER_NAME_KEY)
     const MAX_RETRIES = 10;
     const RETRY_INTERVAL = 5000;
     const [hostId, setHostId] = useState(userId)
@@ -81,6 +82,7 @@ const BuzzerTImer = () => {
             alert('Vibration API is not supported on this device.');
         }
         const newUser = {
+            id: userId,
             name: userName,
             time: new Date().toLocaleString(),
             groupId: groupId
@@ -94,6 +96,27 @@ const BuzzerTImer = () => {
         setUserList([]);
         setIsBuzzerActive(true);
         ws.send(JSON.stringify({ type: Constant.NOTIFICATION_TYPE.REACTIVE_BUZZER, groupId: groupId }));
+    };
+
+    const handleClearResponseBuzzer = () => {
+        setIsBuzzerActive(true);
+        setUserList((prevList) =>
+            prevList.filter((user) => user.id !== userId)
+        );
+
+        const removedUser = {
+            id: userId,
+            name: name,
+            time: new Date().toLocaleString(),
+            groupId: groupId
+        };
+
+        ws.send(JSON.stringify({
+            type: Constant.NOTIFICATION_TYPE.CLEAR_RESPONSE_BUZZER,
+            removedUser: removedUser,
+            groupId: groupId
+        }));
+        ws.send(JSON.stringify({ type: Constant.NOTIFICATION_TYPE.CLEAR_RESPONSE_BUZZER, groupId: groupId }));
     };
 
     return (
@@ -114,6 +137,14 @@ const BuzzerTImer = () => {
                         onClick={handleReActiveBuzzer}
                     >
                         Re-Active Buzzer
+                    </button>
+                )}
+                {(hostId != userId && !isBuzzerActive) && (
+                    <button
+                        className="re-active-buzzer-btn"
+                        onClick={handleClearResponseBuzzer}
+                    >
+                        Clear Response
                     </button>
                 )}
             </div>

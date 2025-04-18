@@ -24,11 +24,11 @@ export const deleteMessage = (messageId) => {
     });
 };
 
-export const markEmailAsNotSent = (userId, gameId, chatBoxType) => {
+export const markEmailAsNotSent = (userId, gameId, groupId, chatBoxType) => {
     return handleRequest({
         method: 'post',
         url: '/api/chat/markEmailAsNotSent',
-        data: { userId, gameId, chatBoxType },
+        data: { userId, gameId, groupId, chatBoxType },
     });
 };
 

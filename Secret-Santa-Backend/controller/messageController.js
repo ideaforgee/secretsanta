@@ -79,8 +79,8 @@ const getPendingMessagesForUserInGame = async (req, res) => {
  * }
  */
 const markEmailAsNotSent = async (req, res) => {
-    const { userId, gameId, chatBoxType } = req.body;
-    const result = await messageService.markEmailAsNotSent(userId, gameId, chatBoxType);
+    const { userId, gameId, groupId, chatBoxType } = req.body;
+    const result = await messageService.markEmailAsNotSent(userId, gameId, groupId, chatBoxType);
     return response(res, result.status, message.SUCCESS, result.response);
 };
 

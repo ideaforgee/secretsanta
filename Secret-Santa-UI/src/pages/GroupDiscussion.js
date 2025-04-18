@@ -38,6 +38,38 @@ const GroupDiscussion = () => {
 
     const toggleBadgeVisibility = (setHidden, value) => setHidden(value);
 
+    useEffect(() => {
+        const inputEl = document.querySelector('.message-input');
+        if (inputEl) {
+            inputEl.addEventListener('focus', () => {
+                setTimeout(() => {
+                    inputEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            });
+        }
+
+        return () => {
+            inputEl?.removeEventListener('focus', () => { });
+        };
+    }, []);
+
+    useEffect(() => {
+        const handleResize = () => {
+            const chatContainer = document.querySelector('.chat-container');
+            if (window.innerHeight < 600) {
+                chatContainer.style.paddingBottom = '250px';
+            } else {
+                chatContainer.style.paddingBottom = '0px';
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+
+
     const handleMessagesFetchError = (error) => {
         const errorMessage = error || Constant.POPUP_ERROR_MESSAGE;
         setErrorPopUp({ message: errorMessage, show: true });
@@ -45,7 +77,7 @@ const GroupDiscussion = () => {
 
     const markMessagesAsRead = async (chatBoxType) => {
         try {
-            await messageService.markEmailAsNotSent(userId, groupId, chatBoxType);
+            await messageService.markEmailAsNotSent(userId, null, groupId, chatBoxType);
         } catch (error) {
             handleMessagesFetchError(error);
         }
@@ -125,7 +157,8 @@ const GroupDiscussion = () => {
             chatBoxType: chatMode,
             content: messageContent,
             senderName: userName,
-            groupId: groupId }));
+            groupId: groupId
+        }));
 
         const newMessage = { from: chatMode === Constant.CHAT_BOX_TYPE.PUBLIC_CHAT ? 'Me' : 'Anonymous', content: messageContent };
 
@@ -174,7 +207,7 @@ const GroupDiscussion = () => {
             <div className='chat-messages' ref={ref}>
                 {messages.map((msg, idx) => (
                     header === 'Public Chat' ?
-                        <div className={`message ${msg.from === "Me" ? "sent" : "received"}`}>
+                        <div key={idx} className={`message ${msg.from === "Me" ? "sent" : "received"}`}>
                             <div className="message-content">
                                 {msg.from !== "Me" ? <span className="message-from">{msg.from}</span> : null}
                                 <span className="message-text">{msg.content}</span>
@@ -211,7 +244,7 @@ const GroupDiscussion = () => {
                 {[Constant.CHAT_BOX_TYPE.PUBLIC_CHAT, Constant.CHAT_BOX_TYPE.ANONYMOUS_CHAT].map((type, idx) => (
                     <Badge
                         key={idx}
-                        badgeContent='🎁'
+                        badgeContent='💬'
                         invisible={type === Constant.CHAT_BOX_TYPE.PUBLIC_CHAT ? publicChatMessagesHidden : anonymousChatMessagesHidden}
                         sx={{
                             '& .MuiBadge-badge': {
@@ -236,7 +269,13 @@ const GroupDiscussion = () => {
             </div>
             {chatMode === Constant.CHAT_BOX_TYPE.PUBLIC_CHAT && renderChatWindow(messagesPublic, publicChatInputMessage, setPublicChatInputMessage, publicMessagesEndRef, 'Public Chat')}
             {chatMode === Constant.CHAT_BOX_TYPE.ANONYMOUS_CHAT && renderChatWindow(messagesAnonymous, anonymousChatInputMessage, setAnonymousChatInputMessage, anonymousMessagesEndRef, 'Anonymous Chat')}
-            <ErrorComponent message={errorPopUp.message} show={errorPopUp.show} onClose={() => setErrorPopUp({ message: '', show: false })} />
+
+            {errorPopUp.show && (
+                <ErrorComponent
+                    message={errorPopUp.message}
+                    onClose={() => setErrorPopUp({ message: '', show: false })}
+                />
+            )}
         </div>
     );
 };

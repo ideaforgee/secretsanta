@@ -79,7 +79,8 @@ const dispatchMessageToUser = async (receiverId, messageData, connections) => {
     if (webSocket && webSocket.readyState === WebSocket.OPEN) {
         webSocket.send(JSON.stringify(messageData));
     } else {
-        sendEmailNotificationToUser(receiverId, messageData);
+        const reverserChatBoxType = messageData.chatBoxType === 'secretSanta' ? 'giftNinja' : 'secretSanta'
+        sendEmailNotificationToUser(receiverId, messageData, reverserChatBoxType);
         console.error(`Cannot send message. User ${receiverId} is not connected.`);
     }
 };
@@ -132,13 +133,12 @@ const getPendingMessagesForUserInGame = async (userId, gameId) => {
  * @param {object} messageData - The message object to send in the email.
  * @returns {void}
  */
-const sendEmailNotificationToUser = async (receiverId, messageData) => {
-    const reverserChatBoxType = messageData.chatBoxType === 'secretSanta' ? 'giftNinja' : 'secretSanta'
-    const emailAlreadySent = await hasEmailAlreadyBeenSent(receiverId, messageData, reverserChatBoxType);
+const sendEmailNotificationToUser = async (receiverId, messageData, chatBoxType) => {
+    const emailAlreadySent = await hasEmailAlreadyBeenSent(receiverId, messageData, chatBoxType);
     if (!emailAlreadySent) {
-        const targetUser = await messageDao.getUserById(receiverId);
+        //const targetUser = await messageDao.getUserById(receiverId);
         //await emailService.sendSecretSantaSentMessageEmail(targetUser, reverserChatBoxType);
-        messageDao.upsertUserEmailStatusForGame(receiverId, messageData.gameId, reverserChatBoxType);
+        messageDao.upsertUserEmailStatusForGame(receiverId, messageData.gameId, messageData.groupId, chatBoxType);
     }
 };
 
@@ -150,7 +150,7 @@ const sendEmailNotificationToUser = async (receiverId, messageData) => {
  * @returns {boolean} - Returns true if an email has been sent, false otherwise.
  */
 const hasEmailAlreadyBeenSent = async (receiverId, messageData, chatBoxType) => {
-    const result = await messageDao.isEmailAlreadySent(receiverId, messageData.gameId, chatBoxType);
+    const result = await messageDao.isEmailAlreadySent(receiverId, messageData.gameId, messageData.groupId, chatBoxType);
     return result.isEmailAlreadySent === 1 ? true : false;
 };
 
@@ -162,12 +162,12 @@ const hasEmailAlreadyBeenSent = async (receiverId, messageData, chatBoxType) => 
  * @param {string} chatBoxType - The type of chat box ('secretSanta' or 'giftNinja').
  * @returns {void}
  */
-const markEmailAsNotSent = async (userId, gameId, chatBoxType) => {
-    if (!userId || !gameId || !chatBoxType) {
+const markEmailAsNotSent = async (userId, gameId, groupId, chatBoxType) => {
+    if (!userId || !chatBoxType) {
         return commonService.createResponse(httpResponse.BAD_REQUEST, message.INVALID_CREDENTIALS);
     }
 
-    await messageDao.markEmailAsNotSent(userId, gameId, chatBoxType);
+    await messageDao.markEmailAsNotSent(userId, gameId, groupId, chatBoxType);
     return commonService.createResponse(httpResponse.SUCCESS, message.EMAIL_MARKED_NOT_SENT);
 };
 
@@ -234,10 +234,10 @@ const dispatchGroupDiscussionMessageToUser = async (senderId, receiverId, messag
         await notificationPushService.sendPushNotifications(receiverId, title, messageData.content);
         if (webSocket && webSocket.readyState === WebSocket.OPEN) {
             webSocket.send(JSON.stringify(messageData))
-        };
-    } else {
-        //sendEmailNotificationToUser(receiverId, messageData);
-        console.error(`Cannot send message. User ${receiverId} is not connected.`);
+        } else {
+            sendEmailNotificationToUser(receiverId, messageData, messageData.chatBoxType);
+            console.error(`Cannot send message. User ${receiverId} is not connected.`);
+        }
     }
 };
 

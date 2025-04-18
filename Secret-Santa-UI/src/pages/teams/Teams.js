@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, Typography, Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useLocation } from 'react-router-dom';
+import * as Constant from '../../constants/secretSantaConstants';
 
 const lemonYellow = '#ACD2F2';
 
@@ -43,7 +44,7 @@ function Teams() {
   }
 
   return (
-    <>
+    <div style={Constant.FUN_ZONE_STYLE}>
       <div
         style={{
           height: '100vh',
@@ -52,6 +53,7 @@ function Teams() {
           paddingLeft: '16px',
           paddingRight: '16px',
           paddingBottom: '16px',
+          backgroundImage: Constant.FUN_ZONE_STYLE
         }}
       >
         <Grid
@@ -83,7 +85,7 @@ function Teams() {
           ))}
         </Grid>
       </div>
-    </>
+    </div>
   );
 }
 

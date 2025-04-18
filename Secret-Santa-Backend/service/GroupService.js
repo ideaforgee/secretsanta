@@ -122,6 +122,7 @@ const handlePressBuzzer = async (userId, messageData, connections) => {
   const groupUsers = await groupDao.getAllGroupUsers(messageData.groupId);
   const usersWhoPressedBuzzer = await groupDao.usersWhoPressedBuzzer(messageData.groupId);
   messageData.usersWhoPressedBuzzer = usersWhoPressedBuzzer;
+  messageData.type = 'pressBuzzer';
 
   for (let user of groupUsers) {
     const webSocket = connections.get(user.id?.toString());

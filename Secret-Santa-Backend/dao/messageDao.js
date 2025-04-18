@@ -89,7 +89,7 @@ const getPendingMessagesForUserInGame = async (userId, gameId) => {
     }
 };
 
-const isEmailAlreadySent = async (userId, gameId, chatBoxType) => {
+const isEmailAlreadySent = async (userId, gameId, groupId, chatBoxType) => {
     const query = `
       SELECT
         MAX(CASE
@@ -97,10 +97,10 @@ const isEmailAlreadySent = async (userId, gameId, chatBoxType) => {
             ELSE FALSE
         END) AS isEmailAlreadySent
       FROM userEmailStatus
-      WHERE userId = ? AND gameId = ? AND chatBoxType = ?;
+      WHERE userId = ? AND (gameId = ? OR groupId = ?) AND chatBoxType = ?;
     `;
     try {
-        const [rows] = await db.query(query, [userId, gameId, chatBoxType]);
+        const [rows] = await db.query(query, [userId, gameId, groupId, chatBoxType]);
         return rows[0];
     } catch (err) {
         console.error('Error executing query:', err);
@@ -108,31 +108,31 @@ const isEmailAlreadySent = async (userId, gameId, chatBoxType) => {
     }
 };
 
-const upsertUserEmailStatusForGame = async (userId, gameId, chatBoxType) => {
+const upsertUserEmailStatusForGame = async (userId, gameId, groupId, chatBoxType) => {
     const query = `
-      INSERT INTO userEmailStatus (userId, gameId, chatBoxType, emailStatus)
-      VALUES (?, ?, ?, 'sent')
+      INSERT INTO userEmailStatus (userId, gameId, groupId, chatBoxType, emailStatus)
+      VALUES (?, ?, ?, ?, 'sent')
       ON DUPLICATE KEY UPDATE
           emailStatus = 'sent';
     `;
 
     try {
-        await db.query(query, [userId, gameId, chatBoxType]);
+        await db.query(query, [userId, gameId, groupId, chatBoxType]);
     } catch (err) {
         console.error('Error executing upsert query:', err);
         throw err;
     }
 };
 
-const markEmailAsNotSent = async (userId, gameId, chatBoxType) => {
+const markEmailAsNotSent = async (userId, gameId, groupId, chatBoxType) => {
     const query = `
       UPDATE userEmailStatus
       SET emailStatus = 'notSent'
-      WHERE userId = ? AND gameId = ? AND chatBoxType = ?
+      WHERE userId = ? AND (gameId = ? OR groupId = ?) AND chatBoxType = ?
     `;
 
     try {
-        await db.query(query, [userId, gameId, chatBoxType]);
+        await db.query(query, [userId, gameId, groupId, chatBoxType]);
     } catch (err) {
         console.error('Error executing update query:', err);
         throw err;

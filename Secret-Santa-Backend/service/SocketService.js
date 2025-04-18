@@ -60,6 +60,10 @@ const initializeSocketServer = (server) => {
                     handleReactiveBuzzer(parsedMessage);
                 }
 
+                if (parsedMessage.type == 'clearResponseBuzzer') {
+                    handleClearResponseBuzzer(parsedMessage, userId);
+                }
+
                 if (parsedMessage.type == 'groupDiscussionMessage') {
                     handleGroupDiscussionMessage(parsedMessage, userId);
                 }
@@ -124,6 +128,11 @@ async function handlePressBuzzer(parsedMessage, userId) {
 async function handleReactiveBuzzer(parsedMessage) {
     groupService.reactiveBuzzerRoom(parsedMessage.groupId, connections);
     await groupDao.reactiveBuzzerRoom(parsedMessage.groupId);
+}
+
+async function handleClearResponseBuzzer(parsedMessage, userId) {
+    await groupDao.removeUserToBuzzerRoom(userId, parsedMessage.groupId);
+    groupService.handlePressBuzzer(userId, parsedMessage, connections);
 }
 
 async function handleGroupDiscussionMessage(parsedMessage, userId) {

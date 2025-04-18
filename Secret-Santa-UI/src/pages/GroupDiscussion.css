@@ -2,8 +2,16 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100vh;
+    height: 100dvh;
+    overflow: auto;
     text-align: center;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
 }
 
 .chat-mode-buttons {
@@ -48,7 +56,7 @@
 .chat-messages {
     flex-grow: 1;
     overflow-y: auto;
-    padding: 10px;
+    padding: 10px 0;
     display: flex;
     flex-direction: column;
     background-color: rgba(0, 0, 0, 0.5);
@@ -107,8 +115,10 @@
 }
 
 .sent {
+    align-self: flex-end;
+    display: flex;
     justify-content: flex-end;
-    margin: initial;
+    width: 100%;
     margin-top: 5px;
 }
 
@@ -124,6 +134,8 @@
     overflow-wrap: break-word;
     font-size: medium;
     text-align: left;
+    margin-left: auto;
+    align-self: flex-end;
 }
 
 .received {

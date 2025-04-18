@@ -78,6 +78,15 @@ const addUserToBuzzerRoom = async (userId, groupId, time) => {
   }
 };
 
+const removeUserToBuzzerRoom = async (userId, groupId) => {
+  try {
+    const query = 'DELETE FROM buzzerRoom WHERE userId = ? AND funZoneGroupId = ?;';
+    await db.query(query, [Number(userId), Number(groupId)]);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 const reactiveBuzzerRoom = async (groupId) => {
   try {
     const query = 'DELETE FROM buzzerRoom where funZoneGroupId = ?';
@@ -134,5 +143,6 @@ module.exports = {
   reactiveBuzzerRoom,
   getGroupBuzzerTimerDetail,
   getAllGroupUsers,
-  usersWhoPressedBuzzer
+  usersWhoPressedBuzzer,
+  removeUserToBuzzerRoom
 };

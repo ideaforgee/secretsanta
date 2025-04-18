@@ -4,7 +4,7 @@ DROP PROCEDURE IF EXISTS getGroupBuzzerTimerDetail;
 
 CREATE PROCEDURE getGroupBuzzerTimerDetail(IN funZoneGroupId INT, IN userId INT)
 BEGIN
-    SELECT u.name
+    SELECT u.id, u.name
     FROM buzzerRoom br
     JOIN users u ON br.userId = u.id
     WHERE br.funZoneGroupId = funZoneGroupId

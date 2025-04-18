@@ -16,7 +16,8 @@ export const NOTIFICATION_TYPE = {
     CLAIM: 'claim',
     PRESS_BUZZER: 'pressBuzzer',
     REACTIVE_BUZZER: 'reactiveBuzzer',
-    GROUP_DISCUSSION_MESSAGE: 'groupDiscussionMessage'
+    GROUP_DISCUSSION_MESSAGE: 'groupDiscussionMessage',
+    CLEAR_RESPONSE_BUZZER: 'clearResponseBuzzer'
 };
 
 export const BACKGROUND_STYLE = {

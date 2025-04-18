@@ -44,7 +44,7 @@ const SecretSantaChat = () => {
 
     const markMessagesAsRead = async (chatBoxType) => {
         try {
-            await messageService.markEmailAsNotSent(userId, gameId, chatBoxType);
+            await messageService.markEmailAsNotSent(userId, gameId, null, chatBoxType);
         } catch (error) {
             handleMessagesFetchError(error);
         }
