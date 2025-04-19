@@ -29,6 +29,9 @@ const MasterMind = () => {
   const [totalGusses, setTotalGusses] = useState(0);
   const [colors, setAllColors] = useState([]);
   const [colorMap, setColorMap] = useState({});
+  const [isShowColorPalette, setIsShowColorPalette] = useState(false);
+  const [activePaletteLevel, setActivePaletteLevel] = useState(null);
+  const [selectedSlot, setSelectedSlot] = useState({ levelIndex: null, slotIndex: null });
   const navigate = useNavigate();
   const { showAlert } = useAlert();
 
@@ -159,6 +162,23 @@ const MasterMind = () => {
     }
   };
 
+  const handleOnClick = (levelIndex) => {
+    setIsShowColorPalette(!isShowColorPalette);
+    setActivePaletteLevel(levelIndex);
+  }
+
+  const fillSelectedSlot = (color) => {
+    if (!gameComplete && selectedSlot.levelIndex !== null && selectedSlot.slotIndex !== null) {
+      const { levelIndex, slotIndex } = selectedSlot;
+      const newLevels = [...levels];
+      const clr = Number(color) > 0 ? color : reverseColorMap[color];
+      newLevels[levelIndex][slotIndex] = clr;
+      setLevels(newLevels);
+      setSelectedSlot({ levelIndex: null, slotIndex: null });
+      setIsShowColorPalette(false);
+    }
+  };
+
   return (
     <div className={`game-container ${gameComplete ? "game-over" : ""}`} onDragOver={(e) => e.preventDefault()} onDrop={handleRemoveDrop}>
       <Navbar title={'🎯 MASTER MIND'} />
@@ -177,6 +197,12 @@ const MasterMind = () => {
                 onDrop={() => handleDrop(levelIndex, slotIndex)}
                 onDragStart={() => handleDragStart(colorCode, levelIndex, slotIndex)}
                 draggable={!gameComplete && colorCode !== null && !verifiedLevels?.includes(levelIndex)}
+                onClick={() => {
+                  if (levelIndex === currentLevel) {
+                    setSelectedSlot({ levelIndex, slotIndex });
+                    handleOnClick(levelIndex);
+                  }
+                }}
               ></div>
             ))}
             <div className="hint-box">
@@ -184,6 +210,26 @@ const MasterMind = () => {
                 <div key={index} className={`hint-circle ${hint}`}></div>
               ))}
             </div>
+            {isShowColorPalette && activePaletteLevel === levelIndex && (
+              <div
+                className="color-palette-overlay"
+                onClick={() => setIsShowColorPalette(false)}
+              >
+                <div
+                  className="color-palette-popup"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {colors.map((color) => (
+                    <div
+                      key={color}
+                      className="color-btn"
+                      style={{ background: color }}
+                      onClick={() => fillSelectedSlot(color)}
+                    ></div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         ))}
       </div>
