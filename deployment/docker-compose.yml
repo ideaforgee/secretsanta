@@ -16,6 +16,7 @@ services:
       - webnet_secret-santa
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    restart: always
   secret-santa-backend:
     image: "ghcr.io/ideaforgee/secretsanta/secret-santa-backend:${BACKEND_BUILD_NUMBER}"
     ports:
@@ -24,3 +25,4 @@ services:
       - ./.env
     networks:
       - webnet_secret-santa
+    restart: always
