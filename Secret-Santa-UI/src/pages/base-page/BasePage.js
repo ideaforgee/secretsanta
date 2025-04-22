@@ -33,7 +33,7 @@ const BasePage = () => {
     const enableNotifications = async (userId) => {
         try {
             // Check if the permission is already denied
-            if (Notification.permission === 'denied') {
+            if (Notification?.permission === 'denied') {
                 alert('Notifications have been blocked. Please enable notifications from your browser settings.');
                 return;
             }
@@ -41,7 +41,7 @@ const BasePage = () => {
             // Request permission if it's not already granted
             const permission = await Notification.requestPermission();
 
-            if (permission !== 'granted') {
+            if (permission !== 'granted' || Notification?.permission !== 'granted') {
                 console.warn('User denied notification permission');
                 return;
             }
@@ -112,7 +112,7 @@ const BasePage = () => {
     return (
         <div style={Constant.FUN_ZONE_STYLE} className='base-page-container'>
             <div><Navbar title={'FUN ZONE'} /></div>
-            <Box sx={{ pr: 4, width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <Box sx={{ pr: 4,  pt: isSmallScreen ? 15 : 35, width: '100%', display: 'flex', justifyContent: 'center' }}>
                 <Box sx={{ width: '100%', maxWidth: '1200px' }}>
                     <Grid container spacing={3} justifyContent="center">
                         {cards.map((card, index) => (
