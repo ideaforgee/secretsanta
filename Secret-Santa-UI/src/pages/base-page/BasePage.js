@@ -41,7 +41,8 @@ const BasePage = () => {
             // Request permission if it's not already granted
             const permission = await Notification.requestPermission();
 
-            if (permission === 'granted' || Notification?.permission === 'granted') {
+            if (permission === 'granted' || Notification?.permission === 'granted'
+                || permission === 'default' || Notification?.permission === 'default') {
                 await registerServiceWorker(userId);
                 return;
             }
