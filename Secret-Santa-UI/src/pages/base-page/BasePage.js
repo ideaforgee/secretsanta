@@ -41,13 +41,11 @@ const BasePage = () => {
             // Request permission if it's not already granted
             const permission = await Notification.requestPermission();
 
-            if (permission !== 'granted' || Notification?.permission !== 'granted') {
-                console.warn('User denied notification permission');
+            if (permission === 'granted' || Notification?.permission === 'granted') {
+                await registerServiceWorker(userId);
                 return;
             }
-
-            // Now it's safe to register service worker
-            await registerServiceWorker(userId);
+            console.warn('User denied notification permission');
 
         } catch (error) {
             console.error('Failed to enable notifications:', error);
@@ -128,7 +126,7 @@ const BasePage = () => {
                                 <Card
                                     onClick={card.onClick}
                                     sx={{
-                                        width: isSmallScreen ? '90%' : '100%',
+                                        width: isSmallScreen ? '75%' : '100%',
                                         height: isSmallScreen ? 180 : 250,
                                         display: 'flex',
                                         alignItems: 'center',
