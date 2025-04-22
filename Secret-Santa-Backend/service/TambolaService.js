@@ -23,7 +23,7 @@ const createNewTambolaGame = async (userId) => {
 
         notificationPushService.sendPushNotifications(Number(userId), messages.CREATED_GAME_SUCCESSFULLY, `Here is your tambola game Code ${tambolaGameCode}`);
 
-        await emailService.sendCreatedSecretSantaGameEmail(user, tambolaGameCode);
+        await emailService.sendCreatedTambolaGameEmail(user, tambolaGameCode);
 
         return commonService.createResponse(httpResponse.SUCCESS, { tambolaGameId, gameCode: tambolaGameCode });
     }

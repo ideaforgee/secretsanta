@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './BasePage.css';
 import CreateGroup from '../create-group/CreateGroup';
 import * as Constant from '../../constants/secretSantaConstants.js';
 import ErrorComponent from '../../components/Error/ErrorComponent.js';
 import { useNavigate } from 'react-router-dom';
-import { Box, Card, Typography, Grid, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Card, Typography, Grid, useMediaQuery, useTheme, IconButton } from '@mui/material';
 import Navbar from "../../components/navbar/Navbar";
 import CodeDialog from '../../components/CodeDialog/CodeDialog';
 import { GROUP_ID_KEY, USER_KEY } from '../../constants/appConstant.js';
@@ -12,7 +12,8 @@ import { gameAssistHandler } from '../../services/groupService.js';
 import funZoneGroup from '../../assets/funZoneGroup.jpeg';
 import gameZone from '../../assets/gameZone.jpeg';
 import gameAssist from '../../assets/gameAssist.jpeg';
-import { registerServiceWorker, requestNotificationPermission } from '../../services/notificationService.js';
+import { registerServiceWorker } from '../../services/notificationService.js';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 
 const BasePage = () => {
     const [openCreateGroup, setOpenCreateGroup] = useState(false);
@@ -29,13 +30,29 @@ const BasePage = () => {
     const navigate = useNavigate();
     const userId = localStorage.getItem(USER_KEY);
 
-    useEffect(() => {
-        const requestPermission = async () => {
-            await requestNotificationPermission();
+    const enableNotifications = async (userId) => {
+        try {
+            // Check if the permission is already denied
+            if (Notification.permission === 'denied') {
+                alert('Notifications have been blocked. Please enable notifications from your browser settings.');
+                return;
+            }
+
+            // Request permission if it's not already granted
+            const permission = await Notification.requestPermission();
+
+            if (permission !== 'granted') {
+                console.warn('User denied notification permission');
+                return;
+            }
+
+            // Now it's safe to register service worker
             await registerServiceWorker(userId);
-        };
-        requestPermission();
-      }, [userId]);
+
+        } catch (error) {
+            console.error('Failed to enable notifications:', error);
+        }
+    };
 
     const onClickCreateGroup = () => {
         setResetForm(true);
@@ -173,6 +190,30 @@ const BasePage = () => {
                     onClose={closeErrorPopUp}
                 />
             )}
+
+            {/* Notification Toggle */}
+            (
+                <Box
+                    sx={{
+                        position: 'fixed',
+                        bottom: '20px',
+                        right: '20px',
+                        backgroundColor: 'white',
+                        borderRadius: '50%',
+                        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+                    }}
+                >
+                    <IconButton
+                        onClick={() => enableNotifications(userId)}
+                        sx={{
+                            color: '#4caf50',
+                            fontSize: '30px',
+                        }}
+                    >
+                        <NotificationsIcon />
+                    </IconButton>
+                </Box>
+            )
         </div>
     );
 };

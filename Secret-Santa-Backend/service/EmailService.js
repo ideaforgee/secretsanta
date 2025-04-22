@@ -23,6 +23,18 @@ const sendCreatedSecretSantaGameEmail = async (user, gameCode) => {
 }
 
 /**
+ * Sends an email to the user with their Tambola game code.
+ *
+ * @param {Object} user - The user object containing name and email.
+ * @param {string} gameCode - The Secret Santa game code.
+ */
+const sendCreatedTambolaGameEmail = async (user, gameCode) => {
+  const emailSubject = "🎅🎄 Your Tambola Game Code is Here! 🎁✨";
+  const emailBody = await loadTemplate("tambolaGameEmail.html", { name: user.name, gameCode });
+  await sendEmail(user.email, emailSubject, emailBody);
+}
+
+/**
  * Sends an email to each shuffled user with details about who they are the Secret Santa for.
  *
  * @param {Array} shuffledUsers - Array of user objects where each user has a name, email, and a giftNinja (assigned Secret Santa).
@@ -114,5 +126,6 @@ module.exports = {
   sendEmail,
   sendAddWishSecretSantaEmail,
   sendRestPasswordEmail,
-  sendCreatedGroupEmail
+  sendCreatedGroupEmail,
+  sendCreatedTambolaGameEmail
 };
