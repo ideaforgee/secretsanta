@@ -63,14 +63,20 @@ function TeamSplitter({ open, onClose, resetPrompt }) {
 
     try {
       const checkedMembers = teamData.players.filter((member) => member.checked);
+      const membersPerTeam = parseInt(teamData.numberOfTeams, 10);
+      
+      if (membersPerTeam <= 0 || membersPerTeam > checkedMembers.length) {
+        showAlert('Number of members per team must be greater than 0 and less than or equal to the selected members.', Constant.ERROR);
+        return;
+      }
+
       const shuffledMembers = [...checkedMembers].sort(() => 0.5 - Math.random());
       const teams = [];
-      const teamSize = checkedMembers.length / teamData.numberOfTeams;
-
       let startIndex = 0;
-      for (let i = 0; i < teamData.numberOfTeams; i++) {
-        teams.push(shuffledMembers.slice(startIndex, startIndex + teamSize));
-        startIndex += teamSize;
+
+      while (startIndex < shuffledMembers.length) {
+        teams.push(shuffledMembers.slice(startIndex, startIndex + membersPerTeam));
+        startIndex += membersPerTeam;
       }
 
       onClose();
@@ -91,8 +97,14 @@ function TeamSplitter({ open, onClose, resetPrompt }) {
   useEffect(() => {
     if (teamData.players && teamData.numberOfTeams) {
       const checkedMembers = teamData.players.filter((member) => member.checked);
-      if (checkedMembers.length > 0 && teamData.numberOfTeams > 0) {
-        setCanCreateTeams(checkedMembers.length % teamData.numberOfTeams !== 0);
+      const membersPerTeam = parseInt(teamData.numberOfTeams, 10);
+
+      if (
+        checkedMembers.length > 0 &&
+        membersPerTeam > 0 &&
+        membersPerTeam <= checkedMembers.length
+      ) {
+        setCanCreateTeams(false);
       } else {
         setCanCreateTeams(true);
       }
@@ -121,7 +133,7 @@ function TeamSplitter({ open, onClose, resetPrompt }) {
         <DialogContent>
           <TextField
             style={{ marginTop: '10px' }}
-            label='Split Teams into'
+            label='Number of Members per Team'
             variant='outlined'
             value={teamData.numberOfTeams}
             onChange={(e) => handleTeamChange('numberOfTeams', e.target.value)}
