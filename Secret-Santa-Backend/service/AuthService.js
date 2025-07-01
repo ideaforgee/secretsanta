@@ -20,8 +20,9 @@ const registerUser = async (name, email, password) => {
 
     const userId = await userDao.registerUser(name, email, password);
     const token = commonService.generateToken(userId);
+    const isUserInGroup = userDao.checkUserInGroup(userId);
 
-    return commonService.createResponse(httpResponse.SUCCESS, { userId, token });
+    return commonService.createResponse(httpResponse.SUCCESS, { userId, token, isUserInGroup });
   } catch (error) {
     return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, messages.SERVER_ERROR);
   }
@@ -41,7 +42,8 @@ const loginUser = async (email, password) => {
     }
 
     const token = commonService.generateToken(user.id);
-    return commonService.createResponse(httpResponse.SUCCESS, { userId: user.id, token, userName: user.name });
+    const isUserInGroup = await userDao.checkUserInGroup(user.id);
+    return commonService.createResponse(httpResponse.SUCCESS, { userId: user.id, token, userName: user.name, isUserInGroup: isUserInGroup });
   } catch (error) {
     return commonService.createResponse(httpResponse.INTERNAL_SERVER_ERROR, messages.SERVER_ERROR);
   }
