@@ -31,5 +31,6 @@ module.exports = {
     USERS_COUNT_INVALID: 'Users should be greater than 1',
     GROUP_CREATED_SUCCESSFULLY: 'Group created successfully',
     INVALID_GROUP_CODE: 'Invalid Group code',
-    GAME_ANNOUNCEMENT_PAYLOAD_FIELD_VALIDATION_ERROR: 'All fields are required.'
+    GAME_ANNOUNCEMENT_PAYLOAD_FIELD_VALIDATION_ERROR: 'All fields are required.',
+    USER_DOES_NOT_EXIST_IN_GROUP: 'User does not exist in group'
 };

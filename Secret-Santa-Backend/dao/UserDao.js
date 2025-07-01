@@ -73,4 +73,22 @@ const updateUserPassword = async (newPassword, userId) => {
   }
 }
 
-module.exports = { registerUser, getUserByEmail, verifyPassword, getUserDetailsById, updateUserPassword };
+/**
+ * Check if user is in the group.
+ * @param {number} userId - HTTP status code.
+ * @returns {boolean} - Standardized response.
+ */
+const checkUserInGroup = async (userId) => {
+    try {
+        const query = 'SELECT groupId FROM users WHERE id = ?';
+        const [result] = await promisePool.query(query, [userId]);
+        if (result.length === 0 || result[0].groupId === null) {
+            return false;
+        }
+        return true;
+    } catch (error) {
+        throw new Error(messages.USER_DOES_NOT_EXIST_IN_GROUP);
+    }
+};
+
+module.exports = { registerUser, getUserByEmail, verifyPassword, getUserDetailsById, updateUserPassword, checkUserInGroup };

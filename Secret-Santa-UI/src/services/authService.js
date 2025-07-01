@@ -2,6 +2,7 @@
 import axiosInstance from '../services/axionsInstance';
 import { GAME_ID_KEY } from '../constants/appConstant';
 import { jwtDecode } from 'jwt-decode';
+import { GROUP_ID_KEY } from '../constants/appConstant';
 
 const TOKEN_KEY = 'token';
 const USER_KEY = 'userId';
@@ -29,7 +30,11 @@ export const registerHandler = async (name, email, password) => {
 export const loginHandler = async (email, password) => {
   try {
     const response = await axiosInstance.post('api/auth/login', { email, password });
-    const { token, userId, userName } = response.data.data;
+    const { token, userId, userName, isUserInGroup } = response.data.data;
+
+    if(!isUserInGroup) {
+      localStorage.removeItem(GROUP_ID_KEY);
+    }
 
     localStorage.setItem(TOKEN_KEY, token);
     localStorage.setItem(USER_KEY, JSON.stringify(userId));
