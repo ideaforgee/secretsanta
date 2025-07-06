@@ -3,6 +3,7 @@ const http = require('http');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
 
 const secretSantaRoutes = require('./routes/SecretSantaRoute.js');
 const authRoutes = require('./routes/authRoutes');
@@ -30,6 +31,8 @@ const io = new Server(server, {
         methods: ["GET", "POST"],
     },
 });
+
+app.use('/tools', express.static(path.join(__dirname, 'scripts')));
 
 // Middleware
 app.use(cors());
