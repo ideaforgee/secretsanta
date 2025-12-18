@@ -155,8 +155,8 @@ const getSecretSantaGameInfoByGameCode = async (gameId) => {
     const query = `
       SELECT g.name AS gameName, u.name AS userName,u.id AS userId, u.email, g.id, g.hostId
       FROM games g
-      LEFT JOIN userGame ug ON g.id = ug.gameId
-      LEFT JOIN users u ON ug.userId = u.id
+      INNER JOIN userGame ug ON g.id = ug.gameId
+      INNER JOIN users u ON ug.userId = u.id
       WHERE g.id = ?`;
 
     const results = await db.query(query, [gameId]);
